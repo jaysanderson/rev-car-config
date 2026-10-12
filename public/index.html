@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light dark}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Harbourline Ridge Configurator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a three-lane showroom. Options on the left, the car and its live availability in the middle, the assistant on the right. Everything below the fold explains the plumbing. */
+:root{
+  --bg:#EDF0F4; --surface:#FFFFFF; --surface-2:#F5F7FA; --ink:#141A26; --muted:#5C6774; --line:#D5DBE4;
+  --accent:#1F4FD8; --accent-ink:#FFFFFF; --accent-soft:#E6ECFB;
+  --good:#1B7F4B; --good-soft:#E3F3E9; --warn:#A8600A; --warn-soft:#FBEEDB; --crit:#B3261E;
+  --domo:#0E7C86; --domo-soft:#DDF2F4; --kb:#1F4FD8; --kb-soft:#E6ECFB;
+  --glass:#1A2130; --shadow:0 1px 2px rgba(20,26,38,.06),0 8px 24px rgba(20,26,38,.08);
+  --display:"Archivo",system-ui,sans-serif; --body:"Instrument Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1218; --surface:#161B23; --surface-2:#1D232D; --ink:#E7ECF3; --muted:#98A3B3; --line:#2A3240;
+  --accent:#7D9EFF; --accent-ink:#0E1218; --accent-soft:#1E2A47;
+  --good:#5BCF8C; --good-soft:#15301F; --warn:#E8AA4A; --warn-soft:#3A2A10; --crit:#F0867E;
+  --domo:#4CC4CF; --domo-soft:#0F2E32; --kb:#7D9EFF; --kb-soft:#1E2A47;
+  --glass:#0B0F16; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0E1218; --surface:#161B23; --surface-2:#1D232D; --ink:#E7ECF3; --muted:#98A3B3; --line:#2A3240;
+  --accent:#7D9EFF; --accent-ink:#0E1218; --accent-soft:#1E2A47;
+  --good:#5BCF8C; --good-soft:#15301F; --warn:#E8AA4A; --warn-soft:#3A2A10; --crit:#F0867E;
+  --domo:#4CC4CF; --domo-soft:#0F2E32; --kb:#7D9EFF; --kb-soft:#1E2A47;
+  --glass:#0B0F16; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
+h1,h2,h3,h4{font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);padding-inline:clamp(16px,3vw,32px);height:58px;display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand b{font-family:var(--display);font-variation-settings:"wdth" 125;font-weight:800;font-size:17px;letter-spacing:.02em;text-transform:uppercase}
+.brand span{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;display:inline-flex;align-items:center;gap:6px;background:var(--surface);color:var(--ink)}
+.pill.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.pill.on .dot{background:var(--good)}
+.mock{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--warn);background:var(--warn-soft);border-radius:4px;padding:3px 7px;text-transform:uppercase}
+.langs{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.langs button{padding:5px 10px;font-size:13px;color:var(--muted)}
+.langs button.on{background:var(--accent);color:var(--accent-ink)}
+
+/* configurator shell */
+.shell{padding:clamp(16px,2.5vw,28px) clamp(16px,3vw,32px);display:grid;gap:20px;grid-template-columns:1fr;max-width:1560px;margin:0 auto}
+@media (min-width:1120px){.shell{grid-template-columns:290px minmax(0,1fr) 390px}.opts{order:1}.stage{order:2}.assist{order:3}}
+.stage{order:1}.opts{order:2}.assist{order:3}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+
+/* options */
+.opts{display:flex;flex-direction:column;gap:14px}
+.sect{padding:16px 18px}
+.sect .head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;gap:10px}
+.sect .head h3{font-size:15px;font-variation-settings:"wdth" 112}
+.sect .head .sub{font-size:12px;color:var(--muted)}
+.chooser{display:grid;gap:8px}
+.choice{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);transition:border-color .15s,background .15s}
+.choice:hover{border-color:var(--muted)}
+.choice.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.choice .n{font-weight:600}
+.choice .p{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right}
+.choice .d{grid-column:1/-1;font-size:12.5px;color:var(--muted);line-height:1.35}
+.choice .stock{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:2px}
+.sd{width:7px;height:7px;border-radius:50%;flex:none}
+.sd.here{background:var(--good)}.sd.near{background:var(--warn)}.sd.none{background:var(--line);border:1px solid var(--muted)}
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.sw{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px;border-radius:10px;border:1px solid transparent}
+.sw:hover{border-color:var(--line)}
+.sw.on{border-color:var(--accent);background:var(--accent-soft)}
+.sw .chip{width:40px;height:40px;border-radius:50%;border:1px solid rgba(0,0,0,.15);box-shadow:inset -6px -8px 14px rgba(0,0,0,.25),inset 6px 8px 12px rgba(255,255,255,.35)}
+.sw .l{font-size:11px;line-height:1.2;text-align:center;color:var(--ink)}
+.sw .s{font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:4px;font-family:var(--mono)}
+.toggle{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+.toggle.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.toggle .box{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--muted);flex:none;margin-top:2px;display:grid;place-items:center}
+.toggle.on .box{background:var(--accent);border-color:var(--accent)}
+.toggle.on .box::after{content:"";width:9px;height:5px;border-left:2px solid var(--accent-ink);border-bottom:2px solid var(--accent-ink);transform:rotate(-45deg) translateY(-1px)}
+.toggle .t{flex:1}
+.toggle .n{font-weight:600}
+.toggle .d{font-size:12.5px;color:var(--muted);line-height:1.35}
+.toggle .p{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.locked{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.locked .link{color:var(--accent);font-size:13px;font-weight:500}
+
+/* stage */
+.stage{display:flex;flex-direction:column;gap:16px;min-width:0}
+.hero{padding:22px clamp(16px,3vw,32px) 18px;position:relative;overflow:hidden}
+.hero .titles{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.hero h1{font-size:clamp(26px,3.2vw,38px)}
+.hero .spec{color:var(--muted);margin-top:4px;font-size:14px}
+.price{text-align:right}
+.price .big{font-family:var(--display);font-variation-settings:"wdth" 110;font-weight:700;font-size:clamp(22px,2.6vw,30px);letter-spacing:-.01em}
+.price .sm{font-size:12px;color:var(--muted)}
+.carwrap{margin:8px auto 0;max-width:720px;width:100%}
+.carwrap svg{width:100%;height:auto;display:block}
+.site{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);margin-top:4px;flex-wrap:wrap}
+.site b{color:var(--ink);font-weight:600}
+
+/* availability */
+.avail{padding:18px clamp(16px,2.5vw,24px)}
+.avail .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.avail h2{font-size:18px}
+.avail .fresh{font-family:var(--mono);font-size:11px;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+.avail .fresh i{width:7px;height:7px;border-radius:50%;background:var(--good);display:inline-block}
+.ways{display:grid;gap:10px}
+.way{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.way.hot{border-color:var(--good);background:var(--good-soft)}
+.way.nudge{border-style:dashed}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:6px;white-space:nowrap;grid-row:1/span 2;align-self:start;margin-top:2px}
+.tag.good{background:var(--good);color:#fff}.tag.warn{background:var(--warn-soft);color:var(--warn)}.tag.info{background:var(--accent-soft);color:var(--accent)}.tag.neutral{background:var(--line);color:var(--ink)}
+.way .t{font-weight:600}
+.way .d{grid-column:2;font-size:13px;color:var(--muted);line-height:1.4}
+.way .act{grid-column:3;grid-row:1/span 2;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.way .pr{font-family:var(--mono);font-size:13px;white-space:nowrap}
+.way .pr s{color:var(--muted);margin-right:6px}
+.btn{border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{background:transparent}
+.btn:hover{filter:brightness(.96)}
+@media (max-width:640px){.way{grid-template-columns:auto 1fr}.way .act{grid-column:1/-1;grid-row:auto;flex-direction:row;justify-content:space-between;align-items:center;margin-top:6px}}
+.ctaBar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px clamp(16px,2.5vw,24px);justify-content:space-between}
+.ctaBar .note{font-size:13px;color:var(--muted)}
+.ctaBar .btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* data-layer annotations */
+.ann{display:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;padding:2px 6px;border-radius:4px;align-items:center;gap:4px;white-space:nowrap;vertical-align:middle}
+.ann.domo{background:var(--domo-soft);color:var(--domo)}
+.ann.kb{background:var(--kb-soft);color:var(--kb)}
+.ann.dms{background:var(--line);color:var(--ink)}
+body.reveal .ann{display:inline-flex}
+body.reveal .way,body.reveal .sw.on,body.reveal .choice.on{outline:1px dashed var(--domo);outline-offset:2px}
+.annrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+
+/* assistant */
+.assist{display:flex;flex-direction:column;min-width:0}
+.assist .card{display:flex;flex-direction:column;height:100%;min-height:560px;max-height:calc(100vh - 100px)}
+@media (max-width:1119px){.assist .card{max-height:none;height:auto}}
+.ahead{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.ahead .av{width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-family:var(--display);font-variation-settings:"wdth" 125;font-weight:800;font-size:13px;flex:none}
+.ahead .who{min-width:0}
+.ahead .who b{display:block;font-weight:600;font-size:14px}
+.ahead .who span{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ahead .live{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--good);display:flex;gap:5px;align-items:center;white-space:nowrap}
+.ahead .live i{width:7px;height:7px;border-radius:50%;background:var(--good)}
+.thread{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:300px;max-height:60vh}
+@media (min-width:1120px){.thread{max-height:none}}
+.msg{max-width:92%;display:flex;flex-direction:column;gap:6px}
+.msg.a{align-self:flex-start}
+.msg.u{align-self:flex-end;align-items:flex-end}
+.bub{padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.5}
+.msg.a .bub{background:var(--surface-2);border:1px solid var(--line);border-top-left-radius:4px}
+.msg.u .bub{background:var(--accent);color:var(--accent-ink);border-top-right-radius:4px}
+.msg.sys{align-self:center;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.trace{display:flex;flex-wrap:wrap;gap:5px}
+.tr{font-family:var(--mono);font-size:10.5px;padding:3px 7px;border-radius:5px;display:inline-flex;gap:5px;align-items:center}
+.tr.domo{background:var(--domo-soft);color:var(--domo)}
+.tr.kb{background:var(--kb-soft);color:var(--kb)}
+.tr::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8}
+.acts{display:flex;flex-wrap:wrap;gap:6px}
+.acts .btn{font-size:12.5px;padding:6px 10px}
+.working{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px;padding:8px 12px;border-left:2px solid var(--line)}
+.working .step{display:flex;gap:8px;align-items:center;opacity:0;transform:translateX(-4px);animation:stepin .3s forwards}
+.working .step::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+@keyframes stepin{to{opacity:1;transform:none}}
+.chips{padding:10px 16px 0;display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 11px;font-size:12.5px;background:var(--surface);color:var(--ink)}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.ask{display:flex;gap:8px;padding:12px 16px 14px}
+.ask input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--surface-2);color:var(--ink)}
+.ask button{border-radius:10px;padding:0 14px;background:var(--ink);color:var(--bg);font-weight:600}
+.langnote{font-size:11.5px;color:var(--muted);padding:0 16px 10px;font-family:var(--mono)}
+
+/* below the fold */
+.below{max-width:1180px;margin:0 auto;padding:40px clamp(16px,3vw,32px) 80px;display:flex;flex-direction:column;gap:56px}
+.below h2{font-size:clamp(22px,2.6vw,30px);margin-bottom:6px}
+.below .lede{color:var(--muted);max-width:66ch;font-size:15.5px}
+.flow{display:grid;grid-template-columns:1fr;gap:14px;margin-top:22px}
+@media (min-width:900px){.flow{grid-template-columns:1fr 1fr 1fr 1fr;align-items:stretch}}
+.node{padding:16px 18px;position:relative}
+.node .eyebrow{margin-bottom:6px}
+.node h3{font-size:16px;margin-bottom:8px}
+.node ul{margin:0;padding-left:16px;font-size:13.5px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.node.domo{border-top:3px solid var(--domo)}
+.node.kb{border-top:3px solid var(--kb)}
+.node.xp{border-top:3px solid var(--good)}
+.node.dms{border-top:3px solid var(--muted)}
+.node .arrow{position:absolute;right:-13px;top:50%;width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:9px solid var(--muted);display:none}
+@media (min-width:900px){.node .arrow{display:block}}
+.node .out{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+.tbl{overflow-x:auto;margin-top:18px}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--line)}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}
+td:first-child{font-weight:600;white-space:nowrap}
+.who{font-family:var(--mono);font-size:11px;padding:2px 6px;border-radius:4px;white-space:nowrap}
+.who.domo{background:var(--domo-soft);color:var(--domo)}.who.kb{background:var(--kb-soft);color:var(--kb)}.who.dms{background:var(--line)}
+.notes{display:grid;gap:12px;grid-template-columns:1fr;margin-top:18px}
+@media (min-width:760px){.notes{grid-template-columns:1fr 1fr}}
+.note{padding:14px 16px;font-size:14px;color:var(--muted);line-height:1.5}
+.note b{color:var(--ink);display:block;margin-bottom:3px;font-weight:600}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="brand"><b>Harbourline</b><span>Motor Group · Parramatta</span></div>
+  <div class="right">
+    <span class="mock">Mockup</span>
+    <div class="langs" id="langs" aria-label="Assistant language">
+      <button class="on" data-lang="en">EN</button><button data-lang="zh">中文</button><button data-lang="vi">Tiếng Việt</button>
+    </div>
+    <button class="pill" id="reveal" aria-pressed="false"><span class="dot"></span>Show data layer</button>
+  </div>
+</header>
+
+<main class="shell">
+
+  <!-- STAGE -->
+  <section class="stage">
+    <div class="card hero">
+      <div class="titles">
+        <div>
+          <div class="eyebrow">Kestrel · mid-size SUV · MY26</div>
+          <h1 id="title">Ridge Touring</h1>
+          <p class="spec" id="spec">Storm Grey · Charcoal leather · Tech Pack</p>
+          <div class="site"><b>Harbourline Parramatta</b><span>·</span><span>nearest to you</span><span class="ann dms">DMS · site_config</span></div>
+        </div>
+        <div class="price">
+          <div class="big num" id="price">$59,290</div>
+          <div class="sm">drive-away, NSW, private buyer <span class="ann kb">KB · price_list_MY26</span></div>
+        </div>
+      </div>
+      <div class="carwrap">
+        <svg id="car" viewBox="0 0 660 270" role="img" aria-label="Side profile of the configured car">
+          <defs>
+            <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".45" stop-color="#fff" stop-opacity=".04"/><stop offset=".7" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".28"/>
+            </linearGradient>
+            <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fa4c0" stop-opacity=".9"/><stop offset="1" stop-color="#1a2130"/></linearGradient>
+          </defs>
+          <ellipse cx="330" cy="236" rx="290" ry="12" fill="#000" opacity=".12"/>
+          <!-- body -->
+          <path id="body" d="M64 196 L64 150 Q64 136 78 132 L156 118 L212 66 Q222 54 240 54 L432 54 Q454 54 470 68 L534 120 L592 130 Q612 134 612 152 L612 196 Q612 206 602 206 L74 206 Q64 206 64 196 Z" fill="#6B7280"/>
+          <path d="M64 196 L64 150 Q64 136 78 132 L156 118 L212 66 Q222 54 240 54 L432 54 Q454 54 470 68 L534 120 L592 130 Q612 134 612 152 L612 196 Q612 206 602 206 L74 206 Q64 206 64 196 Z" fill="url(#sheen)"/>
+          <!-- glass -->
+          <path d="M176 116 L218 70 Q224 62 236 62 L316 62 L316 116 Z" fill="url(#glass)"/>
+          <path d="M328 62 L428 62 Q446 62 458 72 L508 116 L328 116 Z" fill="url(#glass)"/>
+          <!-- trims -->
+          <rect x="64" y="186" width="548" height="6" fill="#000" opacity=".25"/>
+          <path d="M322 62 L322 116" stroke="#000" stroke-opacity=".35" stroke-width="3"/>
+          <path d="M176 122 L508 122" stroke="#fff" stroke-opacity=".25" stroke-width="2"/>
+          <path d="M240 128 L300 128 M330 128 L400 128" stroke="#000" stroke-opacity=".3" stroke-width="4" stroke-linecap="round"/>
+          <!-- lights -->
+          <path d="M598 136 L612 142 L612 156 L596 152 Z" fill="#f3f0d8"/>
+          <path d="M64 152 L78 148 L78 166 L64 166 Z" fill="#c8302a"/>
+          <!-- arches + wheels -->
+          <circle cx="172" cy="204" r="44" fill="var(--surface)"/><circle cx="500" cy="204" r="44" fill="var(--surface)"/>
+          <circle cx="172" cy="204" r="36" fill="#1c1f24"/><circle cx="500" cy="204" r="36" fill="#1c1f24"/>
+          <circle cx="172" cy="204" r="19" fill="#b8bec8"/><circle cx="500" cy="204" r="19" fill="#b8bec8"/>
+          <circle cx="172" cy="204" r="6" fill="#4a505a"/><circle cx="500" cy="204" r="6" fill="#4a505a"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card avail">
+      <div class="head">
+        <div>
+          <h2>How you can have this car</h2>
+          <div class="eyebrow" style="margin-top:4px">Checked against stock at Parramatta and three sites within 35 km</div>
+        </div>
+        <span class="fresh"><i></i>stock refreshed 6 min ago <span class="ann domo">Domo · stock_by_site</span></span>
+      </div>
+      <div class="ways" id="ways"></div>
+    </div>
+
+    <div class="card ctaBar">
+      <div class="note">Reserve or book against a specific car, not a generic enquiry. <span class="ann dms">DMS · write-back: lead + VIN + site</span></div>
+      <div class="btns"><button class="btn" data-toast="Test drive booked at Parramatta (mockup)">Book a test drive</button><button class="btn primary" data-toast="Reservation placed against this car (mockup)">Reserve this build</button></div>
+    </div>
+  </section>
+
+  <!-- OPTIONS -->
+  <aside class="opts">
+    <div class="card sect">
+      <div class="head"><h3>Model</h3></div>
+      <div class="locked"><div><div style="font-weight:600">Ridge</div><div style="font-size:12.5px;color:var(--muted)">Mid-size SUV · 5 seats · AWD</div></div><button class="link" data-toast="Only Ridge is wired up in this mockup">Change</button></div>
+    </div>
+    <div class="card sect">
+      <div class="head"><h3>Grade</h3><span class="sub">counts are cars on the lot <span class="ann domo">Domo</span></span></div>
+      <div class="chooser" id="grades"></div>
+    </div>
+    <div class="card sect">
+      <div class="head"><h3>Colour</h3><span class="sub">who has it <span class="ann domo">Domo</span></span></div>
+      <div class="swatches" id="colours"></div>
+    </div>
+    <div class="card sect">
+      <div class="head"><h3>Interior</h3></div>
+      <div class="chooser" id="interiors"></div>
+    </div>
+    <div class="card sect">
+      <div class="head"><h3>Packs</h3><span class="sub">factory-fitted</span></div>
+      <div class="chooser" id="packs"></div>
+    </div>
+  </aside>
+
+  <!-- ASSISTANT -->
+  <section class="assist">
+    <div class="card">
+      <div class="ahead">
+        <div class="av">HL</div>
+        <div class="who"><b>Harbourline assistant</b><span>Progress Agentic RAG · answers from spec sheets, pricing, finance terms and live stock</span></div>
+        <div class="live"><i></i>live</div>
+      </div>
+      <div class="thread" id="thread"></div>
+      <div class="chips" id="chips"></div>
+      <div class="langnote" id="langnote"></div>
+      <form class="ask" id="ask"><input id="askin" type="text" autocomplete="off"><button type="submit" id="askbtn">Ask</button></form>
+    </div>
+  </section>
+</main>
+
+<section class="below">
+  <div>
+    <div class="eyebrow">How it fits together</div>
+    <h2>What the customer never sees</h2>
+    <p class="lede">Two systems do the work. Domo turns dealer management system data into stock intelligence. Progress Agentic RAG turns product knowledge plus that intelligence into a conversation. The configurator is just where they meet.</p>
+    <div class="flow">
+      <div class="card node dms">
+        <div class="eyebrow">Source</div>
+        <h3>Dealer management system</h3>
+        <ul><li>Vehicle stock by VIN, site, status, days in stock</li><li>Inbound pipeline and order bank</li><li>Deals, margins, demo fleet</li><li>Leads and bookings (write-back)</li></ul>
+        <div class="out">stock every 15 min · deals nightly</div>
+        <span class="arrow"></span>
+      </div>
+      <div class="card node domo">
+        <div class="eyebrow">ETL and stock intelligence</div>
+        <h3>Domo</h3>
+        <ul><li>Dataflows: stock ageing, days of supply by model and colour, transfer feasibility between sites</li><li>Move-priority score and incentive headroom per VIN</li><li>Order-bank ETA by build slot</li><li>Published datasets, read via the Domo API</li></ul>
+        <div class="out">stock_by_site · aged_stock_actions · transfer_feasibility · inbound_pipeline · order_bank_eta</div>
+        <span class="arrow"></span>
+      </div>
+      <div class="card node kb">
+        <div class="eyebrow">Conversation</div>
+        <h3>Progress Agentic RAG</h3>
+        <ul><li>Knowledge box: brochures, spec sheets, price lists, warranty, finance terms, dealer policies, term dates</li><li>Agents: cited retrieval, a Domo stock tool, language detection, a consult flow that asks about use and timing</li><li>Replies in whatever language the customer writes</li></ul>
+        <div class="out">answer + citations + suggested build changes</div>
+        <span class="arrow"></span>
+      </div>
+      <div class="card node xp">
+        <div class="eyebrow">Experience</div>
+        <h3>Configurator and assistant</h3>
+        <ul><li>Every option shows who has it and when</li><li>Ready-now cars surface as honest offers, not a stock search button</li><li>The assistant can change the build</li><li>Reserve and test-drive go back to the DMS against a VIN</li></ul>
+        <div class="out">one page, one conversation</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="eyebrow">Touchpoints</div>
+    <h2>Where the data shows up on the page</h2>
+    <p class="lede">Turn on “Show data layer” at the top to see these tags in place on the configurator.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Moment</th><th>What the customer sees</th><th>Behind it</th><th>Powered by</th></tr></thead>
+      <tbody>
+        <tr><td>Colour swatches</td><td>“3 here”, “Hornsby”, “Order” under each colour</td><td>Stock counts by colour and grade at the home site and nearby sites</td><td><span class="who domo">Domo</span></td></tr>
+        <tr><td>Grade buttons</td><td>Cars on the lot and nearby for each grade</td><td>Same dataset, grouped by grade</td><td><span class="who domo">Domo</span></td></tr>
+        <tr><td>Availability panel</td><td>Ready now, here Thursday, arriving in 9 days, built to order in 14 to 18 weeks</td><td>Exact and near matches against stock, transfer feasibility, inbound pipeline, order-bank ETA</td><td><span class="who domo">Domo</span></td></tr>
+        <tr><td>Ready-now bonus</td><td>A near-match car with a discount and a plain reason for it</td><td>Move-priority score from ageing and days of supply, incentive headroom from margin</td><td><span class="who domo">Domo</span></td></tr>
+        <tr><td>Spec questions</td><td>Towing, grade differences, warranty, finance, in plain language with sources</td><td>Cited retrieval over the knowledge box</td><td><span class="who kb">Agentic RAG</span></td></tr>
+        <tr><td>Stock inside an answer</td><td>“There’s one on site in Midnight Blue”</td><td>The agent calls Domo as a tool mid-answer</td><td><span class="who kb">Agentic RAG</span> <span class="who domo">Domo</span></td></tr>
+        <tr><td>Deadline questions</td><td>“A factory order won’t make it. Two cars will.”</td><td>Term dates from the knowledge box combined with Domo ETAs</td><td><span class="who kb">Agentic RAG</span> <span class="who domo">Domo</span></td></tr>
+        <tr><td>Language</td><td>The assistant replies in the language the customer writes</td><td>Language detection and multilingual retrieval; the page chrome follows</td><td><span class="who kb">Agentic RAG</span></td></tr>
+        <tr><td>Assistant changes the build</td><td>“Add Tow Pack”, “Switch to the Storm Grey Touring”</td><td>Agent returns a structured build change the page applies</td><td><span class="who kb">Agentic RAG</span></td></tr>
+        <tr><td>Reserve and test drive</td><td>A booking against this car at this site</td><td>Lead, VIN and site written back</td><td><span class="who dms">DMS</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div>
+    <div class="eyebrow">Read before reviewing</div>
+    <h2>Assumptions in this mockup</h2>
+    <div class="notes">
+      <div class="card note"><b>Fictional dealer and marque</b>Harbourline, Kestrel and Ridge are invented. Prices, stock, ages and bonuses are illustrative and chosen to show each behaviour at least once.</div>
+      <div class="card note"><b>Four questions are wired up</b>The suggested chips return scripted answers with the trace the real agent would produce. Free-text questions get a placeholder reply.</div>
+      <div class="card note"><b>Domo is read through its API, not embedded</b>The page never shows a Domo card. The experience consumes published datasets and renders them in its own language.</div>
+      <div class="card note"><b>Stock refresh cadence</b>Assumed 15 minutes for stock and nightly for ageing and margin. Fast enough to never show a sold car for long, slow enough to keep DMS load trivial.</div>
+      <div class="card note"><b>Discounts are explained</b>Aged stock is offered with the reason stated. The customer should never feel steered without knowing why.</div>
+      <div class="card note"><b>Assistant language only</b>Switching language translates the assistant here. In production the whole page follows the customer.</div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  // ---------- catalogue ----------
+  const GRADES=[
+    {id:'core',name:'Core',price:48990,d:'Safety suite, 10-inch screen, 18-inch wheels, cloth'},
+    {id:'touring',name:'Touring',price:56490,d:'Adds 19-inch wheels, 12.3-inch screen, power tailgate, heated seats'},
+    {id:'summit',name:'Summit',price:64990,d:'Adds panoramic roof, adaptive suspension, ventilated seats, leather standard'}
+  ];
+  const COLOURS=[
+    {id:'white',name:'Glacier White',hex:'#E6E9ED',price:0},
+    {id:'grey',name:'Storm Grey',hex:'#6B7280',price:750},
+    {id:'blue',name:'Midnight Blue',hex:'#1E2F5C',price:750},
+    {id:'red',name:'Ember Red',hex:'#9B1C1C',price:950},
+    {id:'sand',name:'Dune Sand',hex:'#C8B48E',price:750}
+  ];
+  const INTERIORS=[
+    {id:'cloth',name:'Charcoal cloth',price:0},
+    {id:'leather',name:'Charcoal leather',price:2400},
+    {id:'tan',name:'Tan leather',price:2400}
+  ];
+  const PACKS=[
+    {id:'tow',name:'Tow Pack',price:1950,d:'2,500 kg braked, trailer sway control, 12-pin plug'},
+    {id:'tech',name:'Tech Pack',price:2800,d:'Head-up display, 360 camera, premium audio'},
+    {id:'family',name:'Family Pack',price:1200,d:'Rear sunshades, cargo barrier, third-row vents'}
+  ];
+  const SITES={par:{name:'Parramatta',home:true},hor:{name:'Hornsby',km:28,when:'Thursday'},pen:{name:'Penrith',km:34,when:'Friday'},liv:{name:'Liverpool',km:22,when:'Thursday'}};
+  // stock units as Domo would publish them (stock_by_site joined to aged_stock_actions)
+  const UNITS=[
+    {id:'HL-2231',site:'par',grade:'touring',colour:'grey',interior:'leather',packs:['tech'],age:94,bonus:1800,priority:1},
+    {id:'HL-2290',site:'par',grade:'core',colour:'grey',interior:'cloth',packs:[],age:31,bonus:0},
+    {id:'HL-2310',site:'par',grade:'summit',colour:'blue',interior:'tan',packs:['tow','tech'],age:12,bonus:0},
+    {id:'HL-2325',site:'par',grade:'core',colour:'white',interior:'cloth',packs:[],age:8,bonus:0},
+    {id:'HL-1988',site:'hor',grade:'touring',colour:'white',interior:'leather',packs:['family'],age:58,bonus:0},
+    {id:'HL-1941',site:'hor',grade:'summit',colour:'grey',interior:'leather',packs:['tech'],age:110,bonus:2400,priority:2},
+    {id:'HL-2104',site:'pen',grade:'touring',colour:'red',interior:'leather',packs:['tech'],age:67,bonus:1200,priority:3},
+    {id:'HL-2150',site:'liv',grade:'summit',colour:'sand',interior:'tan',packs:['tech','family'],age:21,bonus:0},
+    {id:'HL-2402',site:'par',transit:9,grade:'touring',colour:'blue',interior:'leather',packs:['tow'],age:0,bonus:0}
+  ];
+  const by=(arr,id)=>arr.find(x=>x.id===id);
+  const fmt=n=>'$'+n.toLocaleString('en-AU');
+
+  // ---------- state ----------
+  const cfg={grade:'touring',colour:'grey',interior:'leather',packs:['tech']};
+  let lang='en';
+
+  function price(c){
+    const g=by(GRADES,c.grade);let p=g.price+by(COLOURS,c.colour).price;
+    if(c.grade!=='summit')p+=by(INTERIORS,c.interior).price;
+    c.packs.forEach(id=>p+=by(PACKS,id).price);return p;
+  }
+  function unitPrice(u){return price({grade:u.grade,colour:u.colour,interior:u.interior,packs:u.packs});}
+  function describe(c){const ps=c.packs.map(id=>by(PACKS,id).name).join(' + ');return by(COLOURS,c.colour).name+' · '+by(INTERIORS,c.interior).name+(ps?' · '+ps:'');}
+
+  // difference between a unit and the build: list of human strings
+  function diffs(u,c){
+    const d=[];
+    if(u.grade!==c.grade)d.push(by(GRADES,u.grade).name+' grade instead of '+by(GRADES,c.grade).name);
+    if(u.colour!==c.colour)d.push(by(COLOURS,u.colour).name+' instead of '+by(COLOURS,c.colour).name);
+    if(u.interior!==c.interior)d.push(by(INTERIORS,u.interior).name+' instead of '+by(INTERIORS,c.interior).name);
+    const missing=c.packs.filter(p=>!u.packs.includes(p));
+    if(missing.length)d.push('without the '+missing.map(p=>by(PACKS,p).name).join(' and '));
+    return d;
+  }
+  function extras(u,c){return u.packs.filter(p=>!c.packs.includes(p)).map(p=>by(PACKS,p).name);}
+
+  // ---------- render options ----------
+  function stockFor(pred){
+    const here=UNITS.filter(u=>!u.transit&&u.site==='par'&&pred(u)).length;
+    const near=UNITS.filter(u=>!u.transit&&u.site!=='par'&&pred(u)).length;
+    const tr=UNITS.filter(u=>u.transit&&pred(u)).length;
+    return {here,near,tr};
+  }
+  function stockLine(s){
+    const parts=[];
+    if(s.here)parts.push(`<span class="sd here"></span>${s.here} on the lot`);
+    if(s.near)parts.push(`<span class="sd near"></span>${s.near} nearby`);
+    if(s.tr)parts.push(`<span class="sd near"></span>${s.tr} arriving`);
+    if(!parts.length)parts.push('<span class="sd none"></span>factory order');
+    return parts.join('<span style="margin:0 4px"></span>');
+  }
+  function renderGrades(){
+    const el=document.getElementById('grades');el.innerHTML='';
+    GRADES.forEach(g=>{
+      const s=stockFor(u=>u.grade===g.id);
+      const b=document.createElement('button');b.className='choice'+(cfg.grade===g.id?' on':'');b.id='grade-'+g.id;
+      b.innerHTML=`<span class="n">${g.name}</span><span class="p num">${fmt(g.price)}</span><span class="d">${g.d}</span><span class="stock">${stockLine(s)}</span>`;
+      b.onclick=()=>{cfg.grade=g.id;if(g.id==='summit'&&cfg.interior==='cloth')cfg.interior='leather';update();};
+      el.appendChild(b);
+    });
+  }
+  function renderColours(){
+    const el=document.getElementById('colours');el.innerHTML='';
+    COLOURS.forEach(c=>{
+      const s=stockFor(u=>u.colour===c.id);
+      let tag='Order';if(s.here)tag=s.here+' here';else if(s.near)tag=s.near+' nearby';else if(s.tr)tag='arriving';
+      const cls=s.here?'here':(s.near||s.tr)?'near':'none';
+      const b=document.createElement('button');b.className='sw'+(cfg.colour===c.id?' on':'');b.id='col-'+c.id;b.title=c.name;
+      b.innerHTML=`<span class="chip" style="background:${c.hex}"></span><span class="l">${c.name}</span><span class="s"><span class="sd ${cls}"></span>${tag}</span>`;
+      b.onclick=()=>{cfg.colour=c.id;update();};
+      el.appendChild(b);
+    });
+  }
+  function renderInteriors(){
+    const el=document.getElementById('interiors');el.innerHTML='';
+    INTERIORS.forEach(i=>{
+      const summit=cfg.grade==='summit';const dis=summit&&i.id==='cloth';
+      const s=stockFor(u=>u.interior===i.id);
+      const b=document.createElement('button');b.className='choice'+(cfg.interior===i.id?' on':'');b.id='int-'+i.id;b.disabled=dis;if(dis)b.style.opacity=.45;
+      const p=summit?(i.id==='cloth'?'not on Summit':'included'):(i.price?'+'+fmt(i.price):'standard');
+      b.innerHTML=`<span class="n">${i.name}</span><span class="p num">${p}</span><span class="stock">${stockLine(s)}</span>`;
+      b.onclick=()=>{cfg.interior=i.id;update();};
+      el.appendChild(b);
+    });
+  }
+  function renderPacks(){
+    const el=document.getElementById('packs');el.innerHTML='';
+    PACKS.forEach(p=>{
+      const on=cfg.packs.includes(p.id);
+      const b=document.createElement('button');b.className='toggle'+(on?' on':'');b.id='pack-'+p.id;b.setAttribute('aria-pressed',on);
+      b.innerHTML=`<span class="box"></span><span class="t"><span class="n">${p.name}</span><div class="d">${p.d}</div></span><span class="p num">+${fmt(p.price)}</span>`;
+      b.onclick=()=>{cfg.packs=on?cfg.packs.filter(x=>x!==p.id):cfg.packs.concat(p.id);update();};
+      el.appendChild(b);
+    });
+  }
+
+  // ---------- availability (the Domo-driven part) ----------
+  function renderWays(){
+    const el=document.getElementById('ways');el.innerHTML='';
+    const scored=UNITS.map(u=>({u,d:diffs(u,cfg),x:extras(u,cfg)}));
+    const exact=scored.filter(s=>s.d.length===0).sort((a,b)=>(a.u.transit?2:a.u.site==='par'?0:1)-(b.u.transit?2:b.u.site==='par'?0:1));
+    const close=scored.filter(s=>s.d.length===1&&!exact.some(e=>e.u===s.u)).sort((a,b)=>(b.u.bonus-a.u.bonus)||(a.u.site==='par'?-1:1));
+    const rows=[];
+    exact.forEach(s=>rows.push(wayRow(s,true)));
+    // Domo nudge: a near match the group wants moved
+    const nudge=close.find(s=>s.u.bonus>0);
+    if(nudge)rows.push(wayRow(nudge,false,true));
+    else if(close[0]&&!exact.some(e=>e.u.site==='par'&&!e.u.transit))rows.push(wayRow(close[0],false,false));
+    rows.push(factoryRow());
+    rows.forEach(r=>el.appendChild(r));
+  }
+  function wayRow(s,exact,nudge){
+    const u=s.u,site=SITES[u.site];const row=document.createElement('div');
+    let tag,cls,title,desc,ann=[];
+    if(u.transit){tag='Arrives in '+u.transit+' days';cls='info';title='In transit to Parramatta';desc='Stock '+u.id+' · landed order, not yet on the lot';ann.push('Domo · inbound_pipeline');}
+    else if(u.site==='par'){tag='Ready now';cls='good';title='On the lot at Parramatta';desc='Stock '+u.id+' · '+u.age+' days in stock';ann.push('Domo · stock_by_site');}
+    else{tag='Here '+site.when;cls='warn';title='At Harbourline '+site.name+', '+site.km+' km away';desc='Stock '+u.id+' · transfer on the next run';ann.push('Domo · transfer_feasibility');}
+    if(exact){desc=(s.x.length?'Exactly your spec, and it also has the '+s.x.join(' and ')+'. ':'Exactly your spec. ')+desc;}
+    else{desc='Same car, '+s.d[0]+'. '+desc;}
+    if(u.bonus){desc+=' · Ready-now bonus of '+fmt(u.bonus)+' because it has been on the lot longer than we would like.';ann.push('Domo · aged_stock_actions · priority '+u.priority+' · headroom '+fmt(u.bonus));}
+    if(nudge){tag='Worth a look';cls='warn';}
+    row.className='way'+(exact&&u.site==='par'&&!u.transit?' hot':'')+(nudge?' nudge':'');
+    const p=unitPrice(u);
+    row.innerHTML=`<span class="tag ${cls}">${tag}</span><span class="t">${title}</span><span class="d">${desc}<span class="annrow">${ann.map(a=>`<span class="ann domo">${a}</span>`).join('')}</span></span>
+      <span class="act"><span class="pr num">${u.bonus?`<s>${fmt(p)}</s>${fmt(p-u.bonus)}`:fmt(p)}</span>${exact?`<button class="btn ${u.site==='par'&&!u.transit?'primary':''}" data-toast="${u.transit?'Arrival held for you':'Held for 48 hours'} · ${u.id} (mockup)">${u.transit?'Hold the arrival':u.site==='par'?'Reserve this one':'Hold for transfer'}</button>`:`<button class="btn" data-unit="${u.id}">Switch to this car</button>`}</span>`;
+    return row;
+  }
+  function factoryRow(){
+    const row=document.createElement('div');row.className='way';
+    row.innerHTML=`<span class="tag neutral">Built to order</span><span class="t">Exactly your spec from the factory</span><span class="d">14 to 18 weeks. The order bank is open for March production. We will tell you the build week when the slot is confirmed.<span class="annrow"><span class="ann domo">Domo · order_bank_eta</span><span class="ann dms">DMS · order bank</span></span></span>
+      <span class="act"><span class="pr num">${fmt(price(cfg))}</span><button class="btn" data-toast="Factory order started (mockup)">Place order</button></span>`;
+    return row;
+  }
+
+  function applyUnit(id){
+    const u=by(UNITS,id);cfg.grade=u.grade;cfg.colour=u.colour;cfg.interior=u.interior;cfg.packs=u.packs.slice();update();
+    toast('Build updated to stock '+u.id);
+    document.querySelector('.hero').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function update(){
+    document.getElementById('title').textContent='Ridge '+by(GRADES,cfg.grade).name;
+    document.getElementById('spec').textContent=describe(cfg);
+    document.getElementById('price').textContent=fmt(price(cfg));
+    document.getElementById('body').setAttribute('fill',by(COLOURS,cfg.colour).hex);
+    renderGrades();renderColours();renderInteriors();renderPacks();renderWays();
+  }
+
+  // ---------- assistant (Progress Agentic RAG) ----------
+  const T={
+    en:{
+      greet:'Hi, I’m the Harbourline assistant. You’re building a Ridge at Harbourline Parramatta. I can see what’s on the lot here and at Hornsby, Penrith and Liverpool, and I know the spec sheets, pricing and finance terms. Ask me anything, in any language.',
+      tip:'Tell me how you’ll use the car and when you need it, and I’ll steer the build.',
+      chips:['Can it tow my caravan?','Touring or Summit?','I need it before the school holidays','Any deals on one you have now?'],
+      ph:'Ask about the car, pricing, finance or delivery…',ask:'Ask',
+      note:'Detected: English. The assistant answers in whatever language you write in.',
+      free:'In this mockup only the four suggested questions are wired up. In the real build this goes to the Progress Agentic RAG agent, which answers from the knowledge box and checks Domo for stock when it needs to.',
+      switched:'Assistant switched to English',
+      q:{
+        tow:{steps:['Reading Ridge MY26 spec sheet · towing','Reading Tow Pack accessory sheet','Checking your current build'],
+          a:'Ridge tows 2,500 kg braked on Touring and Summit with the Tow Pack, or 2,000 kg without it. A typical 19 ft family caravan sits around 2,200 to 2,400 kg ATM, so you’d want the pack. It adds the hitch receiver, trailer sway control and a 12-pin plug, and it’s $1,950 fitted. Want me to add it?',
+          tr:[['kb','KB · Ridge MY26 spec sheet p.14'],['kb','KB · Tow Pack accessory sheet']],
+          acts:[['Add Tow Pack','pack:tow']]},
+        grade:{steps:['Reading grade comparison MY26','Checking Summit and Touring stock within 35 km'],
+          a:'Touring already has the full safety suite, 19-inch wheels and the 12.3-inch screen. Summit adds the panoramic roof, adaptive suspension, ventilated seats and leather as standard, for $8,500 more. Most people who step up do it for the roof and the ride. One thing worth knowing: Summit stock is thin right now. There’s one on site in Midnight Blue; Touring has three within 30 km.',
+          tr:[['kb','KB · grade comparison MY26'],['domo','Domo · stock_by_site · 6 min ago']],
+          acts:[['Choose Touring','grade:touring'],['Choose Summit','grade:summit']]},
+        holiday:{steps:['Reading NSW school term dates 2026','Checking factory order ETA','Checking stock and inbound cars that fit your build'],
+          a:'NSW school holidays start on Saturday 19 December. A factory order placed today lands late February, so that won’t make it. Two ways to get there in time: a Storm Grey Touring with the Tech Pack that’s on our lot now, with $1,800 off because it’s been here a while, or a Midnight Blue Touring with the Tow Pack that arrives in 9 days. Either can be ready well before the 19th.',
+          tr:[['kb','KB · NSW term dates 2026'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],
+          acts:[['Switch to the Storm Grey Touring','unit:HL-2231'],['Switch to the Midnight Blue arrival','unit:HL-2402']]},
+        deal:{steps:['Checking aged stock actions for Ridge','Reading pricing policy'],
+          a:'Yes, two. A Storm Grey Touring with the Tech Pack here at Parramatta, $1,800 off drive-away. And a Storm Grey Summit with the Tech Pack at Hornsby, $2,400 off, which we can have here by Thursday. Both are current model year with full warranty. The discount is there because they’ve been on the lot longer than we’d like, not because anything is wrong with them.',
+          tr:[['domo','Domo · aged_stock_actions · priority 1, 2'],['kb','KB · pricing policy']],
+          acts:[['Show me the Touring','unit:HL-2231'],['Show me the Summit','unit:HL-1941']]}
+      }
+    },
+    zh:{
+      greet:'你好，我是 Harbourline 助手。您正在 Harbourline Parramatta 配置一辆 Ridge。我可以查看本店以及 Hornsby、Penrith 和 Liverpool 的现车库存，也熟悉规格表、价格和金融条款。有任何问题都可以问我，用什么语言都可以。',
+      tip:'告诉我您的用车场景和提车时间，我会帮您调整配置。',
+      chips:['它能拖我的房车吗？','Touring 还是 Summit？','我需要在学校假期前提车','现车有什么优惠吗？'],
+      ph:'询问车辆、价格、金融或交车…',ask:'发送',
+      note:'已识别：中文。您用什么语言提问，助手就用什么语言回答。',
+      free:'此原型只接入了四个建议问题。在正式版本中，问题会交给 Progress Agentic RAG 代理，它从知识库中作答，并在需要时通过 Domo 查询库存。',
+      switched:'助手已切换为中文',
+      q:{
+        tow:{steps:['正在查阅 Ridge MY26 规格表 · 拖曳','正在查阅拖车套件配件说明','正在检查您当前的配置'],
+          a:'Ridge 的 Touring 和 Summit 版本在加装拖车套件后制动拖曳能力为 2,500 公斤，不加装为 2,000 公斤。常见的 19 英尺家庭房车 ATM 约在 2,200 至 2,400 公斤，所以建议选装该套件。套件包含拖车钩、拖车防摆控制和 12 针插头，安装价 $1,950。需要我帮您加上吗？',
+          tr:[['kb','知识库 · Ridge MY26 规格表 第14页'],['kb','知识库 · 拖车套件配件说明']],
+          acts:[['添加拖车套件','pack:tow']]},
+        grade:{steps:['正在查阅 MY26 版本对比','正在查询 35 公里内 Summit 和 Touring 库存'],
+          a:'Touring 已标配完整安全套件、19 英寸轮毂和 12.3 英寸屏幕。Summit 多出全景天窗、自适应悬架、通风座椅并标配真皮，价格高出 $8,500。大多数升级的客户是为了天窗和行驶质感。还有一点值得了解：Summit 目前现车较少，本店只有一辆午夜蓝；Touring 在 30 公里内有三辆。',
+          tr:[['kb','知识库 · MY26 版本对比'],['domo','Domo · stock_by_site · 6 分钟前']],
+          acts:[['选择 Touring','grade:touring'],['选择 Summit','grade:summit']]},
+        holiday:{steps:['正在查阅 2026 年新州学期日期','正在查询工厂订单交付时间','正在查询符合您配置的现车和在途车'],
+          a:'新南威尔士州的学校假期从 12 月 19 日（周六）开始。今天下单的工厂订单要到二月底才能到车，赶不上。有两种方式可以按时提车：一辆现在就在本店的风暴灰 Touring（含科技套件），因为在店时间较长可优惠 $1,800；或一辆 9 天后到店的午夜蓝 Touring（含拖车套件）。两辆都能在 19 日之前准备好。',
+          tr:[['kb','知识库 · 2026 新州学期日期'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],
+          acts:[['换成风暴灰 Touring','unit:HL-2231'],['换成即将到店的午夜蓝','unit:HL-2402']]},
+        deal:{steps:['正在查询 Ridge 的库龄车处理方案','正在查阅定价政策'],
+          a:'有，两辆。一辆在 Parramatta 本店的风暴灰 Touring（含科技套件），落地价优惠 $1,800。另一辆在 Hornsby 的风暴灰 Summit（含科技套件），优惠 $2,400，周四可调到本店。两辆都是当前年款，享受完整保修。优惠是因为它们在店时间比我们希望的长，并不是车有任何问题。',
+          tr:[['domo','Domo · aged_stock_actions · 优先级 1、2'],['kb','知识库 · 定价政策']],
+          acts:[['看看这辆 Touring','unit:HL-2231'],['看看这辆 Summit','unit:HL-1941']]}
+      }
+    },
+    vi:{
+      greet:'Xin chào, tôi là trợ lý Harbourline. Bạn đang cấu hình chiếc Ridge tại Harbourline Parramatta. Tôi có thể xem xe sẵn có tại đây và tại Hornsby, Penrith, Liverpool, đồng thời nắm rõ thông số kỹ thuật, giá và điều khoản tài chính. Hãy hỏi tôi bất cứ điều gì, bằng ngôn ngữ nào cũng được.',
+      tip:'Cho tôi biết bạn dùng xe thế nào và cần xe khi nào, tôi sẽ gợi ý cấu hình phù hợp.',
+      chips:['Xe có kéo được caravan của tôi không?','Touring hay Summit?','Tôi cần xe trước kỳ nghỉ học','Có ưu đãi cho xe sẵn có không?'],
+      ph:'Hỏi về xe, giá, tài chính hoặc giao xe…',ask:'Gửi',
+      note:'Đã nhận diện: Tiếng Việt. Trợ lý trả lời bằng ngôn ngữ bạn viết.',
+      free:'Trong bản mô phỏng này chỉ có bốn câu hỏi gợi ý được kết nối. Ở bản thật, câu hỏi được chuyển đến tác tử Progress Agentic RAG, trả lời từ kho tri thức và kiểm tra tồn kho qua Domo khi cần.',
+      switched:'Trợ lý đã chuyển sang Tiếng Việt',
+      q:{
+        tow:{steps:['Đang đọc thông số Ridge MY26 · kéo moóc','Đang đọc tài liệu Gói Kéo Moóc','Đang kiểm tra cấu hình hiện tại của bạn'],
+          a:'Ridge kéo được 2.500 kg có phanh trên bản Touring và Summit khi có Gói Kéo Moóc, hoặc 2.000 kg nếu không có. Một caravan gia đình 19 ft thường có ATM khoảng 2.200 đến 2.400 kg, nên bạn sẽ cần gói này. Gói gồm móc kéo, kiểm soát lắc moóc và ổ cắm 12 chân, giá 1.950 đô lắp sẵn. Bạn muốn tôi thêm vào không?',
+          tr:[['kb','KB · Thông số Ridge MY26 tr.14'],['kb','KB · Tài liệu Gói Kéo Moóc']],
+          acts:[['Thêm Gói Kéo Moóc','pack:tow']]},
+        grade:{steps:['Đang đọc bảng so sánh phiên bản MY26','Đang kiểm tra xe Summit và Touring trong 35 km'],
+          a:'Touring đã có đầy đủ gói an toàn, mâm 19 inch và màn hình 12,3 inch. Summit thêm cửa sổ trời toàn cảnh, hệ thống treo thích ứng, ghế thông gió và da tiêu chuẩn, đắt hơn 8.500 đô. Hầu hết khách nâng cấp vì cửa sổ trời và cảm giác lái. Một điều nên biết: xe Summit sẵn có hiện khá ít. Có một chiếc màu Xanh Đêm tại đây; Touring có ba chiếc trong bán kính 30 km.',
+          tr:[['kb','KB · So sánh phiên bản MY26'],['domo','Domo · stock_by_site · 6 phút trước']],
+          acts:[['Chọn Touring','grade:touring'],['Chọn Summit','grade:summit']]},
+        holiday:{steps:['Đang đọc lịch học kỳ NSW 2026','Đang kiểm tra thời gian đặt xe từ nhà máy','Đang kiểm tra xe sẵn có và xe sắp về phù hợp cấu hình'],
+          a:'Kỳ nghỉ học ở NSW bắt đầu thứ Bảy 19 tháng 12. Đặt xe từ nhà máy hôm nay thì cuối tháng 2 mới về, nên sẽ không kịp. Có hai cách để kịp: một chiếc Touring màu Xám Bão với Gói Công Nghệ đang có sẵn tại đây, giảm 1.800 đô vì đã ở bãi một thời gian, hoặc một chiếc Touring màu Xanh Đêm với Gói Kéo Moóc sẽ về sau 9 ngày. Cả hai đều có thể sẵn sàng trước ngày 19.',
+          tr:[['kb','KB · Lịch học kỳ NSW 2026'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],
+          acts:[['Chuyển sang Touring Xám Bão','unit:HL-2231'],['Chuyển sang Xanh Đêm sắp về','unit:HL-2402']]},
+        deal:{steps:['Đang kiểm tra xe tồn lâu của Ridge','Đang đọc chính sách giá'],
+          a:'Có, hai chiếc. Một chiếc Touring Xám Bão với Gói Công Nghệ tại Parramatta, giảm 1.800 đô giá lăn bánh. Và một chiếc Summit Xám Bão với Gói Công Nghệ tại Hornsby, giảm 2.400 đô, có thể về đây vào thứ Năm. Cả hai đều là đời hiện tại, bảo hành đầy đủ. Giảm giá vì xe ở bãi lâu hơn mong muốn, không phải vì xe có vấn đề gì.',
+          tr:[['domo','Domo · aged_stock_actions · ưu tiên 1, 2'],['kb','KB · Chính sách giá']],
+          acts:[['Xem chiếc Touring','unit:HL-2231'],['Xem chiếc Summit','unit:HL-1941']]}
+      }
+    }
+  };
+  const QKEYS=['tow','grade','holiday','deal'];
+  const thread=document.getElementById('thread');
+  function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e;}
+  function scroll(){thread.scrollTop=thread.scrollHeight;}
+  function addUser(text){const m=el('div','msg u');m.appendChild(el('div','bub',text));thread.appendChild(m);scroll();}
+  function addSys(text){thread.appendChild(el('div','msg sys',text));scroll();}
+  function addAssistant(text,tr,acts){
+    const m=el('div','msg a');m.appendChild(el('div','bub',text));
+    if(tr&&tr.length){const t=el('div','trace');tr.forEach(([k,l])=>t.appendChild(el('span','tr '+k,l)));m.appendChild(t);}
+    if(acts&&acts.length){const a=el('div','acts');acts.forEach(([label,action])=>{const b=el('button','btn',label);b.onclick=()=>doAction(action,b);a.appendChild(b);});m.appendChild(a);}
+    thread.appendChild(m);scroll();
+  }
+  function doAction(action,btn){
+    const [k,v]=action.split(':');
+    if(k==='pack'){if(!cfg.packs.includes(v))cfg.packs.push(v);update();toast(by(PACKS,v).name+' added to your build');}
+    if(k==='grade'){cfg.grade=v;if(v==='summit'&&cfg.interior==='cloth')cfg.interior='leather';update();toast('Grade set to '+by(GRADES,v).name);}
+    if(k==='unit'){applyUnit(v);}
+    btn.disabled=true;btn.style.opacity=.6;
+  }
+  function ask(key){
+    const q=T[lang].q[key];
+    addUser(T[lang].chips[QKEYS.indexOf(key)]);
+    const w=el('div','msg a');const box=el('div','working');w.appendChild(box);thread.appendChild(w);
+    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    q.steps.forEach((s,i)=>setTimeout(()=>{box.appendChild(el('div','step',s));scroll();},reduce?0:350*i));
+    setTimeout(()=>{w.remove();addAssistant(q.a,q.tr,q.acts);},reduce?50:350*q.steps.length+500);
+  }
+  function renderAssistant(reset){
+    const t=T[lang];
+    if(reset){thread.innerHTML='';addAssistant(t.greet);addAssistant(t.tip);}
+    const chips=document.getElementById('chips');chips.innerHTML='';
+    t.chips.forEach((c,i)=>{const b=el('button','chip',c);b.onclick=()=>ask(QKEYS[i]);chips.appendChild(b);});
+    document.getElementById('askin').placeholder=t.ph;document.getElementById('askbtn').textContent=t.ask;
+    document.getElementById('langnote').textContent=t.note;
+  }
+  document.getElementById('ask').addEventListener('submit',e=>{
+    e.preventDefault();const inp=document.getElementById('askin');const v=inp.value.trim();if(!v)return;
+    addUser(v);inp.value='';setTimeout(()=>addAssistant(T[lang].free,[['kb','KB · Progress Agentic RAG agent']]),400);
+  });
+  document.getElementById('langs').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;lang=b.dataset.lang;
+    document.querySelectorAll('#langs button').forEach(x=>x.classList.toggle('on',x===b));
+    renderAssistant(true);addSys(T[lang].switched);
+  });
+
+  // ---------- misc ----------
+  const toastEl=document.getElementById('toast');let tt;
+  function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('show'),2400);}
+  document.body.addEventListener('click',e=>{
+    const t=e.target.closest('[data-toast]');if(t){toast(t.dataset.toast);return;}
+    const u=e.target.closest('[data-unit]');if(u){applyUnit(u.dataset.unit);}
+  });
+  const rv=document.getElementById('reveal');
+  rv.addEventListener('click',()=>{const on=document.body.classList.toggle('reveal');rv.classList.toggle('on',on);rv.setAttribute('aria-pressed',on);rv.lastChild.textContent=on?'Data layer shown':'Show data layer';});
+
+  update();renderAssistant(true);
+})();
+</script>
+
+</body>
+</html>
