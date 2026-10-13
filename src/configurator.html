@@ -326,6 +326,76 @@ body.reveal .json{display:block}
 .ask input{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--raised);color:var(--text);font:inherit}
 .ask input:focus{border-color:var(--brand-500);outline:none;box-shadow:var(--focus)}
 
+/* promotions */
+.promos{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.promo{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:600;background:var(--accent-soft);color:var(--accent-fg);border:1px solid rgba(0,181,99,.25)}
+.promo::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-500)}
+.otile .promo{background:rgba(144,239,142,.18);color:var(--accent-300);border-color:rgba(144,239,142,.3)}
+.nudge{font-size:.78rem;color:var(--accent-fg);background:var(--accent-soft);padding:6px 9px;border-radius:var(--radius);margin-top:4px;line-height:1.4}
+
+/* dealer priorities drawer */
+.dealer .dbody{padding:18px 22px 40px}
+.prio{display:grid;gap:14px}
+.prio .row{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface)}
+.prio .row b{font-size:.9rem}
+.prio .row .d{grid-column:1/-1;font-size:.78rem;color:var(--muted)}
+.prio .row input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--brand-600)}
+.prio .row .val{font-family:var(--mono);font-size:.78rem;color:var(--brand-600);min-width:3ch;text-align:right}
+.prio select,.prio textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--raised);color:var(--text);font:inherit}
+.prio textarea{min-height:64px;resize:vertical}
+.prio .save{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prio .meta{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.effect{margin-top:16px;padding:12px 14px;border:1px dashed var(--border);border-radius:var(--radius-lg);font-size:.82rem;color:var(--muted)}
+.effect b{color:var(--text)}
+
+/* booking modal */
+.mback{position:fixed;inset:0;background:rgba(0,18,60,.5);z-index:85;display:none;align-items:center;justify-content:center;padding:16px}
+.mback.open{display:flex}
+.modal{width:min(720px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--raised);border-radius:16px;box-shadow:0 30px 80px rgba(0,18,60,.35);display:flex;flex-direction:column}
+.mhead{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.mhead .kick{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-600)}
+.mhead h2{font-size:1.2rem;margin-top:2px}
+.mhead .sub{font-size:.82rem;color:var(--muted);margin-top:2px}
+.mhead .close{margin-left:auto;width:32px;height:32px;border-radius:var(--radius);border:1px solid var(--border);display:grid;place-items:center;font-size:18px;flex:none}
+.mbody{padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px}
+.mstep{display:flex;gap:6px;align-items:center}
+.mstep i{width:34px;height:6px;border-radius:999px;background:var(--border)}
+.mstep i.done{background:var(--accent-500)}.mstep i.cur{background:var(--brand-600)}
+.sites{display:flex;gap:6px;flex-wrap:wrap}
+.sites button{padding:6px 11px;border-radius:999px;border:1px solid var(--border);font-size:.8rem;font-weight:500;color:var(--muted)}
+.sites button.on{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.days{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;padding-bottom:4px}
+.days button{flex:0 0 auto;padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);font-size:.8rem;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted)}
+.days button b{color:var(--text);font-size:.86rem}
+.days button.on{border-color:var(--brand-600);background:var(--brand-50);color:var(--brand-700)}
+.days button.on b{color:var(--brand-700)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
+.slots button{padding:8px 6px;border-radius:var(--radius);border:1px solid var(--border);font-size:.82rem;font-weight:500;background:var(--raised)}
+.slots button:hover{border-color:var(--brand-600)}
+.slots button:disabled{opacity:.35;text-decoration:line-through}
+.slots button.on{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.qcard{padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.qcard .qn{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-600)}
+.qcard b{font-size:.95rem}
+.qcard .why{font-size:.76rem;color:var(--muted)}
+.qopts{display:flex;flex-wrap:wrap;gap:6px}
+.qopts button{padding:7px 12px;border-radius:999px;border:1px solid var(--border);font-size:.82rem;font-weight:500;background:var(--raised)}
+.qopts button:hover{border-color:var(--brand-600)}
+.qopts button.on{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.voucher{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:14px 16px;border-radius:var(--radius-lg);background:linear-gradient(135deg,var(--ink-900),var(--brand-600));color:#fff}
+.voucher .vk{grid-row:1/span 3;display:grid;place-items:center;width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,.14);font-weight:800;font-size:.8rem;text-align:center;line-height:1.1}
+.voucher b{font-size:1rem}
+.voucher .vd{font-size:.82rem;opacity:.9}
+.voucher .vr{font-size:.74rem;opacity:.75;font-family:var(--mono)}
+.confirm{display:grid;gap:4px;padding:12px 14px;border:1px solid var(--accent-500);background:var(--accent-soft);border-radius:var(--radius-lg)}
+.confirm b{font-size:.95rem}
+.confirm .c{font-size:.82rem;color:var(--text)}
+.prep{margin:0;padding-left:18px;font-size:.84rem;display:flex;flex-direction:column;gap:3px}
+.mfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.mwork{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;padding:8px 12px;border-left:2px solid var(--brand-600)}
+.mwork .step{display:flex;gap:8px;align-items:center;opacity:0;transform:translateX(-4px);animation:stepin .3s forwards}
+.mwork .step::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand-600)}
+
 /* highlight */
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(75,75,247,.55)}70%{box-shadow:0 0 0 14px rgba(75,75,247,0)}100%{box-shadow:0 0 0 0 rgba(75,75,247,0)}}
 .hl{animation:pulse 1.2s ease-out 2;position:relative;z-index:2}
@@ -334,9 +404,9 @@ body.reveal .json{display:block}
 .backdrop{position:fixed;inset:0;background:rgba(0,18,60,.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:79}
 body.drawer-open .backdrop{opacity:1;pointer-events:auto}
 @media (min-width:960px){body.drawer-open .backdrop{pointer-events:none;opacity:0}}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:100vw;background:var(--raised);border-left:1px solid var(--border);box-shadow:-20px 0 60px rgba(0,18,60,.18);transform:translateX(102%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:80;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:100vw;visibility:hidden;background:var(--raised);border-left:1px solid var(--border);box-shadow:-20px 0 60px rgba(0,18,60,.18);transform:translateX(102%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:80;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
 @media (min-width:960px){.drawer{width:50vw}}
-body.drawer-open .drawer{transform:none}
+.drawer.open{transform:none;visibility:visible}
 .dhead{padding:14px 22px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
 .dhead .kick{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-600)}
 .dhead h2{font-size:1.3rem;margin-top:2px}
@@ -389,6 +459,7 @@ body.drawer-open .drawer{transform:none}
   <button class="lnk hide-sm" id="openDrawer" aria-controls="drawer" aria-expanded="false">How it works</button>
   <div class="seg" id="langs" aria-label="Assistant language"><button class="on" data-lang="en">EN</button><button data-lang="zh">中文</button><button data-lang="vi">Tiếng Việt</button></div>
   <button class="toggle" id="reveal" aria-pressed="false"><i></i><span class="lbl">Data layer</span></button>
+  <button class="toggle" id="openDealer" aria-controls="dealer"><i></i><span class="lbl">Dealer</span></button>
 </header>
 
 <div class="phead">
@@ -396,7 +467,7 @@ body.drawer-open .drawer{transform:none}
   <nav class="steps" id="steps" aria-label="Build steps"></nav>
   <div class="actions">
     <button class="btn secondary sm" id="openFinder">Find the right car</button>
-    <button class="btn sm hide-sm" data-toast="Reservation placed against this build (prototype)">Reserve this build</button>
+    <button class="btn sm hide-sm" data-book>Book a test drive</button>
   </div>
 </div>
 
@@ -429,7 +500,7 @@ body.drawer-open .drawer{transform:none}
     </div>
     <div class="bfoot" id="f-cta">
       <div class="tot"><span>Drive-away, NSW <span class="ann kb">KB · price_list</span></span><b class="num" id="price2">$0</b></div>
-      <div class="row"><button class="btn ghost" data-toast="Test drive booked at Parramatta (prototype)">Test drive</button><button class="btn" data-toast="Reservation placed against this build (prototype)">Reserve</button></div>
+      <div class="row"><button class="btn ghost" data-toast="Reservation placed against this build (prototype)">Reserve</button><button class="btn" data-book>Test drive</button></div>
       <span class="ann dms">DMS · write-back: lead + VIN + site</span>
     </div>
   </div></aside>
@@ -494,6 +565,17 @@ body.drawer-open .drawer{transform:none}
   <nav class="dnav" id="dnav"></nav>
   <div class="dbody" id="dbody"></div>
 </aside>
+<aside class="drawer dealer" id="dealer" aria-label="Dealer priorities" aria-hidden="true">
+  <div class="dhead">
+    <div><div class="kick">Dealer console · business user</div><h2>Dealer priorities</h2><div class="meta"><span>Weights the finder ranking and the offers you show</span><span class="ann domo">Domo · dealer_priorities</span></div></div>
+    <button class="close" id="closeDealer" aria-label="Close">×</button>
+  </div>
+  <div class="dbody" id="dealerBody"></div>
+</aside>
+<div class="mback" id="mback"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+  <div class="mhead"><div><div class="kick" id="mkick">Book a test drive</div><h2 id="mtitle">Pick a time</h2><div class="sub" id="msub"></div></div><button class="close" id="mclose" aria-label="Close">×</button></div>
+  <div class="mbody" id="mbody"></div>
+</div></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -680,19 +762,20 @@ body.drawer-open .drawer{transform:none}
     if(nudge){tag='Worth a look';cls='warn';}
     row.className='way'+(exact&&u.site==='par'&&!u.transit?' hot':'')+(nudge?' nudge':'');const p=unitPrice(u);
     const btn=exact?`<button class="btn sm ${u.site==='par'&&!u.transit?'':'secondary'}" data-toast="${u.transit?'Arrival held for you':'Held for 48 hours'} · ${u.id} (prototype)">${u.transit?'Hold the arrival':u.site==='par'?'Reserve this one':'Hold for transfer'}</button>`:`<button class="btn sm secondary" data-unit="${u.id}">Switch to this car</button>`;
-    row.innerHTML=`<div class="top"><span class="chip ${cls}">${tag}</span><span class="t">${title}</span></div><div class="d">${desc}<span class="annrow">${ann.map(a=>`<span class="ann domo">${a}</span>`).join('')}</span></div><div class="act"><span class="pr num">${u.bonus?`<s>${fmt(p)}</s>${fmt(p-u.bonus)}`:fmt(p)}</span>${btn}</div>`;return row;}
+    row.innerHTML=`<div class="top"><span class="chip ${cls}">${tag}</span><span class="t">${title}</span></div><div class="d">${desc}${promoChips(promosFor(u.model,u))}<span class="annrow">${ann.map(a=>`<span class="ann domo">${a}</span>`).join('')}</span></div><div class="act"><span class="pr num">${u.bonus?`<s>${fmt(p)}</s>${fmt(p-u.bonus)}`:fmt(p)}</span>${btn}</div>`;return row;}
   function factoryRow(){const w=eta(cfg.model);const row=el('div','way');
     row.innerHTML=`<div class="top"><span class="chip dms">Built to order</span><span class="t">Exactly your spec from the factory</span></div><div class="d">${w[0]} to ${w[1]} weeks. We will confirm the build week when the slot is allocated.<span class="annrow"><span class="ann domo">Domo · order_bank_eta</span><span class="ann dms">DMS · order bank</span></span></div><div class="act"><span class="pr num">${fmt(price())}</span><button class="btn sm secondary" data-toast="Factory order started (prototype)">Place order</button></div>`;return row;}
 
   // ======================= OFFERS (Domo-driven internal ads) =======================
   function localOffers(){const m=M();const {exact}=matches(cfg);const shown=new Set(exact.map(s=>s.u.id));
     return units().filter(u=>u.bonus>0&&!u.transit&&!shown.has(u.id)).map(u=>{const um=by(CAT.models,u.model)||{};return{unitId:u.id,modelId:u.model,gradeId:u.grade,colourId:u.colour,price:unitPrice(u),bonus:u.bonus,site:u.site,age:u.age,priority:u.priority||9,sameBody:um.body===m.body,reason:u.age>=90?'on the lot over 90 days':u.age>=60?'on the lot over 60 days':'more of these than we need'};})
-      .sort((a,b)=>(b.sameBody-a.sameBody)||(a.priority-b.priority));}
+      .map(o=>Object.assign(o,{boost:(PRIOS.weights.pushModel&&PRIOS.weights.pushModel.modelId===o.modelId?PRIOS.weights.pushModel.weight/100:0)+(promosFor(o.modelId,by(units(),o.unitId)).length?PRIOS.weights.promotions/100*0.5:0)}))
+      .sort((a,b)=>(b.sameBody-a.sameBody)||(b.boost-a.boost)||(a.priority-b.priority));}
   async function renderOffers(){let offers=null;if(API){try{const r=await fetch(`/api/offers?model=${cfg.model}&body=${M().body}`);if(r.ok)offers=await r.json();}catch(e){}}
     if(!Array.isArray(offers)||!offers.length)offers=localOffers();const shown=new Set(matches(cfg).exact.map(x=>x.u.id));offers=offers.filter(o=>!shown.has(o.unitId));const top=offers.slice(0,3);const elm=$('otiles');elm.innerHTML='';
     top.forEach((o,i)=>{const m=by(CAT.models,o.modelId)||{};const g=m.grades?by(m.grades,o.gradeId):null;const c=COL(o.colourId)||{hex:'#888',name:o.colourId};const site=SITES[o.site]||{name:o.site};
       const t=el('button','otile');t.setAttribute('data-unit',o.unitId);
-      t.innerHTML=`<span class="ok">${o.site==='par'?'Ready now · Parramatta':'At '+site.name+' · here '+(site.when||'soon')}</span>${carPic(o.modelId,m.silhouette||'suv',c.hex,'#0b1a45','o'+i,{thumb:true,colour:o.colourId,alt:m.name||''})}<span class="on">${esc((m.name||o.modelId)+' '+(g?g.name:o.gradeId))}</span><span class="od">${esc(c.name)} · ${esc(o.reason||'')}</span><span class="op"><s>${fmt(o.price)}</s><b>${fmt(o.price-o.bonus)}</b><em>save ${fmt(o.bonus)}</em></span><span class="annrow"><span class="ann domo">Domo · aged_stock_actions · priority ${o.priority} · rank ${i+1}</span></span>`;elm.appendChild(t);});
+      t.innerHTML=`<span class="ok">${o.site==='par'?'Ready now · Parramatta':'At '+site.name+' · here '+(site.when||'soon')}</span>${carPic(o.modelId,m.silhouette||'suv',c.hex,'#0b1a45','o'+i,{thumb:true,colour:o.colourId,alt:m.name||''})}<span class="on">${esc((m.name||o.modelId)+' '+(g?g.name:o.gradeId))}</span><span class="od">${esc(c.name)} · ${esc(o.reason||'')}</span><span class="op"><s>${fmt(o.price)}</s><b>${fmt(o.price-o.bonus)}</b><em>save ${fmt(o.bonus)}</em></span>${promoChips(promosFor(o.modelId,by(units(),o.unitId)))}<span class="annrow"><span class="ann domo">Domo · aged_stock_actions · priority ${o.priority} · rank ${i+1}</span></span>`;elm.appendChild(t);});
     const rib=$('ribbon');const r0=offers.find(o=>o.modelId===cfg.model)||offers[0];if(r0){const m=by(CAT.models,r0.modelId)||{};const g=m.grades?by(m.grades,r0.gradeId):null;rib.hidden=false;rib.innerHTML=`<span><b>${fmt(r0.bonus)} off</b> a ${esc((m.name||'')+' '+(g?g.name:''))} ready now <span class="ann domo">Domo · placement: build_ribbon</span></span><button data-unit="${r0.unitId}">See it</button>`;}else rib.hidden=true;}
 
   // ======================= FOR YOU (Spotify-style rows, semantic find) =======================
@@ -726,7 +809,7 @@ body.drawer-open .drawer{transform:none}
   function applyUnit(id){const u=by(units(),id);if(!u)return;Object.assign(cfg,unitCfg(u));cfg.packs=cfg.packs.slice();normalise();showStage();update();toast('Build updated to stock '+u.id);$('f-stage').scrollIntoView({behavior:'smooth',block:'start'});}
   function fresh(){const t=STOCK.refreshed_at?new Date(STOCK.refreshed_at):null;if(!t||isNaN(t))return 'stand-in data';const mins=Math.round((Date.now()-t)/60000);if(mins<1)return 'refreshed just now';if(mins<120)return 'refreshed '+mins+' min ago';if(mins<48*60)return 'refreshed '+Math.round(mins/60)+' h ago';return 'refreshed '+t.toLocaleDateString('en-AU',{day:'numeric',month:'short'});}
   function renderFresh(){document.querySelectorAll('[data-fresh]').forEach(e=>e.textContent='stock '+fresh());document.querySelectorAll('[data-ranked]').forEach(e=>e.textContent='ranked with stock '+fresh());}
-  function update(){normalise();renderFresh();renderModels();renderGrades();renderColours();renderInteriors();renderPacks();renderSteps();renderHero();renderWays();renderOffers();renderForYou();}
+  function update(){normalise();noteViewed();renderFresh();renderModels();renderGrades();renderColours();renderInteriors();renderPacks();renderSteps();renderHero();renderWays();renderOffers();renderForYou();}
   function showStage(){$('finderView').hidden=true;$('stageView').style.display='contents';}
   // ======================= FINDER (five dynamic questions, JSON from the agent) =======================
   const FQ={
@@ -777,8 +860,8 @@ body.drawer-open .drawer{transform:none}
       let grade=m.grades[0];if(a.budget){const [lo,hi]=BUDGET[a.budget];const fits=m.grades.filter(g=>g.price>=lo*0.9&&g.price<=hi);if(fits.length){s+=2;grade=fits[fits.length-1];why.push(grade.name+(grade.price<lo?' comes in under your budget at ':' fits your budget at ')+fmt(grade.price));}else if(m.grades[0].price>hi){s-=4;watch.push('Starts above your budget at '+fmt(m.grades[0].price));}else{grade=m.grades[m.grades.length-1];}}
       const av=availabilityOf(m.id);if(a.when==='now'){if(av.onLot){s+=1;why.push(av.onLot+' on the lot now');}else watch.push('Nothing on the lot today: '+av.soonest);}if(a.when==='summer'&&(av.onLot||av.nearby||av.inTransit))s+=1;
       if(a.use==='commute'&&has('performance'))s-=2;if(m.seats<5&&(a.use==='family'))s-=3;
-      out.push({modelId:m.id,gradeId:grade.id,score:s,why:[...new Set(why)].slice(0,3),watch:[...new Set(watch)].slice(0,2),availability:av});});
-    out.sort((x,y)=>y.score-x.score);const recs=out.slice(0,3).map((r,i)=>Object.assign(r,{fit:Math.max(40,Math.min(97,52+r.score*4-i*3))}));const top=by(CAT.models,recs[0].modelId);
+      const df=dealerFactor(m.id);out.push({modelId:m.id,gradeId:grade.id,score:s,fit:Math.max(40,Math.min(97,52+s*4)),dealerFactor:df.factor,nudge:df.nudge,why:[...new Set(why)].slice(0,3),watch:[...new Set(watch)].slice(0,2),availability:av});});
+    out.sort((x,y)=>(y.fit+y.dealerFactor)-(x.fit+x.dealerFactor));const recs=out.slice(0,3).map((r,i)=>Object.assign(r,{fit:Math.min(97,r.fit-i*2)}));const top=by(CAT.models,recs[0].modelId);
     return{done:true,summary:`Based on your five answers, the ${top.name} is the best fit. Here is why, and two alternatives worth a look.`,recommendations:recs,trace:[{kind:'kb',label:'KB · finder-guide'},{kind:'kb',label:'KB · spec sheets, towing guide'},{kind:'domo',label:'Domo · stock_by_site'},{kind:'domo',label:'Domo · order_bank_eta'}]};}
   // The agent takes several seconds per question, so once a question is on screen we prefetch the next one for every option.
   const finderCache=new Map();
@@ -816,7 +899,7 @@ body.drawer-open .drawer{transform:none}
       <div class="recs">${res.recommendations.map((r,i)=>{const m=by(CAT.models,r.modelId);if(!m)return '';const g=by(m.grades,r.gradeId)||m.grades[0];const hex=COL(m.colours.includes(cfg.colour)?cfg.colour:m.colours[0])?.hex||'#888';const av=r.availability||availabilityOf(m.id);
         return`<div class="rec ${i===0?'best':''}"><div class="pic">${carPic(m.id,m.silhouette,hex,i===0?'var(--accent-soft)':'var(--raised)','r'+i,{thumb:true,alt:m.name})}</div>
           <div class="rh"><span class="chip ${i===0?'good':'dms'}">${i===0?'Best match':'#'+(i+1)}</span><b>${esc(m.name)} ${esc(g.name)}</b><span class="fit">fit ${r.fit}% · from ${fmt(g.price)}</span></div>
-          <ul>${(r.why||[]).map(w=>`<li>${esc(w)}</li>`).join('')}</ul>${(r.watch||[]).length?`<ul class="watch">${r.watch.map(w=>`<li>${esc(w)}</li>`).join('')}</ul>`:''}
+          <ul>${(r.why||[]).map(w=>`<li>${esc(w)}</li>`).join('')}</ul>${(r.watch||[]).length?`<ul class="watch">${r.watch.map(w=>`<li>${esc(w)}</li>`).join('')}</ul>`:''}${r.nudge?`<div class="nudge">${esc(r.nudge.reason)} <span class="ann domo">Domo · dealer_priorities · +${r.dealerFactor}</span></div>`:''}
           <div class="ravail">${av.onLot?av.onLot+' on the lot · ':''}${av.nearby?av.nearby+' nearby · ':''}${av.inTransit?av.inTransit+' in transit · ':''}${esc(av.soonest||'')}</div>
           <div class="ract"><button class="btn ${i===0?'':'secondary'} sm" data-rec="${m.id}:${g.id}">Configure this car</button></div></div>`;}).join('')}</div>
       <div class="fnav"><div class="answers">${answersChips()}</div><button class="btn ghost sm" id="finderReset">Start over</button></div>
@@ -887,7 +970,7 @@ body.drawer-open .drawer{transform:none}
   $('langs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.lang;document.querySelectorAll('#langs button').forEach(x=>x.classList.toggle('on',x===b));renderAssistant(true);addSys(T[lang].switched);});
 
   const HOW={
-    version:'0.5.0',updated:'13 Oct 2026',
+    version:'0.6.0',updated:'14 Oct 2026',
     intro:'Two systems do the work. Domo turns dealer management system data into stock intelligence. Progress Agentic RAG turns product knowledge plus that intelligence into a conversation. The configurator is where they meet. Every feature below says what the customer sees, what powers it, and how the data gets there.',
     systems:[
       {k:'dms',name:'Dealer management system',d:'System of record: stock by VIN, orders, deals, leads, bookings.'},
@@ -913,6 +996,30 @@ body.drawer-open .drawer{transform:none}
       {from:'agent',to:'cfg',label:'build changes'},{from:'cfg',to:'wb',label:'reserve · test drive'}
     ]},
     features:[
+      {id:'dealer-priorities',name:'Dealer priorities (business-editable nudge)',target:'f-offers',
+        sees:'Nothing labelled as such. A sales manager sets four weights in the Dealer console in the band: prefer cars on the lot, clear aged stock, lead with promotions, push a model. The finder ranking and the offers strip change immediately, and each nudged recommendation carries a plain-language reason.',
+        powered:['domo','rag','page'],
+        how:['The weights live in a small dataset the DMS vendor owns (dealer_priorities). Business users edit it; no code changes.','The finder scores fit first, then adds a dealer factor: up to 6 points for stock on the lot, 6 for aged stock with headroom, 8 for the pushed model, 4 for a promotion, capped at 12 points in total. Order is fit plus dealer factor.','The agent is given the priorities as context and writes the customer-safe reason ("we have two on the lot and can include servicing"), so the nudge is explained, never hidden.','The offers strip re-sorts on the same weights. The data-layer toggle shows the factor on every nudged card.'],
+        contract:'<b>Domo · dealer_priorities</b>  { updatedAt, updatedBy, weights:{ stockOnLot 0-100, agedStock 0-100, promotions 0-100, pushModel:{modelId, weight} }, note }\n<i>GET/PUT /api/dealer/priorities</i>  ·  recommendations gain { dealerFactor, nudge:{reason, promotionId?} }',
+        diagram:{cols:4,rows:2,nodes:[{id:'m',label:'Sales manager',sub:'Dealer console',kind:'cust',c:0,r:0},{id:'p',label:'dealer_priorities',sub:'weights · note',kind:'domo',c:1,r:0},{id:'f',label:'Finder scoring',sub:'fit + dealer factor',kind:'page',c:2,r:0},{id:'a',label:'Agent',sub:'writes the reason',kind:'rag',c:2,r:1},{id:'o',label:'Ranking + offers',sub:'nudge stated',kind:'page',c:3,r:0}],edges:[{from:'m',to:'p',label:'PUT'},{from:'p',to:'f'},{from:'p',to:'a',label:'context'},{from:'f',to:'o'},{from:'a',to:'o',label:'reason'}]}},
+      {id:'promotions',name:'Promotions as first-class offers',target:'f-avail',
+        sees:'Green promotion chips on availability cards and offer tiles: complimentary servicing, an accessories bundle, a trade-in bonus, a free Towing Pack, delivery to your door. Hover for the dealer’s reason. The assistant can quote them, and only them.',
+        powered:['domo','rag','page'],
+        how:['Promotions are rows in a dealer dataset with rules for what they apply to: models, specific VINs, aged stock, body types, cars on the lot.','The page evaluates the rules per card. The server passes the applicable promotions into the agent’s extra context with an instruction to state the reason and never invent one.','Promotions also feed the dealer-priority nudge, so a promoted model can rank higher when the manager wants it to.'],
+        contract:'<b>Domo · promotions</b>  { id, title, kind: accessory-bundle | servicing | trade-in | finance | delivery, value, desc, reason, appliesTo:{ models?, units?, aged?, bodies?, onLot? }, validUntil }\n<i>GET /api/promotions?model=&unit=&body=</i>',
+        diagram:{cols:3,rows:1,nodes:[{id:'p',label:'promotions',sub:'rules per row',kind:'domo',c:0,r:0},{id:'e',label:'Rule evaluation',sub:'per card',kind:'page',c:1,r:0},{id:'r',label:'Chips + assistant context',sub:'reason stated',kind:'page',c:2,r:0}],edges:[{from:'p',to:'e',label:'API'},{from:'e',to:'r'}]}},
+      {id:'test-drive',name:'Test-drive booking with timeslots',target:'f-cta',
+        sees:'“Test drive” opens a three-step booking: pick a site, day and 45-minute slot; answer three questions; get a confirmation with a show-up incentive. The booking is against this car at this site, with a booking id.',
+        powered:['dms','rag','page'],
+        how:['Slots come from a per-site calendar (stand-in for the DMS diary) generated for the next ten days with existing bookings blocked out. If the car is at another site, the transfer day is shown.','The booking is written back with the VIN, build, the cars the customer looked at, their finder answers and the assistant transcript reference.','Once booked, the slot disappears from the calendar for the next customer.'],
+        contract:'<u>DMS · calendar_slots</u>  GET /api/testdrive/slots?site=&unit=  → { days:[{date,label,slots:[{id,time,available}]}], transferNote? }\n<u>DMS · bookings</u>  POST /api/testdrive/book  → { bookingId, whenLabel, siteName, questions[3], incentive }',
+        diagram:{cols:3,rows:1,nodes:[{id:'c',label:'Calendar',sub:'per site, 45-min slots',kind:'dms',c:0,r:0},{id:'b',label:'Booking modal',sub:'site · day · slot',kind:'page',c:1,r:0},{id:'w',label:'bookings',sub:'VIN · build · answers',kind:'dms',c:2,r:0}],edges:[{from:'c',to:'b',label:'slots'},{from:'b',to:'w',label:'write-back'}]}},
+      {id:'salesperson-questions',name:'Three salesperson questions and a show-up incentive',target:'f-cta',
+        sees:'After choosing a slot, three questions appear, multiple choice or yes/no, chosen for the cars this customer has been looking at: towing weight for a Prado and HiLux browser, home charging for a bZ4X, child seats for a family RAV4. Then a confirmation with what the dealer will have ready and a voucher chosen from their answers.',
+        powered:['rag','dms','page'],
+        how:['The page keeps a short list of the cars the customer has configured or switched to. The booking request carries that list, the current build and any finder answers.','The agent is prompted as an experienced Toyota salesperson preparing for this visit, with the spec sheets and the towing, finance and trade-in guides, and must return exactly three questions as JSON with a fixed shape. Questions already answered in the finder are excluded.','The incentive is picked from a small bank by matching the finder answers and the cars viewed, and its reason names what it was based on.','The customer’s answers go back to the agent, which replies as the salesperson and lists what will be prepared. If the agent is unreachable, a deterministic question bank keyed by model tags takes over with the same contract.'],
+        contract:'<i>POST /api/testdrive/book</i>  { site, slotId, unitId?, build, viewed:[{modelId,gradeId,unitId?}], finder:{answers}, lang }\n→ { bookingId, questions:[ exactly 3 × { id, text, type: choice | yesno, options:[{id,label}], why } ], incentive:{ id, title, desc, value, reason } }\n<i>POST /api/testdrive/answers</i>  { bookingId, answers } → { reply, prep[] }',
+        diagram:{cols:4,rows:2,nodes:[{id:'v',label:'Cars looked at',sub:'+ build + finder answers',kind:'cust',c:0,r:0},{id:'k',label:'Knowledge box',sub:'specs · towing · finance',kind:'kb',c:0,r:1},{id:'a',label:'Agent as salesperson',sub:'answer_json_schema',kind:'rag',c:1,r:0},{id:'q',label:'3 questions',sub:'choice | yes/no',kind:'page',c:2,r:0},{id:'i',label:'Incentive',sub:'matched to answers',kind:'dms',c:2,r:1},{id:'c',label:'Confirmation',sub:'prep list + voucher',kind:'page',c:3,r:0}],edges:[{from:'v',to:'a'},{from:'k',to:'a',label:'retrieval'},{from:'a',to:'q'},{from:'v',to:'i'},{from:'q',to:'c',label:'answers'},{from:'i',to:'c'}]}},
       {id:'finder',name:'Find the right car (five dynamic questions)',target:'f-models',
         sees:'“Find the right car” asks five questions, one at a time. Each question depends on the answers so far: say “towing” and the next question is about weight; say “family” and it asks how many people. After five, it ranks the three best Toyotas with reasons, caveats and live availability, and one tap starts configuring the winner.',
         powered:['rag','domo','page'],
@@ -1006,6 +1113,7 @@ body.drawer-open .drawer{transform:none}
     ],
     assumptions:['Harbourline Toyota is a fictional dealership. Toyota models, grades and specifications are real; prices, stock, ages and bonuses are illustrative and chosen so each behaviour appears at least once.','When the page is served by its API server, every question goes to the Progress Agentic RAG knowledge box. On a host without the server (for example the claude.ai artifact) the four suggested questions are scripted and the finder uses a local rule engine.','Domo is consumed through its API. The page never embeds a Domo card.','Discounts are always explained. The customer should never feel steered without knowing why.'],
     changelog:[
+      {v:'0.6.0',d:'14 Oct 2026',items:['Dealer console: business-editable priorities that nudge the finder and offers, with the reason stated','Promotions as first-class offers on cards and in the assistant’s context','Test-drive booking with per-site timeslots written back as a booking','Three agent-chosen salesperson questions after booking, plus a show-up incentive matched to the answers']},
       {v:'0.5.0',d:'13 Oct 2026',items:['Switched to the current Toyota Australia lineup, 15 models','Progress Agentic RAG kit styling: ink band with the Progress wordmark, prototype label, three scrolling panes','Find the right car: five dynamic JSON-driven questions ending in ranked recommendations','This week at Harbourline: Domo-driven offers strip and build ribbon','For you rows built from semantic /find queries','Knowledge box provisioned; API server for /ask, /finder, /foryou, /find with local fallback']},
       {v:'0.3.0',d:'13 Oct 2026',items:['Rebuilt in Progress Agentic RAG palette with a navy stage','Added this half-page “How it works” drawer with per-feature diagrams','Fixed the column-order bug that squeezed the stage into the options column','Added the three-fact summary strip under the car']},
       {v:'0.2.0',d:'13 Oct 2026',items:['Published to GitHub and Fly','Full HTML document with nginx container']},
@@ -1062,13 +1170,126 @@ body.drawer-open .drawer{transform:none}
 
   // --- drawer open/close ---
   const drawer=$('drawer');let drawerBuilt=false;
-  function openDrawer(){if(!drawerBuilt){renderDrawer();drawerBuilt=true;}document.body.classList.add('drawer-open');drawer.setAttribute('aria-hidden','false');document.getElementById('openDrawer').setAttribute('aria-expanded','true');}
-  function closeDrawer(){document.body.classList.remove('drawer-open');drawer.setAttribute('aria-hidden','true');document.getElementById('openDrawer').setAttribute('aria-expanded','false');}
+  function openDrawer(){if(!drawerBuilt){renderDrawer();drawerBuilt=true;}if(typeof closeDealer==='function')closeDealer();document.body.classList.add('drawer-open');drawer.classList.add('open');drawer.setAttribute('aria-hidden','false');document.getElementById('openDrawer').setAttribute('aria-expanded','true');}
+  function closeDrawer(){drawer.classList.remove('open');drawer.setAttribute('aria-hidden','true');if(!$('dealer').classList.contains('open'))document.body.classList.remove('drawer-open');document.getElementById('openDrawer').setAttribute('aria-expanded','false');}
   $('openDrawer').onclick=openDrawer;const od2=$('openDrawer2');if(od2)od2.onclick=openDrawer;
   document.getElementById('closeDrawer').onclick=closeDrawer;document.getElementById('backdrop').onclick=closeDrawer;
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
   function highlight(id){const t=document.getElementById(id);if(!t)return;t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.remove('hl');void t.offsetWidth;t.classList.add('hl');setTimeout(()=>t.classList.remove('hl'),2600);if(window.innerWidth<960)closeDrawer();}
 
+
+  // ======================= DEALER PRIORITIES, PROMOTIONS, BOOKING =======================
+  // Business-editable weights nudge the finder ranking and the offers. Served by /api/dealer/priorities; local fallback below.
+  const DEFAULT_PRIOS={updatedAt:'2026-10-14T08:00:00+11:00',updatedBy:'Sales manager (demo)',weights:{stockOnLot:60,agedStock:70,promotions:40,pushModel:{modelId:'kluger',weight:50}},note:'Clear aged RAV4/Kluger before December; Kluger hybrid allocation is strong this quarter.'};
+  let PRIOS=JSON.parse(JSON.stringify(DEFAULT_PRIOS));try{const l=localStorage.getItem('hl-prios');if(l)PRIOS=JSON.parse(l);}catch(e){}
+  const FALLBACK_PROMOS=[
+    {id:'svc3',title:'Complimentary 3-year servicing',kind:'servicing',value:1200,desc:'Toyota Service Advantage covered for three years on this car.',reason:'Aged stock we want to move before December.',appliesTo:{models:['rav4','kluger'],aged:true}},
+    {id:'kluger-acc',title:'Genuine accessories bundle worth $1,500',kind:'accessory-bundle',value:1500,desc:'Floor mats, bonnet protector, weathershields and cargo liner fitted.',reason:'Kluger allocation is strong this quarter.',appliesTo:{models:['kluger']}},
+    {id:'tradein',title:'$1,000 trade-in bonus',kind:'trade-in',value:1000,desc:'On top of the valuation for any trade-in against this car.',reason:'Applies to cars that have been on the lot longer than we would like.',appliesTo:{aged:true}},
+    {id:'tow-free',title:'Towing Pack fitted free',kind:'accessory-bundle',value:1650,desc:'Genuine tow bar, harness and trailer wiring fitted before delivery.',reason:'Supports our 4WD and ute customers heading into summer.',appliesTo:{models:['prado','hilux','landcruiser-300','fortuner']}},
+    {id:'delivery',title:'Delivery to your door',kind:'delivery',value:null,desc:'We bring the car to your home or work within 30 km.',reason:'Any car on the lot now.',appliesTo:{onLot:true}}
+  ];
+  let PROMOS=FALLBACK_PROMOS;
+  function promosFor(mid,u){const m=by(CAT.models,mid)||{};return PROMOS.filter(p=>{const a=p.appliesTo||{};
+    if(a.models&&!a.models.includes(mid))return false;if(a.bodies&&!a.bodies.includes(m.body))return false;if(a.units&&!(u&&a.units.includes(u.id)))return false;
+    if(a.aged&&!(u&&u.bonus>0))return false;if(a.onLot&&!(u&&u.site==='par'&&!u.transit))return false;return true;});}
+  function promoChips(list,dark){return list.length?`<span class="promos">${list.map(p=>`<span class="promo" title="${esc(p.reason||'')}">${esc(p.title)}</span>`).join('')}</span>`:'';}
+  // dealer factor used by the local finder and offers (mirrors the server formula)
+  function dealerFactor(mid){const w=PRIOS.weights||{};const u=units().filter(x=>x.model===mid);let f=0;const why=[];
+    if(u.some(x=>!x.transit&&x.site==='par')){f+=(w.stockOnLot||0)/100*6;why.push('on the lot now');}
+    if(u.some(x=>x.bonus>0)){f+=(w.agedStock||0)/100*6;why.push('a ready-now bonus');}
+    if(w.pushModel&&w.pushModel.modelId===mid){f+=(w.pushModel.weight||0)/100*8;why.push('strong allocation this quarter');}
+    const pr=promosFor(mid,u.find(x=>x.bonus>0)||u[0]);if(pr.length){f+=(w.promotions||0)/100*4;why.push(pr[0].title.toLowerCase());}
+    f=Math.min(12,Math.round(f*10)/10);return{factor:f,nudge:f>0?{reason:'We can do well on this one: '+why.join(', ')+'.',promotionId:pr[0]?pr[0].id:null}:null};}
+  async function loadDealer(){if(!API)return;try{const r=await fetch('/api/dealer/priorities');if(r.ok){PRIOS=await r.json();}}catch(e){}try{const r=await fetch('/api/promotions');if(r.ok){const p=await r.json();if(Array.isArray(p)&&p.length)PROMOS=p;}}catch(e){}}
+  async function savePrios(){PRIOS.updatedAt=new Date().toISOString();PRIOS.updatedBy='Sales manager (demo)';try{localStorage.setItem('hl-prios',JSON.stringify(PRIOS));}catch(e){}
+    if(API){try{const r=await fetch('/api/dealer/priorities',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(PRIOS)});if(r.ok)PRIOS=await r.json();}catch(e){}}
+    toast('Dealer priorities saved. Rankings and offers updated.');update();renderDealer();}
+  function renderDealer(){const b=$('dealerBody');const w=PRIOS.weights;const opts=['<option value="">No pushed model</option>'].concat(CAT.models.map(m=>`<option value="${m.id}" ${w.pushModel&&w.pushModel.modelId===m.id?'selected':''}>${esc(m.name)}</option>`)).join('');
+    const slider=(k,label,d)=>`<label class="row"><b>${label}</b><span class="val" data-val="${k}">${w[k]}</span><span class="d">${d}</span><input type="range" min="0" max="100" step="5" value="${w[k]}" data-w="${k}" id="w-${k}"></label>`;
+    b.innerHTML=`<div class="prio">
+      ${slider('stockOnLot','Prefer cars on the lot','Rank models we can hand over today above factory orders.')}
+      ${slider('agedStock','Clear aged stock','Rank models with a ready-now bonus higher and feature them in offers.')}
+      ${slider('promotions','Lead with promotions','Weight models that carry a current promotion.')}
+      <div class="row"><b>Push a model</b><span class="val" data-val="push">${w.pushModel?w.pushModel.weight:0}</span><span class="d">Allocation is strong or a target needs hitting.</span><select id="w-pushModel">${opts}</select><input type="range" min="0" max="100" step="5" value="${w.pushModel?w.pushModel.weight:0}" id="w-pushWeight"></div>
+      <div class="row"><b>Note to the team</b><span></span><textarea id="w-note">${esc(PRIOS.note||'')}</textarea></div>
+      <div class="save"><button class="btn" id="w-save">Save priorities</button><button class="btn ghost" id="w-reset">Reset to defaults</button><span class="meta">last saved ${esc(PRIOS.updatedAt?new Date(PRIOS.updatedAt).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'never')} by ${esc(PRIOS.updatedBy||'')}</span></div>
+      <div class="effect" id="w-effect"></div></div>`;
+    const sync=()=>{w.stockOnLot=+$('w-stockOnLot').value;w.agedStock=+$('w-agedStock').value;w.promotions=+$('w-promotions').value;const pm=$('w-pushModel').value;w.pushModel=pm?{modelId:pm,weight:+$('w-pushWeight').value}:{modelId:null,weight:0};PRIOS.note=$('w-note').value;
+      b.querySelectorAll('[data-val]').forEach(e=>{const k=e.dataset.val;e.textContent=k==='push'?(w.pushModel.weight||0):w[k];});renderEffect();};
+    b.querySelectorAll('input,select,textarea').forEach(e=>e.addEventListener('input',sync));
+    $('w-save').onclick=savePrios;$('w-reset').onclick=()=>{PRIOS=JSON.parse(JSON.stringify(DEFAULT_PRIOS));renderDealer();savePrios();};renderEffect();}
+  function renderEffect(){const e=$('w-effect');if(!e)return;const rows=CAT.models.map(m=>({m,d:dealerFactor(m.id)})).filter(x=>x.d.factor>0).sort((a,b)=>b.d.factor-a.d.factor).slice(0,5);
+    e.innerHTML=`<b>Effect right now</b> · the finder adds up to 12 fit points and the offers strip re-sorts. Top nudges: ${rows.map(x=>`<b>${esc(x.m.name)}</b> +${x.d.factor}`).join(', ')||'none'}.`;}
+  const dealer=$('dealer');
+  function openDealer(){closeDrawer();renderDealer();document.body.classList.add('drawer-open');dealer.setAttribute('aria-hidden','false');dealer.classList.add('open');}
+  function closeDealer(){dealer.classList.remove('open');dealer.setAttribute('aria-hidden','true');if(!drawer.classList.contains('open'))document.body.classList.remove('drawer-open');}
+  $('openDealer').onclick=()=>dealer.classList.contains('open')?closeDealer():openDealer();$('closeDealer').onclick=closeDealer;
+
+  // ---- what the customer has looked at (feeds the booking questions) ----
+  const viewed=[];function noteViewed(){const g=G();const u=matches(cfg).exact[0];const e={modelId:cfg.model,gradeId:g.id,unitId:u?u.u.id:null,at:Date.now()};const i=viewed.findIndex(v=>v.modelId===e.modelId);if(i>=0)viewed.splice(i,1);viewed.unshift(e);if(viewed.length>6)viewed.length=6;}
+
+  // ---- test-drive booking with timeslots, three salesperson questions, show-up incentive ----
+  const booking={step:1,site:'par',unitId:null,slots:null,day:null,slot:null,result:null,answers:{}};
+  function localSlots(site){const days=[];const now=new Date();for(let d=1;d<=10;d++){const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+d);if(dt.getDay()===0)continue;const date=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;const slots=[];for(let h=8.5;h<17.5;h+=0.75){const hh=Math.floor(h),mm=Math.round((h-hh)*60);const id=`${site}-${date}-${String(hh).padStart(2,'0')}${String(mm).padStart(2,'0')}`;const t=`${hh>12?hh-12:hh}:${String(mm).padStart(2,'0')} ${hh>=12?'pm':'am'}`;slots.push({id,time:t,available:((hh*7+mm/15+d*3)%5)!==0});}
+      days.push({date,label:dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'}),slots});}
+    return{site,siteName:SITES[site].name,days};}
+  async function getSlots(site,unitId){if(API){try{const r=await fetch(`/api/testdrive/slots?site=${site}${unitId?'&unit='+unitId:''}`);if(r.ok){const j=await r.json();if(j&&j.days)return j;}}catch(e){}}return localSlots(site);}
+  const QBANK={tow:{id:'tow-weight',text:'What will you be towing, and roughly how heavy?',type:'choice',options:[{id:'light',label:'Camper or trailer, under 1.5 t'},{id:'van',label:'Caravan, 2 to 2.5 t'},{id:'heavy',label:'Boat or big van, over 2.5 t'},{id:'none',label:'Nothing for now'}],why:'So the right tow bar and the right car are ready.'},
+    ev:{id:'home-charge',text:'Can you charge at home overnight?',type:'yesno',why:'Home charging changes the running-cost story completely.'},
+    family:{id:'child-seats',text:'Do you need to fit three child seats across the back?',type:'yesno',why:'We will have the seats set up to test on the day.'},
+    seven:{id:'third-row',text:'How often would the third row actually be used?',type:'choice',options:[{id:'daily',label:'Most days'},{id:'weekly',label:'Weekly'},{id:'rare',label:'Rarely'}],why:'Decides whether a seven-seater or a bigger boot serves you better.'},
+    trade:{id:'trade-in',text:'Do you have a car to trade in?',type:'yesno',why:'We can have a valuation ready while you drive.'},
+    work:{id:'work-use',text:'Will the car be used for work?',type:'choice',options:[{id:'tools',label:'Tools and site work'},{id:'client',label:'Client visits'},{id:'no',label:'Private use only'}],why:'Payload, tray and novated-lease options differ.'},
+    offroad:{id:'terrain',text:'Where will it go off the bitumen?',type:'choice',options:[{id:'none',label:'Sealed roads only'},{id:'gravel',label:'Gravel and farm tracks'},{id:'serious',label:'Beach, rock and low range'}],why:'So we can show the drive modes that matter.'},
+    budget:{id:'finance',text:'Would you like finance figures prepared for the visit?',type:'yesno',why:'A comparison rate and monthly figure ready to take away.'},
+    perf:{id:'gearbox',text:'Manual or automatic?',type:'choice',options:[{id:'manual',label:'Manual'},{id:'auto',label:'Automatic'},{id:'either',label:'Either'}],why:'We will put the right one on the demo plate.'}};
+  function localQuestions(){const a=Object.fromEntries(finder.answers.map(x=>[x.id,x.value]));const ms=[cfg.model].concat(viewed.map(v=>v.modelId)).map(id=>by(CAT.models,id)).filter(Boolean);const tags=new Set(ms.flatMap(m=>m.tags));const has=t=>tags.has(t);const q=[];
+    if((has('towing')||has('caravan'))&&!a.towing)q.push(QBANK.tow);if(ms.some(m=>m.powertrain==='ev'))q.push(QBANK.ev);if(ms.some(m=>m.seats>=7)&&!a.people)q.push(QBANK.seven);if(has('family')&&!q.includes(QBANK.seven))q.push(QBANK.family);
+    if(ms.some(m=>m.body==='ute')&&!a.worktype)q.push(QBANK.work);if(has('off-road')&&!a.terrain)q.push(QBANK.offroad);if(has('performance'))q.push(QBANK.perf);q.push(QBANK.trade);q.push(QBANK.budget);
+    return [...new Set(q)].slice(0,3);}
+  function localIncentive(){const a=Object.fromEntries(finder.answers.map(x=>[x.id,x.value]));const m=M();
+    if(a.towing||a.use==='tow'||m.towKg>=3000)return{id:'towbar',title:'Tow bar fitting voucher',desc:'Genuine tow bar fitting at no charge if you buy within 14 days of your drive.',value:450,reason:'Because you told us you tow.'};
+    if(m.powertrain==='ev'||a.power==='ev')return{id:'charger',title:'Home charging assessment',desc:'A licensed electrician checks your switchboard and quotes a wallbox, on us.',value:250,reason:'Because you are looking at going electric.'};
+    if(a.use==='family'||a.people==='more'||m.seats>=7)return{id:'childseat',title:'Child-seat fitting and safety check',desc:'Certified fitter installs and checks your seats at the dealership.',value:150,reason:'Because you told us this is a family car.'};
+    if(a.distance==='over80'||a.use==='commute')return{id:'fuel',title:'$100 fuel card',desc:'Yours when you come in for the drive.',value:100,reason:'Because you cover real kilometres.'};
+    return{id:'detail',title:'Complimentary interior detail',desc:'For your current car while you are with us.',value:120,reason:'A thank-you for coming in.'};}
+  async function bookSlot(){const payload={site:booking.site,slotId:booking.slot.id,unitId:booking.unitId,build:{modelId:cfg.model,gradeId:cfg.grade,colourId:cfg.colour,interiorId:cfg.interior,packs:cfg.packs},viewed:viewed.map(v=>({modelId:v.modelId,gradeId:v.gradeId,unitId:v.unitId})),finder:{answers:finder.answers},lang};
+    if(API){try{const r=await fetch('/api/testdrive/book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});if(r.ok){const j=await r.json();if(j&&j.questions&&j.questions.length===3)return j;}}catch(e){}}
+    const g=G();const dt=new Date(booking.day.date+'T00:00:00');return{bookingId:'TD-'+Math.random().toString(36).slice(2,7).toUpperCase(),site:booking.site,siteName:SITES[booking.site].name,whenLabel:dt.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'})+' at '+booking.slot.time,unitId:booking.unitId,model:M().name,grade:g.name,questions:localQuestions(),incentive:localIncentive(),trace:[{kind:'kb',label:'local picker (offline) · same JSON contract'}]};}
+  async function sendAnswers(){const answers=Object.entries(booking.answers).map(([id,v])=>({id,value:v.id,label:v.label,question:v.q}));if(API){try{const r=await fetch('/api/testdrive/answers',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({bookingId:booking.result.bookingId,answers})});if(r.ok)return await r.json();}catch(e){}}
+    const m=M(),g=G();return{ok:true,reply:`Thanks, that helps. I'll have the ${m.name} ${g.name} ready at ${booking.slot.time} and we'll cover ${answers.map(a=>(a.question||a.id).replace(/\?$/,'').toLowerCase()+' ('+a.label.toLowerCase()+')').join(', ')} while you're here.`,prep:[`${m.name} ${g.name} fuelled and ready at ${booking.slot.time}`,answers.some(a=>a.id==='trade-in'&&a.value==='yes')?'Trade-in valuation on arrival':'Drive route that suits how you will use the car',answers.some(a=>a.id==='finance'&&a.value==='yes')?'Finance figures printed for you to take away':'Drive-away quote ready to take away']};}
+  function openBooking(unitId){const u=unitId?by(units(),unitId):(matches(cfg).exact[0]||{}).u;booking.step=1;booking.unitId=u?u.id:null;booking.site=u&&!u.transit?u.site:'par';booking.day=null;booking.slot=null;booking.result=null;booking.answers={};booking.slots=null;$('mback').classList.add('open');renderBooking();}
+  function closeBooking(){$('mback').classList.remove('open');}
+  $('mclose').onclick=closeBooking;$('mback').addEventListener('click',e=>{if(e.target===$('mback'))closeBooking();});
+  function mwork(host,steps){host.innerHTML='';const box=el('div','mwork');host.appendChild(box);const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;steps.forEach((s,i)=>setTimeout(()=>box.appendChild(el('div','step',esc(s))),reduce?0:220*i));return reduce?0:220*steps.length+200;}
+  async function renderBooking(){const body=$('mbody');const m=M(),g=G();const steps=`<div class="mstep">${[1,2,3].map(i=>`<i class="${i<booking.step?'done':i===booking.step?'cur':''}"></i>`).join('')}</div>`;
+    if(booking.step===1){$('mkick').textContent='Book a test drive · step 1 of 3';$('mtitle').textContent='Pick a time';$('msub').textContent=`${m.name} ${g.name}${booking.unitId?' · stock '+booking.unitId:''}`;
+      if(!booking.slots){body.innerHTML=steps+'<div class="mwork"><div class="step">Checking the calendar at '+SITES[booking.site].name+'</div></div>';booking.slots=await getSlots(booking.site,booking.unitId);booking.day=booking.slots.days[0];}
+      const s=booking.slots;body.innerHTML=`${steps}<div class="sites">${Object.keys(SITES).map(k=>`<button class="${k===booking.site?'on':''}" data-site="${k}">${SITES[k].name}</button>`).join('')}</div>${s.transferNote?`<div class="nudge">${esc(s.transferNote)}</div>`:''}
+        <div class="days">${s.days.map(d=>`<button class="${booking.day&&d.date===booking.day.date?'on':''}" data-day="${d.date}"><b>${esc(d.label.split(' ')[0])}</b>${esc(d.label.split(' ').slice(1).join(' '))}</button>`).join('')}</div>
+        <div class="slots">${(booking.day?booking.day.slots:[]).map(sl=>`<button data-slot="${sl.id}" ${sl.available?'':'disabled'} class="${booking.slot&&booking.slot.id===sl.id?'on':''}">${esc(sl.time)}</button>`).join('')}</div>
+        <div class="mfoot"><span class="ann dms">DMS · calendar_slots · site ${booking.site}</span><button class="btn" id="mnext" ${booking.slot?'':'disabled'}>Continue</button></div>`;
+      body.querySelectorAll('[data-site]').forEach(b=>b.onclick=()=>{booking.site=b.dataset.site;booking.slots=null;booking.slot=null;renderBooking();});
+      body.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{booking.day=s.days.find(d=>d.date===b.dataset.day);booking.slot=null;renderBooking();});
+      body.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{booking.slot=booking.day.slots.find(x=>x.id===b.dataset.slot);renderBooking();});
+      $('mnext').onclick=async()=>{booking.step=2;$('mkick').textContent='Book a test drive · step 2 of 3';$('mtitle').textContent='Three quick questions';$('msub').textContent='So the right car, and the right answers, are ready when you arrive';
+        const wait=mwork(body,['Looking at the cars you have been configuring','Reading their spec sheets and the towing, finance and trade-in guides','Choosing the three questions that matter for you']);const t0=Date.now();booking.result=await bookSlot();await new Promise(r=>setTimeout(r,Math.max(0,wait-(Date.now()-t0))));renderBooking();};}
+    else if(booking.step===2){const r=booking.result;const qs=r.questions;
+      body.innerHTML=`${steps}${qs.map((q,i)=>`<div class="qcard"><div class="qn">Question ${i+1} of 3 · ${q.type==='yesno'?'yes or no':'choose one'}</div><b>${esc(q.text)}</b>${q.why?`<div class="why">${esc(q.why)}</div>`:''}<div class="qopts" data-q="${esc(q.id)}">${(q.type==='yesno'?[{id:'yes',label:'Yes'},{id:'no',label:'No'}]:q.options).map(o=>`<button data-o="${esc(o.id)}" data-l="${esc(o.label)}" class="${booking.answers[q.id]&&booking.answers[q.id].id===o.id?'on':''}">${esc(o.label)}</button>`).join('')}</div></div>`).join('')}
+        <div class="trace">${(r.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">${API?'ARAG · /ask · answer_json_schema · salesperson prompt':'local question bank (offline)'}</span></div>
+        <div class="mfoot"><button class="btn ghost" id="mback1">Back</button><button class="btn" id="mnext" ${Object.keys(booking.answers).length===3?'':'disabled'}>Confirm booking</button></div>`;
+      body.querySelectorAll('.qopts').forEach(g=>g.querySelectorAll('button').forEach(b=>b.onclick=()=>{const q=qs.find(x=>x.id===g.dataset.q);booking.answers[g.dataset.q]={id:b.dataset.o,label:b.dataset.l,q:q?q.text:''};renderBooking();}));
+      $('mback1').onclick=()=>{booking.step=1;renderBooking();};
+      $('mnext').onclick=async()=>{booking.step=3;$('mkick').textContent='Book a test drive · step 3 of 3';$('mtitle').textContent='You are booked in';$('msub').textContent='';const wait=mwork(body,['Writing the booking to the DMS','Preparing your visit']);const t0=Date.now();booking.reply=await sendAnswers();await new Promise(r=>setTimeout(r,Math.max(0,wait-(Date.now()-t0))));renderBooking();};}
+    else{const r=booking.result,a=booking.reply||{},inc=r.incentive;
+      body.innerHTML=`${steps}<div class="confirm"><b>${esc(r.model)} ${esc(r.grade)} · ${esc(r.whenLabel)}</b><div class="c">Harbourline Toyota ${esc(r.siteName)} · booking ${esc(r.bookingId)}${r.unitId?' · stock '+esc(r.unitId):''}</div></div>
+        ${a.reply?`<div class="msg a" style="max-width:100%"><div class="bub">${esc(a.reply)}</div></div>`:''}
+        ${(a.prep||[]).length?`<div><div class="label" style="margin-bottom:6px">We will have ready</div><ul class="prep">${a.prep.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>`:''}
+        ${inc?`<div class="voucher"><div class="vk">${inc.value?'$'+inc.value:'GIFT'}</div><b>${esc(inc.title)}</b><div class="vd">${esc(inc.desc)}</div><div class="vr">${esc(inc.reason)} · show this at reception</div></div>`:''}
+        <div class="mfoot"><span class="ann dms">DMS · write-back: booking + lead + transcript</span><button class="btn" id="mdone">Done</button></div>`;
+      $('mdone').onclick=()=>{closeBooking();addAssistant(`You're booked for ${r.whenLabel} at ${r.siteName} (${r.bookingId}). ${a.reply||''}${inc?' Your '+inc.title.toLowerCase()+' is noted on the booking.':''}`,[{kind:'domo',label:'DMS · booking '+r.bookingId},{kind:'kb',label:'KB · salesperson prep'}]);};}}
+  document.body.addEventListener('click',e=>{const b=e.target.closest('[data-book]');if(b){openBooking(b.dataset.book||null);}});
 
   // ======================= MISC =======================
   const toastEl=$('toast');let tt;
@@ -1082,7 +1303,7 @@ body.drawer-open .drawer{transform:none}
   async function probe(){try{const r=await fetch('/api/health',{cache:'no-store'});if(!r.ok)return;const h=await r.json();if(!h||h.ok===false)return;API=true;
       try{const c=await fetch('/api/catalog');if(c.ok){const cat=await c.json();if(cat&&cat.models&&cat.models.length)CAT=cat;}}catch(e){}
       try{const s=await fetch('/api/stock');if(s.ok){const st=await s.json();if(st&&st.stock_by_site)STOCK=normaliseStock(st);}}catch(e){}
-      normalise();update();renderAssistant(false);setLive(true);addSys('Connected to the knowledge box'+(h.domo==='live'?' and Domo':' · Domo stand-in'));}catch(e){}}
+      await loadDealer();normalise();update();renderAssistant(false);setLive(true);addSys('Connected to the knowledge box'+(h.domo==='live'?' and Domo':' · Domo stand-in'));}catch(e){}}
   function setLive(on){const b=document.querySelector('.ahead .live');if(!b)return;b.textContent=on?'LIVE':'OFFLINE';b.style.background=on?'':'var(--warn-bg)';b.style.color=on?'':'var(--warn-fg)';}
   setLive(false);
   update();renderAssistant(true);probe();
