@@ -23,6 +23,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, resolve, basename } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { kbCoords, ROOT } from './lib-env.mjs';
 
 const args = process.argv.slice(2);
@@ -96,13 +97,13 @@ function catalogMarkdown(cat) {
   return out.filter((l, i, a) => !(l === '' && a[i - 1] === '')).join('\n');
 }
 
-async function req(path, { method = 'GET', body } = {}) {
+export async function req(path, { method = 'GET', body } = {}) {
   const r = await fetch(`${kbUrl}${path}`, { method, headers: H, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(30000) });
   const text = await r.text(); let json; try { json = JSON.parse(text); } catch { json = text; }
   return { ok: r.ok, status: r.status, json };
 }
 
-async function upsert(res) {
+export async function upsert(res) {
   const existing = await req(`/slug/${encodeURIComponent(res.slug)}?show=basic`);
   if (existing.ok && existing.json?.id) {
     const { slug, ...patch } = res;
@@ -115,7 +116,7 @@ async function upsert(res) {
   return { id: r.json.uuid || r.json.id, action: 'created' };
 }
 
-async function waitFor(items, timeoutMs = 10 * 60 * 1000) {
+export async function waitFor(items, timeoutMs = 10 * 60 * 1000) {
   const t0 = Date.now(); const pending = new Map(items.map((i) => [i.id, i]));
   const done = {};
   while (pending.size && Date.now() - t0 < timeoutMs) {
@@ -170,4 +171,7 @@ async function main() {
   if (fail) process.exitCode = 1;
 }
 
-main().catch((e) => { console.error(`  ✗ ${e.message}`); process.exit(1); });
+// Run only when executed directly, so scripts/ingest-images.mjs can import req/upsert/waitFor.
+if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
+  main().catch((e) => { console.error(`  ✗ ${e.message}`); process.exit(1); });
+}

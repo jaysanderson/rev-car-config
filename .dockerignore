@@ -6,3 +6,4 @@ scripts
 *.md
 !content/**/*.md
 .DS_Store
+content/images/raw

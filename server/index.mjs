@@ -15,6 +15,7 @@ import * as arag from './arag.mjs';
 import { catalog, catalogPath, stock, stockPublic, stockSummary, offers, domoMode, modelsMentioned, modelById } from './data.mjs';
 import { askAssistant, finderNext } from './assistant.mjs';
 import { forYou } from './foryou.mjs';
+import imagesRouter from './images.mjs';
 
 const PORT = Number(process.env.PORT || 8080);
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
@@ -147,6 +148,7 @@ app.get('/api/find', wrap(async (req, res) => {
   })));
 }));
 
+app.use('/api/images', imagesRouter);
 app.use('/api', (req, res) => res.status(404).json({ error: 'not found' }));
 // Body-parser errors (malformed JSON, body > 64 kb) as JSON, not Express's HTML page.
 // eslint-disable-next-line no-unused-vars

@@ -1,0 +1,77 @@
+{
+  "yaris-cross": {
+    "hero": "yaris-cross.jpg",
+    "thumb": "thumb/yaris-cross.jpg",
+    "colours": {}
+  },
+  "corolla": {
+    "hero": "corolla.jpg",
+    "thumb": "thumb/corolla.jpg",
+    "colours": {}
+  },
+  "corolla-cross": {
+    "hero": "corolla-cross.jpg",
+    "thumb": "thumb/corolla-cross.jpg",
+    "colours": {}
+  },
+  "c-hr": {
+    "hero": "c-hr.jpg",
+    "thumb": "thumb/c-hr.jpg",
+    "colours": {}
+  },
+  "camry": {
+    "hero": "camry.jpg",
+    "thumb": "thumb/camry.jpg",
+    "colours": {}
+  },
+  "rav4": {
+    "hero": "rav4.jpg",
+    "thumb": "thumb/rav4.jpg",
+    "colours": {}
+  },
+  "kluger": {
+    "hero": "kluger.jpg",
+    "thumb": "thumb/kluger.jpg",
+    "colours": {}
+  },
+  "prado": {
+    "hero": "prado.jpg",
+    "thumb": "thumb/prado.jpg",
+    "colours": {}
+  },
+  "landcruiser-300": {
+    "hero": "landcruiser-300.jpg",
+    "thumb": "thumb/landcruiser-300.jpg",
+    "colours": {}
+  },
+  "fortuner": {
+    "hero": "fortuner.jpg",
+    "thumb": "thumb/fortuner.jpg",
+    "colours": {}
+  },
+  "hilux": {
+    "hero": "hilux.jpg",
+    "thumb": "thumb/hilux.jpg",
+    "colours": {}
+  },
+  "bz4x": {
+    "hero": "bz4x.jpg",
+    "thumb": "thumb/bz4x.jpg",
+    "colours": {}
+  },
+  "gr-yaris": {
+    "hero": "gr-yaris.jpg",
+    "thumb": "thumb/gr-yaris.jpg",
+    "colours": {}
+  },
+  "gr-corolla": {
+    "hero": "gr-corolla.jpg",
+    "thumb": "thumb/gr-corolla.jpg",
+    "colours": {}
+  },
+  "gr86": {
+    "hero": "gr86.jpg",
+    "thumb": "thumb/gr86.jpg",
+    "colours": {}
+  }
+}
