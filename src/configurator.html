@@ -438,12 +438,12 @@ body.drawer-open .drawer{transform:none}
       <div class="card avail" id="f-avail">
         <div class="head">
           <div><h2>How you can have this car</h2><div class="sub">Checked against stock at Parramatta and three sites within 35 km</div></div>
-          <span class="status"><i></i>stock refreshed 6 min ago <span class="ann domo">Domo · stock_by_site</span></span>
+          <span class="status"><i></i><span data-fresh>stock</span> <span class="ann domo">Domo · stock_by_site · refreshed_at</span></span>
         </div>
         <div class="ways" id="ways"></div>
       </div>
       <div class="card offers" id="f-offers">
-        <div class="head"><div><h2>This week at Harbourline</h2><div class="sub">Cars we can do a better price on right now, chosen for the kind of car you are looking at <span class="ann domo">Domo · aged_stock_actions · placement: stage_strip</span></div></div><span class="status"><i></i>ranked 6 min ago</span></div>
+        <div class="head"><div><h2>This week at Harbourline</h2><div class="sub">Cars we can do a better price on right now, chosen for the kind of car you are looking at <span class="ann domo">Domo · aged_stock_actions · placement: stage_strip</span></div></div><span class="status"><i></i><span data-ranked>ranked</span></span></div>
         <div class="otiles" id="otiles"></div>
       </div>
       <div class="card foryou" id="f-foryou">
@@ -680,14 +680,16 @@ body.drawer-open .drawer{transform:none}
     // rows from finder answers
     const byTag=(tag,title,reason,q,blurbFn)=>{const ms=CAT.models.filter(x=>x.tags.includes(tag)&&x.id!==m.id).slice(0,4);if(ms.length)rows.push({id:tag,title,reason,query:q,items:ms.map(x=>item(x.id,null,null,blurbFn(x)))});};
     if(a.use==='family'||m.tags.includes('family'))byTag('family','Because you need room for the family','Five seats or seven, big boots, top safety scores','family SUV with seven seats and Toyota Safety Sense',x=>x.seats+' seats · '+x.blurb);
+    if(a.people==='more'||m.seats>=7)byTag('seven-seats','Because you need seven seats','Three rows, and a boot behind them','seven seat SUV third row boot space',x=>x.seats+' seats · '+x.powertrainLabel);
     if(a.towing||a.use==='tow'||m.towKg>=2500)byTag('towing','Because you tow','Braked towing capacity that covers a caravan','towing capacity caravan 2500 kg braked',x=>x.towKg.toLocaleString()+' kg braked · '+x.powertrainLabel);
     if(a.power==='ev'||m.powertrain==='ev')byTag('ev','Because you\'re going electric','Charging, range and running costs','electric vehicle range and home charging',x=>x.blurb);
-    if(a.worktype||a.use==='work'||m.body==='ute')byTag('offroad','Because you go off-road','Diff locks, clearance and all-terrain modes','off-road capability diff lock multi-terrain select',x=>x.blurb);
+    if(a.terrain==='offroad'||a.terrain==='gravel'||a.worktype==='site'||m.tags.includes('off-road'))byTag('off-road','Because you go off-road','Diff locks, clearance and all-terrain modes','off-road capability diff lock multi-terrain select',x=>x.blurb);
+    if(a.priorities==='economy'||m.powertrain==='hybrid')byTag('efficiency','Because you watch running costs','Hybrids that sip fuel, capped-price servicing','hybrid fuel economy capped price servicing',x=>x.powertrainLabel+' · '+x.blurb);
     if(!rows.some(r=>r.id==='family'))byTag('safety','Because safety matters','Models with the full Toyota Safety Sense suite','Toyota Safety Sense pre-collision lane trace adaptive cruise',x=>(x.safety||x.blurb));
     return rows.slice(0,4);}
   async function renderForYou(){let rows=null;if(API){try{const qs=new URLSearchParams({model:cfg.model,grade:cfg.grade,colour:cfg.colour,answers:finder.answers.map(a=>a.id+':'+a.value).join(',')});const r=await fetch('/api/foryou?'+qs);if(r.ok)rows=await r.json();}catch(e){}}
     if(!Array.isArray(rows)||!rows.length)rows=tagRows();const host=$('foryou');host.innerHTML='';
-    rows.forEach((r,ri)=>{const sec=el('div','fy');sec.innerHTML=`<div class="fyh"><div><h3>${esc(r.title)}</h3><div class="sub">${esc(r.reason||'')}</div></div><span class="ann kb">ARAG · /find · "${esc(r.query||'')}"</span></div><div class="fyrow"></div>`;const row=sec.querySelector('.fyrow');
+    rows.forEach((r,ri)=>{const sec=el('div','fy');sec.innerHTML=`<div class="fyh"><div><h3>${esc(r.title)}</h3><div class="sub">${esc(r.reason||'')}</div></div><span class="ann kb">${API?'ARAG · /find · "'+esc(r.query||'')+'"':'local match (offline) · would query /find: "'+esc(r.query||'')+'"'}</span></div><div class="fyrow"></div>`;const row=sec.querySelector('.fyrow');
       (r.items||[]).forEach((it,i)=>{const mm=by(CAT.models,it.modelId);if(!mm)return;const u=it.unitId?by(units(),it.unitId):null;const hex=COL(u?u.colour:(mm.colours.includes('graphite')?'graphite':mm.colours[0]))?.hex||'#888';
         const c=el('button','fycard');c.innerHTML=`${carSVG(mm.silhouette,hex,'var(--raised)','f'+ri+i)}<b>${esc(it.title)}</b><span>${esc(it.blurb||'')}</span>${it.citation?`<em class="cite">${esc(it.citation.title)}</em>`:''}`;
         c.onclick=()=>{if(u)applyUnit(u.id);else{cfg.model=it.modelId;if(it.gradeId)cfg.grade=it.gradeId;normalise();update();toast('Now configuring the '+mm.name);}};row.appendChild(c);});
@@ -695,7 +697,9 @@ body.drawer-open .drawer{transform:none}
     $('f-foryou').hidden=!rows.length;}
 
   function applyUnit(id){const u=by(units(),id);if(!u)return;Object.assign(cfg,unitCfg(u));cfg.packs=cfg.packs.slice();normalise();showStage();update();toast('Build updated to stock '+u.id);$('f-stage').scrollIntoView({behavior:'smooth',block:'start'});}
-  function update(){normalise();renderModels();renderGrades();renderColours();renderInteriors();renderPacks();renderSteps();renderHero();renderWays();renderOffers();renderForYou();}
+  function fresh(){const t=STOCK.refreshed_at?new Date(STOCK.refreshed_at):null;if(!t||isNaN(t))return 'stand-in data';const mins=Math.round((Date.now()-t)/60000);if(mins<1)return 'refreshed just now';if(mins<120)return 'refreshed '+mins+' min ago';if(mins<48*60)return 'refreshed '+Math.round(mins/60)+' h ago';return 'refreshed '+t.toLocaleDateString('en-AU',{day:'numeric',month:'short'});}
+  function renderFresh(){document.querySelectorAll('[data-fresh]').forEach(e=>e.textContent='stock '+fresh());document.querySelectorAll('[data-ranked]').forEach(e=>e.textContent='ranked with stock '+fresh());}
+  function update(){normalise();renderFresh();renderModels();renderGrades();renderColours();renderInteriors();renderPacks();renderSteps();renderHero();renderWays();renderOffers();renderForYou();}
   function showStage(){$('finderView').hidden=true;$('stageView').style.display='contents';}
   // ======================= FINDER (five dynamic questions, JSON from the agent) =======================
   const FQ={
@@ -706,14 +710,25 @@ body.drawer-open .drawer{transform:none}
     worktype:{text:'What is the work?',why:'Payload and ground clearance, or comfort for the kilometres.',options:[{id:'tools',label:'Tools and materials',sub:'Tray or big boot, payload matters'},{id:'site',label:'Sites and rural roads',sub:'Gravel, mud, long distances'},{id:'client',label:'Client visits',sub:'Sealed roads, comfort and economy'}]},
     power:{text:'How do you feel about going electric?',why:'Toyota has hybrid in most of the range, one full EV, and diesel for the heavy work.',options:[{id:'ev',label:'Ready now',sub:'I can charge at home'},{id:'hybrid',label:'Hybrid first',sub:'Efficient without the charging question'},{id:'diesel',label:'Petrol or diesel',sub:'Simplest for long trips and towing'}]},
     budget:{text:'What is your drive-away budget?',why:'We match the grade to the budget, not just the model.',options:[{id:'u45',label:'Under $45k',sub:''},{id:'45to65',label:'$45k to $65k',sub:''},{id:'65to90',label:'$65k to $90k',sub:''},{id:'o90',label:'Over $90k',sub:''}]},
+    terrain:{text:'Where does it go?',why:'Sealed roads, gravel, or real off-road changes the drivetrain we recommend.',options:[{id:'sealed',label:'Sealed roads',sub:'Highways and towns, the odd dirt driveway'},{id:'gravel',label:'Gravel and dirt',sub:'Station tracks, forestry roads, beach access'},{id:'offroad',label:'Serious off-road',sub:'Low range, diff locks, rock and sand'}]},
+    priorities:{text:'What matters most to you?',why:'Every Toyota here is safe. This decides what we weight after that.',options:[{id:'safety',label:'Safety first',sub:'Every assist, five stars'},{id:'economy',label:'Running costs',sub:'Fuel, servicing, resale'},{id:'space',label:'Space and comfort',sub:'Room, quiet, long-trip comfort'},{id:'tech',label:'Tech and feel',sub:'Screens, sound, how it drives'}]},
     when:{text:'When do you need it?',why:'Some of the shortlist is on the lot now. Some is a factory order.',options:[{id:'now',label:'In the next few weeks',sub:''},{id:'summer',label:'Before the summer holidays',sub:'NSW holidays start 18 December'},{id:'norush',label:'No rush',sub:'Happy to order exactly what I want'}]}
   };
   const BUDGET={u45:[0,45000],'45to65':[45000,65000],'65to90':[65000,90000],o90:[90000,1e9]};
   function localNext(answers){const a=Object.fromEntries(answers.map(x=>[x.id,x.value]));const n=answers.length;let qid;
-    if(n===0)qid='use';else if(n===1)qid={commute:'distance',family:'people',tow:'towing',work:'worktype'}[a.use]||'people';else if(n===2)qid='power';else if(n===3)qid='budget';else if(n===4)qid='when';
-    if(!qid)return localRecs(answers);
+    // Every question depends on what came before: branch on use, then on the second answer, then fill the gaps.
+    const asked=new Set(answers.map(x=>x.id));
+    if(n===0)qid='use';
+    else if(n===1)qid={commute:'distance',family:'people',tow:'towing',work:'worktype'}[a.use]||'people';
+    else if(n===2)qid=(a.use==='tow'||a.worktype==='site'||a.worktype==='tools')?'terrain':(a.use==='commute'||a.use==='family')?'priorities':'power';
+    else if(n===3)qid=!asked.has('power')?'power':'budget';
+    else if(n===4)qid=!asked.has('budget')?'budget':'when';
+    if(!qid||n>=5)return localRecs(answers);
     const q=JSON.parse(JSON.stringify(FQ[qid]));
-    if(qid==='power'){if(a.towing==='caravan'||a.towing==='heavy')q.options[0].note='EV range drops ~40% when towing';if(a.distance==='over80')q.options[0].note='516 km range covers it with home charging';if(a.worktype==='site')q.options[2].note='Diesel 4WDs own this brief';}
+    if(qid==='power'){if(a.towing==='caravan'||a.towing==='heavy')q.options[0].note='EV range drops ~40% when towing';if(a.distance==='over80')q.options[0].note='bZ4X range covers it with home charging';if(a.worktype==='site'||a.terrain==='offroad')q.options[2].note='Diesel 4WDs own this brief';if(a.people==='more')q.options[1].note='Kluger is the only seven-seat hybrid';}
+    if(qid==='terrain'&&a.towing==='heavy')q.options[2].note='Only Prado, LandCruiser and HiLux tow this on dirt';
+    if(qid==='priorities'&&a.people==='more')q.options[2].sub='Seven seats and the boot behind them';
+    if(qid==='budget'){const cheapest=Math.min(...CAT.models.filter(m=>(a.use!=='tow'||m.towKg>=1500)&&(a.people!=='more'||m.seats>=7)).map(m=>m.fromPrice));q.options[0].note=cheapest>45000?'Nothing on the shortlist starts under $45k':'Several fit';}
     if(qid==='when'){const ready=units().filter(u=>!u.transit&&u.site==='par').length;q.options[0].note=ready+' cars on the lot today';}
     return{step:n+1,of:5,question:{id:qid,text:q.text,why:q.why,options:q.options},trace:[{kind:'kb',label:'KB · finder-guide'},{kind:'kb',label:'KB · spec sheets'},...(qid==='when'?[{kind:'domo',label:'Domo · stock_by_site'}]:[])]};}
   function localRecs(answers){const a=Object.fromEntries(answers.map(x=>[x.id,x.value]));const out=[];
@@ -721,11 +736,14 @@ body.drawer-open .drawer{transform:none}
       if(a.use==='commute'){if(has('commute'))s+=3;if(m.body==='ute')s-=2;if(m.body==='suv-large')s-=1;if(has('commute'))why.push(m.blurb);}
       if(a.use==='family'){if(has('family'))s+=3;if(m.seats>=7)s+=1;if(m.body==='hatch'||m.body==='coupe')s-=2;if(has('family'))why.push(m.seats+' seats and a boot that takes the holidays');}
       if(a.use==='tow'){if(m.towKg>=3000)s+=3;else if(m.towKg>=2000)s+=1;else s-=3;if(m.towKg>=2000)why.push(m.towKg.toLocaleString()+' kg braked towing');}
-      if(a.use==='work'){if(m.body==='ute')s+=4;if(has('offroad'))s+=1;if(m.body==='coupe')s-=3;}
-      if(a.distance==='under30'&&has('city'))s+=2;if(a.distance==='over80'){if(has('distance')||has('comfort'))s+=2;if(m.powertrain==='ev')s-=1;}
+      if(a.use==='work'){if(m.body==='ute')s+=4;if(has('off-road'))s+=1;if(m.body==='coupe')s-=3;}
+      if(a.distance==='under30'&&has('city'))s+=2;if(a.distance==='over80'){if(has('comfort')||has('touring'))s+=2;if(m.powertrain==='ev')s-=1;}
       if(a.people==='more'){if(m.seats>=7){s+=3;why.push('Seven seats');}else{s-=2;watch.push('Five seats only');}}if(a.people==='four5'&&has('family'))s+=1;
       if(a.towing){const need={camper:1500,caravan:2500,heavy:3500}[a.towing];if(m.towKg>=need){s+=3;why.push(m.towKg.toLocaleString()+' kg braked covers it');}else{s-=3;watch.push('Tows '+m.towKg.toLocaleString()+' kg, under what you need');}}
-      if(a.worktype==='tools'&&m.body==='ute'){s+=3;why.push('One tonne payload in the tray');}if(a.worktype==='site'){if(has('offroad'))s+=3;}if(a.worktype==='client'){if(has('comfort')||has('commute'))s+=2;if(m.body==='ute')s-=2;}
+      if(a.worktype==='tools'&&m.body==='ute'){s+=3;why.push('One tonne payload in the tray');}if(a.worktype==='site'){if(has('off-road'))s+=3;}
+      if(a.terrain==='gravel'){if(has('off-road')||has('awd'))s+=2;if(m.body==='coupe'||m.body==='hatch')s-=2;}if(a.terrain==='offroad'){if(has('off-road')){s+=4;why.push('Low range and real off-road hardware');}else{s-=4;watch.push('Not built for serious off-road');}}
+      if(a.priorities==='safety'&&has('safety'))s+=2;if(a.priorities==='economy'&&has('efficiency'))s+=2;if(a.priorities==='space'&&(has('seven-seats')||has('comfort')))s+=2;if(a.priorities==='tech'&&(has('tech')||has('premium')))s+=2;if(a.worktype==='client'){if(has('comfort')||has('commute'))s+=2;if(m.body==='ute')s-=2;}
+      if(a.when==='now'&&!a.budget){}
       if(a.power==='ev'){if(m.powertrain==='ev'){s+=5;why.push('Full electric, around 500 km of range');}else s-=1;}
       if(a.power==='hybrid'){if(m.powertrain==='hybrid'){s+=2;why.push('Hybrid: '+m.powertrainLabel);}else if(m.powertrain==='ev')s-=1;}
       if(a.power==='diesel'){if(m.powertrain==='diesel'){s+=2;why.push(m.powertrainLabel);}if(m.powertrain==='ev')s-=4;}
@@ -753,7 +771,7 @@ body.drawer-open .drawer{transform:none}
       <div class="dots">${[0,1,2,3,4].map(i=>`<i class="${i<n?'done':i===n?'cur':''}"></i>`).join('')}</div>
       <div class="fopts">${q.options.map(o=>`<button class="fopt" data-opt="${esc(o.id)}" data-label="${esc(o.label)}"><b>${esc(o.label)}</b>${o.sub?`<span>${esc(o.sub)}</span>`:''}${o.note?`<span class="note">${esc(o.note)}</span>`:''}</button>`).join('')}</div>
       <div class="fnav"><div class="answers">${answersChips()}</div><div>${n>0?'<button class="btn ghost sm" id="finderBack">Back</button>':''}</div></div>
-      <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">ARAG · /ask · answer_json_schema</span></div>
+      <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">${API?'ARAG · /ask · answer_json_schema':'local rule engine (offline) · same JSON contract'}</span></div>
       <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
     v.querySelector('#finderClose').onclick=closeFinder;const bk=v.querySelector('#finderBack');if(bk)bk.onclick=()=>{finder.answers.pop();renderFinderStep();};
     v.querySelectorAll('.fopt').forEach(b=>b.onclick=()=>{finder.answers.push({id:q.id,value:b.dataset.opt,label:b.dataset.label});renderFinderStep();});
@@ -768,7 +786,7 @@ body.drawer-open .drawer{transform:none}
           <div class="ravail">${av.onLot?av.onLot+' on the lot · ':''}${av.nearby?av.nearby+' nearby · ':''}${av.inTransit?av.inTransit+' in transit · ':''}${esc(av.soonest||'')}</div>
           <div class="ract"><button class="btn ${i===0?'':'secondary'} sm" data-rec="${m.id}:${g.id}">Configure this car</button></div></div>`;}).join('')}</div>
       <div class="fnav"><div class="answers">${answersChips()}</div><button class="btn ghost sm" id="finderReset">Start over</button></div>
-      <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">ARAG · /ask · answer_json_schema</span></div>
+      <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">${API?'ARAG · /ask · answer_json_schema':'local rule engine (offline) · same JSON contract'}</span></div>
       <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
     v.querySelector('#finderClose').onclick=closeFinder;v.querySelector('#finderReset').onclick=()=>{finder.answers=[];finder.done=false;finder.recs=null;renderFinderStep();};
     v.querySelectorAll('[data-back]').forEach(c=>c.onclick=()=>{finder.answers=finder.answers.slice(0,+c.dataset.back);finder.done=false;renderFinderStep();});
@@ -786,7 +804,7 @@ body.drawer-open .drawer{transform:none}
       ph:'Ask about the car, pricing, finance or delivery…',ask:'Ask',note:'Detected: English. The assistant answers in whatever language you write in.',
       free:'This prototype isn’t connected to its knowledge box on this host, so only the four suggested questions are scripted. On the live build this goes to the Progress Agentic RAG agent, which answers from the knowledge box and checks Domo for stock when it needs to.',switched:'Assistant switched to English',
       q:{tow:{steps:['Reading RAV4 spec sheet · towing','Reading the towing guide','Checking Prado, Kluger and HiLux stock nearby'],a:'The RAV4 Hybrid AWD tows 1,500 kg braked, which suits a camper or a small trailer, but a 2 to 2.5 t caravan is beyond it. For that weight you want a Kluger at 2,000 kg if the van is light, or a Prado, LandCruiser 300 or HiLux at 3,500 kg with margin to spare. All of them need the Genuine Towing Pack. There’s a Prado GXL with the pack already fitted at our Liverpool site.',tr:[['kb','KB · RAV4 spec sheet'],['kb','KB · towing guide'],['domo','Domo · stock_by_site']],acts:[['Show the Prado GXL at Liverpool','unit:HL-2150'],['Add the Towing Pack to this build','pack:tow']]},
-        grade:{steps:['Reading RAV4 grade comparison','Checking GXL and Cruiser stock within 35 km'],a:'GXL gives you the 10.5-inch display, wireless charging, dual-zone climate and the full Toyota Safety Sense suite. Cruiser adds leather-accented heated seats, a power tailgate, JBL audio, the panoramic view monitor and 19-inch wheels, for about $6,000 more. If it’s the safety kit you’re after, GXL already has it. Stock-wise there’s a Cruiser on our lot now in Graphite, and a GXL arriving in 9 days.',tr:[['kb','KB · RAV4 grades'],['domo','Domo · stock_by_site · 6 min ago']],acts:[['Choose GXL','grade:gxl'],['Choose Cruiser','grade:cruiser']]},
+        grade:{steps:['Reading RAV4 grade comparison','Checking GXL and Cruiser stock within 35 km'],a:'GXL gives you the 10.5-inch display, wireless charging, dual-zone climate and the full Toyota Safety Sense suite. Cruiser adds leather-accented heated seats, a power tailgate, JBL audio, the panoramic view monitor and 19-inch wheels, for about $8,400 more. If it’s the safety kit you’re after, GXL already has it. Stock-wise there’s a Cruiser on our lot now in Graphite, and a GXL arriving in 9 days.',tr:[['kb','KB · RAV4 grades'],['domo','Domo · stock_by_site']],acts:[['Choose GXL','grade:gxl'],['Choose Cruiser','grade:cruiser']]},
         holiday:{steps:['Reading NSW school term dates 2026','Checking RAV4 factory order ETA','Checking stock and inbound cars that fit your build'],a:'NSW school holidays start on Friday 18 December. A RAV4 factory order placed today lands mid-February, so that won’t make it. Two ways to get there in time: the Graphite Cruiser on our lot now, with $1,800 off because it’s been here a while, or the Saturn Blue GXL with the Towing Pack that arrives in 9 days. Either is ready well before the 18th.',tr:[['kb','KB · NSW term dates 2026'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],acts:[['Switch to the Graphite Cruiser','unit:HL-2231'],['Switch to the Saturn Blue arrival','unit:HL-2402']]},
         deal:{steps:['Checking aged stock actions','Reading the ready-now bonus policy'],a:'Yes, two. A Graphite RAV4 Cruiser here at Parramatta, $1,800 off drive-away. And a Graphite Kluger Grande at Hornsby, $2,400 off, which we can have here by Thursday. Both are current model year with the full five-year warranty. The discount is there because they’ve been on the lot longer than we’d like, not because anything is wrong with them.',tr:[['domo','Domo · aged_stock_actions · priority 1, 2'],['kb','KB · dealer policy']],acts:[['Show me the RAV4 Cruiser','unit:HL-2231'],['Show me the Kluger Grande','unit:HL-1941']]}}},
     zh:{greet:'你好，我是 Harbourline 助手。您正在 Harbourline Toyota Parramatta 配置一辆丰田。我可以查看本店以及 Hornsby、Penrith 和 Liverpool 的现车库存，也熟悉规格表、价格、保修和金融条款。有任何问题都可以问我，用什么语言都可以。',
@@ -794,7 +812,7 @@ body.drawer-open .drawer{transform:none}
       ph:'询问车辆、价格、金融或交车…',ask:'发送',note:'已识别：中文。您用什么语言提问，助手就用什么语言回答。',
       free:'此原型在当前主机上未连接知识库，只接入了四个建议问题。在正式版本中，问题会交给 Progress Agentic RAG 代理，它从知识库中作答，并在需要时通过 Domo 查询库存。',switched:'助手已切换为中文',
       q:{tow:{steps:['正在查阅 RAV4 规格表 · 拖曳','正在查阅拖曳指南','正在查询附近的 Prado、Kluger 和 HiLux 库存'],a:'RAV4 混动四驱的制动拖曳能力为 1,500 公斤，适合露营拖车或小型拖车，但 2 至 2.5 吨的房车超出了它的能力。这个重量建议选择 Kluger（2,000 公斤，房车较轻时），或 Prado、LandCruiser 300、HiLux（3,500 公斤，余量充足）。它们都需要加装原厂拖曳套件。我们 Liverpool 店有一辆已装好套件的 Prado GXL。',tr:[['kb','知识库 · RAV4 规格表'],['kb','知识库 · 拖曳指南'],['domo','Domo · stock_by_site']],acts:[['查看 Liverpool 的 Prado GXL','unit:HL-2150'],['为当前配置添加拖曳套件','pack:tow']]},
-        grade:{steps:['正在查阅 RAV4 版本对比','正在查询 35 公里内 GXL 和 Cruiser 库存'],a:'GXL 配备 10.5 英寸屏幕、无线充电、双区空调和完整的 Toyota Safety Sense 安全套件。Cruiser 增加真皮加热座椅、电动尾门、JBL 音响、全景影像和 19 英寸轮毂，价格高出约 $6,000。如果您看重的是安全配置，GXL 已经齐全。库存方面，本店现有一辆石墨灰 Cruiser，另有一辆 GXL 将在 9 天后到店。',tr:[['kb','知识库 · RAV4 版本'],['domo','Domo · stock_by_site · 6 分钟前']],acts:[['选择 GXL','grade:gxl'],['选择 Cruiser','grade:cruiser']]},
+        grade:{steps:['正在查阅 RAV4 版本对比','正在查询 35 公里内 GXL 和 Cruiser 库存'],a:'GXL 配备 10.5 英寸屏幕、无线充电、双区空调和完整的 Toyota Safety Sense 安全套件。Cruiser 增加真皮加热座椅、电动尾门、JBL 音响、全景影像和 19 英寸轮毂，价格高出约 $8,400。如果您看重的是安全配置，GXL 已经齐全。库存方面，本店现有一辆石墨灰 Cruiser，另有一辆 GXL 将在 9 天后到店。',tr:[['kb','知识库 · RAV4 版本'],['domo','Domo · stock_by_site']],acts:[['选择 GXL','grade:gxl'],['选择 Cruiser','grade:cruiser']]},
         holiday:{steps:['正在查阅 2026 年新州学期日期','正在查询 RAV4 工厂订单交付时间','正在查询符合您配置的现车和在途车'],a:'新南威尔士州的学校假期从 12 月 18 日（周五）开始。今天下单的 RAV4 工厂订单要到二月中旬才能到车，赶不上。有两种方式可以按时提车：一辆现在就在本店的石墨灰 Cruiser，因为在店时间较长可优惠 $1,800；或一辆 9 天后到店、已装拖曳套件的土星蓝 GXL。两辆都能在 18 日之前准备好。',tr:[['kb','知识库 · 2026 新州学期日期'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],acts:[['换成石墨灰 Cruiser','unit:HL-2231'],['换成即将到店的土星蓝','unit:HL-2402']]},
         deal:{steps:['正在查询库龄车处理方案','正在查阅现车优惠政策'],a:'有，两辆。一辆在 Parramatta 本店的石墨灰 RAV4 Cruiser，落地价优惠 $1,800。另一辆在 Hornsby 的石墨灰 Kluger Grande，优惠 $2,400，周四可调到本店。两辆都是当前年款，享受完整五年保修。优惠是因为它们在店时间比我们希望的长，并不是车有任何问题。',tr:[['domo','Domo · aged_stock_actions · 优先级 1、2'],['kb','知识库 · 经销商政策']],acts:[['看看这辆 RAV4 Cruiser','unit:HL-2231'],['看看这辆 Kluger Grande','unit:HL-1941']]}}},
     vi:{greet:'Xin chào, tôi là trợ lý Harbourline. Bạn đang cấu hình một chiếc Toyota tại Harbourline Toyota Parramatta. Tôi có thể xem xe sẵn có tại đây và tại Hornsby, Penrith, Liverpool, đồng thời nắm rõ thông số, giá, bảo hành và điều khoản tài chính. Hãy hỏi tôi bất cứ điều gì, bằng ngôn ngữ nào cũng được.',
@@ -802,7 +820,7 @@ body.drawer-open .drawer{transform:none}
       ph:'Hỏi về xe, giá, tài chính hoặc giao xe…',ask:'Gửi',note:'Đã nhận diện: Tiếng Việt. Trợ lý trả lời bằng ngôn ngữ bạn viết.',
       free:'Bản mô phỏng này chưa kết nối kho tri thức trên máy chủ hiện tại, nên chỉ có bốn câu hỏi gợi ý được lập trình sẵn. Ở bản thật, câu hỏi được chuyển đến tác tử Progress Agentic RAG, trả lời từ kho tri thức và kiểm tra tồn kho qua Domo khi cần.',switched:'Trợ lý đã chuyển sang Tiếng Việt',
       q:{tow:{steps:['Đang đọc thông số RAV4 · kéo moóc','Đang đọc hướng dẫn kéo moóc','Đang kiểm tra xe Prado, Kluger và HiLux gần đây'],a:'RAV4 Hybrid AWD kéo được 1.500 kg có phanh, phù hợp với camper hoặc rơ-moóc nhỏ, nhưng caravan 2 đến 2,5 tấn thì vượt quá khả năng. Với trọng lượng đó bạn nên chọn Kluger (2.000 kg nếu caravan nhẹ), hoặc Prado, LandCruiser 300, HiLux (3.500 kg, còn dư nhiều). Tất cả đều cần Gói Kéo Moóc chính hãng. Chúng tôi có một chiếc Prado GXL đã lắp sẵn gói này tại Liverpool.',tr:[['kb','KB · Thông số RAV4'],['kb','KB · Hướng dẫn kéo moóc'],['domo','Domo · stock_by_site']],acts:[['Xem Prado GXL tại Liverpool','unit:HL-2150'],['Thêm Gói Kéo Moóc vào cấu hình này','pack:tow']]},
-        grade:{steps:['Đang đọc bảng so sánh phiên bản RAV4','Đang kiểm tra xe GXL và Cruiser trong 35 km'],a:'GXL có màn hình 10,5 inch, sạc không dây, điều hòa hai vùng và đầy đủ gói Toyota Safety Sense. Cruiser thêm ghế da sưởi, cốp điện, âm thanh JBL, camera toàn cảnh và mâm 19 inch, đắt hơn khoảng 6.000 đô. Nếu bạn cần gói an toàn thì GXL đã có đủ. Về xe sẵn có, có một chiếc Cruiser màu Graphite tại đây, và một chiếc GXL sẽ về sau 9 ngày.',tr:[['kb','KB · Phiên bản RAV4'],['domo','Domo · stock_by_site · 6 phút trước']],acts:[['Chọn GXL','grade:gxl'],['Chọn Cruiser','grade:cruiser']]},
+        grade:{steps:['Đang đọc bảng so sánh phiên bản RAV4','Đang kiểm tra xe GXL và Cruiser trong 35 km'],a:'GXL có màn hình 10,5 inch, sạc không dây, điều hòa hai vùng và đầy đủ gói Toyota Safety Sense. Cruiser thêm ghế da sưởi, cốp điện, âm thanh JBL, camera toàn cảnh và mâm 19 inch, đắt hơn khoảng 8.400 đô. Nếu bạn cần gói an toàn thì GXL đã có đủ. Về xe sẵn có, có một chiếc Cruiser màu Graphite tại đây, và một chiếc GXL sẽ về sau 9 ngày.',tr:[['kb','KB · Phiên bản RAV4'],['domo','Domo · stock_by_site']],acts:[['Chọn GXL','grade:gxl'],['Chọn Cruiser','grade:cruiser']]},
         holiday:{steps:['Đang đọc lịch học kỳ NSW 2026','Đang kiểm tra thời gian đặt RAV4 từ nhà máy','Đang kiểm tra xe sẵn có và xe sắp về phù hợp cấu hình'],a:'Kỳ nghỉ học ở NSW bắt đầu thứ Sáu 18 tháng 12. Đặt RAV4 từ nhà máy hôm nay thì giữa tháng 2 mới về, nên sẽ không kịp. Có hai cách để kịp: chiếc Cruiser màu Graphite đang có sẵn tại đây, giảm 1.800 đô vì đã ở bãi một thời gian, hoặc chiếc GXL màu Saturn Blue có Gói Kéo Moóc sẽ về sau 9 ngày. Cả hai đều sẵn sàng trước ngày 18.',tr:[['kb','KB · Lịch học kỳ NSW 2026'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],acts:[['Chuyển sang Cruiser Graphite','unit:HL-2231'],['Chuyển sang Saturn Blue sắp về','unit:HL-2402']]},
         deal:{steps:['Đang kiểm tra xe tồn lâu','Đang đọc chính sách ưu đãi xe sẵn có'],a:'Có, hai chiếc. Một chiếc RAV4 Cruiser màu Graphite tại Parramatta, giảm 1.800 đô giá lăn bánh. Và một chiếc Kluger Grande màu Graphite tại Hornsby, giảm 2.400 đô, có thể về đây vào thứ Năm. Cả hai đều là đời hiện tại, bảo hành đủ năm năm. Giảm giá vì xe ở bãi lâu hơn mong muốn, không phải vì xe có vấn đề gì.',tr:[['domo','Domo · aged_stock_actions · ưu tiên 1, 2'],['kb','KB · Chính sách đại lý']],acts:[['Xem RAV4 Cruiser','unit:HL-2231'],['Xem Kluger Grande','unit:HL-1941']]}}}
   };
@@ -920,7 +938,7 @@ body.drawer-open .drawer{transform:none}
         powered:['rag','domo','page'],
         how:['The agent resolves the deadline from the knowledge box (NSW term dates) or from what the customer typed.','It calls the ETA tool for a factory order and the stock tool for exact and close matches.','It compares dates and recommends only cars that arrive before the deadline, with the ready-now bonus if one applies.','Each recommendation carries a build change the page can apply in one tap.'],
         contract:'<i>KB</i>  NSW term dates 2026  ·  <b>Domo</b>  order_bank_eta · stock_by_site · inbound_pipeline · aged_stock_actions',
-        diagram:{cols:4,rows:2,nodes:[{id:'k',label:'Term dates',kind:'kb',c:0,r:0},{id:'e',label:'order_bank_eta',kind:'domo',c:0,r:1},{id:'s',label:'stock + inbound',kind:'domo',c:1,r:1},{id:'a',label:'Agent',sub:'compare dates, pick cars',kind:'rag',c:2,r:0},{id:'p',label:'Two offers',sub:'with build-change buttons',kind:'page',c:3,r:0}],edges:[{from:'k',to:'a',label:'deadline'},{from:'e',to:'a',label:'late Feb'},{from:'s',to:'a',label:'now · 9 days'},{from:'a',to:'p'}]}},
+        diagram:{cols:4,rows:2,nodes:[{id:'k',label:'Term dates',kind:'kb',c:0,r:0},{id:'e',label:'order_bank_eta',kind:'domo',c:0,r:1},{id:'s',label:'stock + inbound',kind:'domo',c:1,r:1},{id:'a',label:'Agent',sub:'compare dates, pick cars',kind:'rag',c:2,r:0},{id:'p',label:'Two offers',sub:'with build-change buttons',kind:'page',c:3,r:0}],edges:[{from:'k',to:'a',label:'deadline'},{from:'e',to:'a',label:'mid Feb'},{from:'s',to:'a',label:'now · 9 days'},{from:'a',to:'p'}]}},
       {id:'multilingual',name:'Any language',target:'f-assist',
         sees:'Switch the assistant to 中文 or Tiếng Việt. The greeting, suggestions and answers follow, including the Domo-sourced parts.',
         powered:['rag','page'],
@@ -1030,7 +1048,9 @@ body.drawer-open .drawer{transform:none}
   async function probe(){try{const r=await fetch('/api/health',{cache:'no-store'});if(!r.ok)return;const h=await r.json();if(!h||h.ok===false)return;API=true;
       try{const c=await fetch('/api/catalog');if(c.ok){const cat=await c.json();if(cat&&cat.models&&cat.models.length)CAT=cat;}}catch(e){}
       try{const s=await fetch('/api/stock');if(s.ok){const st=await s.json();if(st&&st.stock_by_site)STOCK=normaliseStock(st);}}catch(e){}
-      normalise();update();renderAssistant(false);addSys('Connected to the knowledge box'+(h.domo==='live'?' and Domo':' · Domo stand-in'));}catch(e){}}
+      normalise();update();renderAssistant(false);setLive(true);addSys('Connected to the knowledge box'+(h.domo==='live'?' and Domo':' · Domo stand-in'));}catch(e){}}
+  function setLive(on){const b=document.querySelector('.ahead .live');if(!b)return;b.textContent=on?'LIVE':'OFFLINE';b.style.background=on?'':'var(--warn-bg)';b.style.color=on?'':'var(--warn-fg)';}
+  setLive(false);
   update();renderAssistant(true);probe();
 })();
 </script>
