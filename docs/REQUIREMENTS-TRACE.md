@@ -33,3 +33,44 @@ Snapshot: 13 Oct 2026, read from `src/configurator.html`, `content/`, `scripts/`
 | Multilingual | see R1c | partial | |
 | Honest discounts | `localOffers`, `wayRow`, KB `dealer-policy.md` | partial | Saving = headroom; reason stated. Missing validity, disclaimer and computed freshness (BL-P1-09, BL-P0-04) |
 | Real citations | trace labels in `T` and `localNext/localRecs` | partial | Labels like "KB · finder-guide" and "KB · NSW term dates 2026" now map to real files, but the scripted holiday answer contradicts the term-dates file (BL-P0-05) |
+
+
+## Harbourline DMS (sales back office)
+
+Source: `docs/DMS-SPEC.md` (spec v1, 14 Oct 2026), PRD `docs/DMS-PRD.md`, demo `docs/DMS-DEMO-SCRIPT.md`. File and endpoint names are the planned locations; engineering updates paths and status as work lands. Status key as above; all rows start as **planned**.
+
+| # | Spec item | Where it should be implemented | Status | Evidence / gap |
+|---|---|---|---|---|
+| DMS-1 | Tenancy: Harbourline Toyota, sites par/hor/pen/liv | content/dms/data/sites.json; scripts/dms-seed.mjs; site switcher in public/dms/dms.js | planned | |
+| DMS-2 | Demo logins and roles gm/sales_manager/salesperson/dxm/finance, prototype auth, bearer token in memory | server/dms/auth.mjs; POST /dms/api/auth/login, GET /auth/me; #/login; #/settings (logins) | planned | |
+| DMS-3 | Data model: sites, staff, customers, vehicles, leads, test_drives, deals, trade_ins, finance_apps, promotions, campaigns, domo_signals, configurator_events, bookings, documents, targets | scripts/dms-seed.mjs; content/dms/data/*.json; content/dms/data/README.md | planned | |
+| DMS-4 | Vehicles include the 22 configurator units with the same ids plus ~380 historic and ~40 ordered units | scripts/dms-seed.mjs reading content/domo/stock_by_site.json; content/dms/data/vehicles.json | planned | |
+| DMS-5 | Volumes (customers ~1,400, leads ~5,500, test drives ~1,900, deals ~2,100, finance ~1,300, trade-ins ~900, campaigns 18, documents 60), seasonality, seeded PRNG, 14 salespeople | scripts/dms-seed.mjs; tests/dms-smoke.mjs (counts, determinism) | planned | |
+| DMS-6 | Common list params and paginated response shape | server/dms/router.mjs (list helper) | planned | |
+| DMS-7 | GET /health, /openapi.json, /docs generated from a route table | server/dms/openapi.mjs; GET /dms/api/health, /openapi.json, /docs | planned | |
+| DMS-8 | CRUD-lite routes for customers, leads, test-drives, deals, vehicles, trade-ins, finance-apps, promotions, campaigns, staff, sites, documents; POST /deals/:id/events | server/dms/routes-*.mjs; /dms/api/* | planned | |
+| DMS-9 | KPIs: /kpi/overview, /kpi/series, /kpi/leaderboard | server/dms/kpi.mjs; #/dashboard | planned | |
+| DMS-10 | Domo: /domo/datasets, /domo/export/:dataset.csv for every table plus derived sales_daily, stock_ageing_daily, funnel_weekly, configurator_events, dealer_signals; /domo/signals | server/dms/domo.mjs; content/dms/domo-datasets.json; #/insights | planned | |
+| DMS-11 | Configurator bridge: POST /api/testdrive/book creates a lead with session, finder answers, viewed, handover; GET /dxm/overview; GET /dxm/handovers | server/testdrive.mjs (hook); server/dms/dxm.mjs; #/dxm; #/leads/:id | planned | |
+| DMS-12 | ARAG POST /ask with scope manual/policy/all, label filters topic/manual, topic/policy | server/dms/ask.mjs; server/arag.mjs; content/dms-kb/; #/assistant (Ask the manual) | planned | |
+| DMS-13 | ARAG POST /agent/query live-ERP retrieval agent with erp.search, erp.kpi, erp.get tools and evidence[]; document chosen implementation | server/dms/agent.mjs; #/assistant (Ask the ERP) | planned | |
+| DMS-14 | POST /deals/:id/summary: summary, next best action, risks | server/dms/summary.mjs; #/deals/:id | planned | |
+| DMS-15 | POST /leads/:id/followup {tone, channel}: grounded, no invented promotions | server/dms/followup.mjs; #/leads/:id | planned | |
+| DMS-16 | POST /documents/:id/process and /verify; per-kind extraction schemas; confidence; verifyFields | server/dms/documents.mjs; content/dms/samples/*.pdf; #/documents | planned | |
+| DMS-17 | GET /search: semantic find plus ERP text search, merged with source labels | server/dms/search.mjs; global search in public/dms/dms.js | planned | |
+| DMS-18 | GET /arag/status: KB id, counts by topic, agent ids, MCP URL, no tokens | server/dms/arag-status.mjs; #/settings | planned | |
+| DMS-19 | UI shell: ink rail, band, site switcher, user menu, hash router, no build step | public/dms/index.html; dms.css; dms.js | planned | |
+| DMS-20 | Pages: login, dashboard, leads, test-drives, deals, stock, customers, promotions, campaigns, dxm, documents, assistant, insights, settings | public/dms/dms.js (one module per route) | planned | |
+| DMS-21 | Dashboard Domo cards in inline SVG, each labelled with dataset | public/dms/dms.js #/dashboard | planned | |
+| DMS-22 | Stock page with Domo signals, move priority and why | public/dms/dms.js #/stock; GET /vehicles; GET /domo/signals | planned | |
+| DMS-23 | Promotions: Domo targets to ARAG-composed promotions, provenance, campaign attachment | server/dms/promotions.mjs (no endpoint in spec, see DMS-PRD gaps); server/promotions.mjs; #/promotions | planned | |
+| DMS-24 | ARAG tag and Domo tag on every powered element; data-layer convention | public/dms/dms.css (.tag-arag, .tag-domo); dms.js | planned | |
+| DMS-25 | Deliverable Data: seed script, data README, domo-datasets.json | scripts/dms-seed.mjs; content/dms/data/README.md; content/dms/domo-datasets.json | planned | |
+| DMS-26 | Deliverable Content: KB manual and policies with frontmatter, 6 sample PDFs, ingest conventions, labelset topics manual/policy/document | content/dms-kb/*.md; content/dms/samples/*.pdf; scripts/ingest.mjs; scripts/provision.mjs | planned | |
+| DMS-27 | Deliverable API: server/dms mounted at /dms/api, static /dms to public/dms | server/dms/*.mjs; server/index.mjs | planned | |
+| DMS-28 | Deliverable Tests: dms smoke test | tests/dms-smoke.mjs | planned | |
+| DMS-N1 | NFR: no secrets in browser (D-NFR4) | grep public/dms; server/dms/* | planned | |
+| DMS-N2 | NFR: no PII in events (D-NFR2) | content/dealer/events.jsonl; configurator_events export | planned | |
+| DMS-N3 | NFR: prototype and honesty labels (D-NFR1, D-NFR5) | public/dms/index.html band; #/insights; #/settings | planned | |
+| DMS-N4 | NFR: graceful fallback when KB unreachable, 15 s timeouts (D-NFR8) | server/dms/*.mjs; public/dms/dms.js | planned | |
+| DMS-N5 | Demo script 12 minutes, PRD | docs/DMS-DEMO-SCRIPT.md; docs/DMS-PRD.md | planned | |

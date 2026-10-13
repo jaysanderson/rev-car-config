@@ -1,0 +1,225 @@
+[
+  {
+    "file": "contract-D-10482-raman.pdf",
+    "kind": "contract",
+    "title": "Signed contract of sale D-10482 - Priya Raman",
+    "dealNo": "D-10482",
+    "expected": {
+      "dealNo": "D-10482",
+      "contractDate": "2026-10-12",
+      "customer": "Priya Raman",
+      "vin": "JTMW079192231B000",
+      "stockNo": "HL-2231",
+      "vehicle": "2026 Toyota RAV4 Cruiser Hybrid AWD",
+      "vehiclePrice": 59240,
+      "onRoadCosts": 3550,
+      "accessories": [
+        {
+          "name": "Protection Pack (fitted)",
+          "price": 890
+        },
+        {
+          "name": "Towing Pack",
+          "price": 1650
+        }
+      ],
+      "accessoriesTotal": 2540,
+      "promotions": [],
+      "readyNowBonus": 1800,
+      "discount": 0,
+      "driveAway": 63530,
+      "tradeIn": "2017 Mazda CX-5 Maxx Sport, rego EKP42L",
+      "tradeInAllowance": 14500,
+      "deposit": 1000,
+      "amountFinanced": 48030,
+      "lender": "Toyota Finance",
+      "termMonths": 60,
+      "deliveryDate": "2026-10-21",
+      "salesperson": "Mia Thompson",
+      "buyerSigned": true,
+      "dealerSigned": true
+    }
+  },
+  {
+    "file": "contract-D-10517-okafor.pdf",
+    "kind": "contract",
+    "title": "Signed contract of sale D-10517 - Daniel Okafor",
+    "dealNo": "D-10517",
+    "expected": {
+      "dealNo": "D-10517",
+      "contractDate": "2026-10-13",
+      "customer": "Daniel Okafor",
+      "vin": "5TDB633521941A000",
+      "stockNo": "HL-1941",
+      "vehicle": "2026 Toyota Kluger Grande Hybrid AWD",
+      "vehiclePrice": 88640,
+      "onRoadCosts": 3950,
+      "accessories": [
+        {
+          "name": "Roof & Cargo Pack",
+          "price": 1290
+        }
+      ],
+      "accessoriesTotal": 1290,
+      "promotions": [
+        "Complimentary 3-year Toyota Service Advantage (promo-tsa-aged)"
+      ],
+      "readyNowBonus": 2400,
+      "discount": 500,
+      "driveAway": 90980,
+      "tradeIn": "2015 Ford Territory TS, rego CWR18H",
+      "tradeInAllowance": 9800,
+      "deposit": 2000,
+      "amountFinanced": 79180,
+      "lender": "Macquarie",
+      "termMonths": 48,
+      "deliveryDate": "2026-10-24",
+      "salesperson": "Ben Kowalski",
+      "buyerSigned": true,
+      "dealerSigned": true
+    }
+  },
+  {
+    "file": "trade-in-EKP42L-cx5.pdf",
+    "kind": "trade_in_form",
+    "title": "Trade-in appraisal TI-30418 - 2017 Mazda CX-5 Maxx Sport",
+    "dealNo": "D-10482",
+    "expected": {
+      "appraisalNo": "TI-30418",
+      "dealNo": "D-10482",
+      "rego": "EKP42L",
+      "state": "NSW",
+      "vin": "JM0KF4W7A00381624",
+      "make": "Mazda",
+      "model": "CX-5 Maxx Sport",
+      "year": 2017,
+      "km": 98450,
+      "owner": "Priya Raman",
+      "condition": [
+        "Light scratch on rear bumper, left corner",
+        "Stone chips on bonnet",
+        "Driver seat bolster wear",
+        "No warning lights; drives well; no accident history declared"
+      ],
+      "reconditioningTotal": 1000,
+      "valuation": 14500,
+      "appraiser": "Luke Harris",
+      "ownerSigned": true
+    }
+  },
+  {
+    "file": "trade-in-CWR18H-territory.pdf",
+    "kind": "trade_in_form",
+    "title": "Trade-in appraisal TI-30441 - 2015 Ford Territory TS",
+    "dealNo": "D-10517",
+    "expected": {
+      "appraisalNo": "TI-30441",
+      "dealNo": "D-10517",
+      "rego": "CWR18H",
+      "state": "NSW",
+      "vin": "6FPAAAJGSWFA41277",
+      "make": "Ford",
+      "model": "Territory TS",
+      "year": 2015,
+      "km": 162300,
+      "owner": "Daniel Okafor",
+      "condition": [
+        "Hail damage to roof and bonnet (approx. 40 dents, unrepaired)",
+        "Windscreen chip passenger side",
+        "Front tyres near replacement",
+        "One key only",
+        "Minor oil seep at sump; no warning lights"
+      ],
+      "reconditioningTotal": 3920,
+      "valuation": 9800,
+      "appraiser": "Grace Lin",
+      "ownerSigned": true
+    }
+  },
+  {
+    "file": "invoice-SCA-204871.pdf",
+    "kind": "supplier_invoice",
+    "title": "Tax invoice SCA-204871 - Southern Cross Auto Accessories Pty Ltd",
+    "expected": {
+      "supplier": "Southern Cross Auto Accessories Pty Ltd",
+      "abn": "53 004 821 000",
+      "invoiceNo": "SCA-204871",
+      "invoiceDate": "2026-10-08",
+      "dueDate": "2026-11-07",
+      "purchaseOrder": "HL-PO-7731",
+      "billTo": "Harbourline Toyota - Parramatta",
+      "lines": [
+        {
+          "description": "Towbar kit RAV4 2026, 2,000 kg, incl. wiring (HL-2231 / D-10482)",
+          "qty": 1,
+          "unitPrice": 612.0,
+          "amount": 612.0
+        },
+        {
+          "description": "Weather shields RAV4, set of 4",
+          "qty": 2,
+          "unitPrice": 118.5,
+          "amount": 237.0
+        },
+        {
+          "description": "Rubber cargo liner RAV4",
+          "qty": 3,
+          "unitPrice": 74.9,
+          "amount": 224.7
+        },
+        {
+          "description": "Fitting labour (hours)",
+          "qty": 2.5,
+          "unitPrice": 95.0,
+          "amount": 237.5
+        }
+      ],
+      "subtotal": 1311.2,
+      "gst": 131.12,
+      "total": 1442.32
+    }
+  },
+  {
+    "file": "invoice-CTP-11093.pdf",
+    "kind": "supplier_invoice",
+    "title": "Tax invoice CTP-11093 - Coastline Tint & Protect Pty Ltd",
+    "expected": {
+      "supplier": "Coastline Tint & Protect Pty Ltd",
+      "abn": "86 120 773 560",
+      "invoiceNo": "CTP-11093",
+      "invoiceDate": "2026-10-13",
+      "dueDate": "2026-10-27",
+      "purchaseOrder": "HL-PO-7764",
+      "billTo": "Harbourline Toyota - Hornsby",
+      "lines": [
+        {
+          "description": "Ceramic window tint, Kluger (HL-1941 / D-10517)",
+          "qty": 1,
+          "unitPrice": 420.0,
+          "amount": 420.0
+        },
+        {
+          "description": "Paint protection film, front bumper and bonnet",
+          "qty": 1,
+          "unitPrice": 890.0,
+          "amount": 890.0
+        },
+        {
+          "description": "Interior fabric and leather protection",
+          "qty": 2,
+          "unitPrice": 145.0,
+          "amount": 290.0
+        },
+        {
+          "description": "Roof crossbars Kluger, supply and fit",
+          "qty": 1,
+          "unitPrice": 385.0,
+          "amount": 385.0
+        }
+      ],
+      "subtotal": 1985.0,
+      "gst": 198.5,
+      "total": 2183.5
+    }
+  }
+]

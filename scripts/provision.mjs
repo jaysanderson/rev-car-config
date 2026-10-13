@@ -34,7 +34,7 @@ const PUBLIC_URL = process.env.PUBLIC_URL || 'https://harbourline-configurator.f
 export const MODEL_LABELS = ['yaris-cross', 'corolla', 'corolla-cross', 'c-hr', 'camry', 'rav4', 'kluger', 'prado',
   'landcruiser-300', 'fortuner', 'hilux', 'bz4x', 'gr-yaris', 'gr-corolla', 'gr86', 'all'];
 export const TOPIC_LABELS = ['specs', 'grades', 'towing', 'accessories', 'pricing', 'warranty', 'service', 'finance',
-  'safety', 'dealer-policy', 'dates'];
+  'safety', 'dealer-policy', 'dates', 'images', 'manual', 'policy', 'document'];
 
 const env = readEnv();
 const { zone, kbId, token, kbUrl } = kbCoords(env);
