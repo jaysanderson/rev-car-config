@@ -37,24 +37,25 @@ A vehicle at another site can be moved on that site's scheduled run at no cost. 
 
 ## Factory orders - typical waiting times
 
-If we do not have the right car in stock, we can place a factory order with Toyota Australia. These are **indicative** ranges as at October 2026; Toyota allocates vehicles and times can change without notice.
+If we do not have the right car in stock, we can place a factory order with Toyota Australia. These are **indicative** ranges as at October 2026, taken from our order-bank tracking; Toyota allocates vehicles and times can change without notice.
 
 | Model | Typical wait (weeks) |
 |---|---|
-| Yaris Cross | 6-10 |
-| Corolla | 4-8 |
-| Corolla Cross | 8-14 |
-| C-HR | 6-10 |
-| Camry | 6-12 |
-| RAV4 (2026, hybrid) | 16-28 |
-| Kluger | 10-16 |
-| Prado 250 | 20-36 |
-| LandCruiser 300 | 16-30 |
-| Fortuner | 8-14 |
-| HiLux | 8-16 |
-| bZ4X | 2-6 |
-| GR Yaris, GR Corolla | 12-26 (allocation dependent) |
-| GR86 | 8-16 |
+| Yaris Cross | 8-12 |
+| Corolla | 8-12 |
+| Corolla Cross | 10-14 |
+| C-HR | 10-14 |
+| Camry | 8-12 |
+| RAV4 (2026, hybrid) | 14-18 |
+| Kluger | 10-14 |
+| Prado 250 | 20-26 |
+| LandCruiser 300 | 24-30 |
+| Fortuner | 12-16 |
+| HiLux | 8-12 |
+| bZ4X | 12-16 |
+| GR Yaris | 16-24 |
+| GR Corolla | 16-24 |
+| GR86 | 12-20 |
 
 A factory order needs a signed contract and deposit. The price you pay is the price on the contract, unless Toyota changes its list price before delivery, in which case we will tell you and you can choose to proceed or cancel with a full deposit refund.
 
