@@ -346,6 +346,9 @@ body.reveal .json{display:block}
 .prio .row b{font-size:.9rem}
 .prio .row .d{grid-column:1/-1;font-size:.78rem;color:var(--muted)}
 .prio .row input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--brand-600)}
+.prio .sig{grid-column:1/-1;height:6px;border-radius:999px;background:var(--border);overflow:hidden}
+.prio .sig i{display:block;height:100%;background:var(--info-fg);border-radius:999px}
+.prio .derived{grid-column:1/-1;margin:0;padding-left:18px;font-size:.82rem;display:flex;flex-direction:column;gap:4px}
 .prio .row .val{font-family:var(--mono);font-size:.78rem;color:var(--brand-600);min-width:3ch;text-align:right}
 .prio select,.prio textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--raised);color:var(--text);font:inherit}
 .prio textarea{min-height:64px;resize:vertical}
@@ -398,6 +401,12 @@ body.reveal .json{display:block}
 .confirm b{font-size:.95rem}
 .confirm .c{font-size:.82rem;color:var(--text)}
 .prep{margin:0;padding-left:18px;font-size:.84rem;display:flex;flex-direction:column;gap:3px}
+.handover{border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);padding:10px 14px}
+.handover summary{cursor:pointer;font-weight:600;font-size:.88rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.handover .hbody{margin-top:10px;font-size:.82rem}
+.hgrid{display:grid;grid-template-columns:auto 1fr;gap:6px 14px}
+.hk{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.hv{min-width:0;line-height:1.45}
 .mfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
 .mwork{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;padding:8px 12px;border-left:2px solid var(--brand-600)}
 .mwork .step{display:flex;gap:8px;align-items:center;opacity:0;transform:translateX(-4px);animation:stepin .3s forwards}
@@ -448,6 +457,10 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
 .cl .v{font-family:var(--mono);font-size:.74rem;color:var(--brand-600);white-space:nowrap}
 .cl .dt{font-family:var(--mono);font-size:.68rem;color:var(--muted);grid-column:1}
 .cl ul{grid-column:2;grid-row:1/span 2;margin:0;padding-left:18px}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.rt{width:100%;border-collapse:collapse;font-size:.8rem}
+.rt td{padding:3px 0;border-bottom:1px solid var(--hairline);vertical-align:top}
+.rt td.num{text-align:right;font-family:var(--mono);white-space:nowrap}
 .legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:12px}
 .lg{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
 .lg i{width:12px;height:12px;border-radius:3px;flex:none;margin-top:4px}
@@ -468,7 +481,6 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   <button class="lnk hide-sm" id="openDrawer" aria-controls="drawer" aria-expanded="false">How it works</button>
   <div class="seg" id="langs" aria-label="Assistant language"><button class="on" data-lang="en">EN</button><button data-lang="zh">中文</button><button data-lang="vi">Tiếng Việt</button></div>
   <button class="toggle" id="reveal" aria-pressed="false"><i></i><span class="lbl">Data layer</span></button>
-  <button class="toggle" id="openDealer" aria-controls="dealer"><i></i><span class="lbl">Dealer</span></button>
 </header>
 
 <div class="phead">
@@ -576,7 +588,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
 </aside>
 <aside class="drawer dealer" id="dealer" aria-label="Dealer priorities" aria-hidden="true">
   <div class="dhead">
-    <div><div class="kick">Dealer console · business user</div><h2>Dealer priorities</h2><div class="meta"><span>Weights the finder ranking and the offers you show</span><span class="ann domo">Domo · dealer_priorities</span></div></div>
+    <div><div class="kick">Domo Intelligence · nightly dataflow</div><h2>What Domo is telling the configurator</h2><div class="meta"><span>Derived from ERP stock, allocation and margin data. Read-only here; business rules live in Domo.</span></div></div>
     <button class="close" id="closeDealer" aria-label="Close">×</button>
   </div>
   <div class="dbody" id="dealerBody"></div>
@@ -784,7 +796,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   async function renderOffers(){let offers=null;if(API){try{const r=await fetch(`/api/offers?model=${cfg.model}&body=${M().body}`);if(r.ok)offers=await r.json();}catch(e){}}
     if(!Array.isArray(offers)||!offers.length)offers=localOffers();const shown=new Set(matches(cfg).exact.map(x=>x.u.id));offers=offers.filter(o=>!shown.has(o.unitId));const top=offers.slice(0,3);const elm=$('otiles');elm.innerHTML='';
     top.forEach((o,i)=>{const m=by(CAT.models,o.modelId)||{};const g=m.grades?by(m.grades,o.gradeId):null;const c=COL(o.colourId)||{hex:'#888',name:o.colourId};const site=SITES[o.site]||{name:o.site};
-      const t=el('button','otile');t.setAttribute('data-unit',o.unitId);
+      const t=el('button','otile');t.setAttribute('data-unit',o.unitId);t.setAttribute('data-offer',o.unitId);logEvent('offer_view',{unitId:o.unitId,modelId:o.modelId,placement:'stage_strip',rank:i+1});
       t.innerHTML=`<span class="ok">${o.site==='par'?'Ready now · Parramatta':'At '+site.name+' · here '+(site.when||'soon')}</span>${carPic(o.modelId,m.silhouette||'suv',c.hex,'#0b1a45','o'+i,{thumb:true,colour:o.colourId,alt:m.name||''})}<span class="on">${esc((m.name||o.modelId)+' '+(g?g.name:o.gradeId))}</span><span class="od">${esc(c.name)} · ${esc(o.reason||'')}</span><span class="op"><s>${fmt(o.price)}</s><b>${fmt(o.price-o.bonus)}</b><em>save ${fmt(o.bonus)}</em></span>${promoChips(promosFor(o.modelId,by(units(),o.unitId)))}<span class="annrow"><span class="ann domo">Domo · aged_stock_actions · priority ${o.priority} · rank ${i+1}</span></span>`;elm.appendChild(t);});
     const rib=$('ribbon');const r0=offers.find(o=>o.modelId===cfg.model)||offers[0];if(r0){const m=by(CAT.models,r0.modelId)||{};const g=m.grades?by(m.grades,r0.gradeId):null;rib.hidden=false;rib.innerHTML=`<span><b>${fmt(r0.bonus)} off</b> a ${esc((m.name||'')+' '+(g?g.name:''))} ready now <span class="ann domo">Domo · placement: build_ribbon</span></span><button data-unit="${r0.unitId}">See it</button>`;}else rib.hidden=true;}
 
@@ -890,7 +902,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
     const steps=n<5?['Reading finder guide and spec sheets','Checking what the last answer rules out','Checking stock for the shortlist','Writing question '+(n+1)]:['Scoring every model against your answers','Matching grades to your budget','Checking stock and factory ETAs','Ranking the top three'];
     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const box=v.querySelector('#fwork');steps.forEach((s,i)=>setTimeout(()=>box&&box.appendChild(el('div','step',s)),reduce?0:220*i));
     const t0=Date.now();const res=await finderNext();await new Promise(r=>setTimeout(r,reduce?0:Math.max(0,220*steps.length+200-(Date.now()-t0))));
-    if(res.done){finder.done=true;finder.recs=res.recommendations;finder.summary=res.summary;renderFinderResults(res);}else renderFinderQuestion(res);}
+    if(res.done){finder.done=true;finder.recs=res.recommendations;finder.summary=res.summary;logEvent('finder_result',{modelIds:res.recommendations.map(r=>r.modelId)});renderFinderResults(res);}else renderFinderQuestion(res);}
   function answersChips(){return finder.answers.map((a,i)=>`<span class="chip" data-back="${i}" title="Change this answer">${esc(a.label)}</span>`).join('');}
   function renderFinderQuestion(res){const v=$('finderView');const q=res.question;const n=res.step-1;
     v.innerHTML=`<div class="fhead"><div><div class="kick">Find the right car · question ${res.step} of ${res.of}</div><h2>${esc(q.text)}</h2><p class="why">${esc(q.why||'')}</p></div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div>
@@ -900,7 +912,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
       <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">${API?'ARAG · /ask · answer_json_schema':'local rule engine (offline) · same JSON contract'}</span></div>
       <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
     v.querySelector('#finderClose').onclick=closeFinder;const bk=v.querySelector('#finderBack');if(bk)bk.onclick=()=>{finder.answers.pop();renderFinderStep();};
-    v.querySelectorAll('.fopt').forEach(b=>b.onclick=()=>{finder.answers.push({id:q.id,value:b.dataset.opt,label:b.dataset.label});renderFinderStep();});
+    v.querySelectorAll('.fopt').forEach(b=>b.onclick=()=>{finder.answers.push({id:q.id,value:b.dataset.opt,label:b.dataset.label});logEvent('finder_answer',{questionId:q.id,value:b.dataset.opt});renderFinderStep();});
     prefetchOptions(q);
     v.querySelectorAll('[data-back]').forEach(c=>c.onclick=()=>{finder.answers=finder.answers.slice(0,+c.dataset.back);renderFinderStep();});}
   function renderFinderResults(res){const v=$('finderView');
@@ -971,16 +983,16 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
       if(!r.ok)throw new Error('ask '+r.status);const res=await r.json();w.el.remove();
       const tr=[...(res.trace||[]),...(res.citations||[]).map(c=>({kind:'kb',label:'KB · '+c.title}))];addAssistant(res.answer||'…',tr,res.actions||[]);}
     catch(e){w.el.remove();addAssistant('I couldn’t reach the knowledge box just now. Try again in a moment.',[{kind:'kb',label:'ARAG · /ask · error'}]);}}
-  function ask(key){const q=T[lang].q[key];const text=T[lang].chips[QKEYS.indexOf(key)];addUser(text);if(API)return askApi(text);
+  function ask(key){const q=T[lang].q[key];const text=T[lang].chips[QKEYS.indexOf(key)];addUser(text);logEvent('ask',{questionLength:text.length,lang,modelId:cfg.model,chip:key});if(API)return askApi(text);
     const w=working(q.steps);setTimeout(()=>{w.el.remove();addAssistant(q.a,q.tr,q.acts);},w.ms);}
   function renderAssistant(reset){const t=T[lang];if(reset){thread.innerHTML='';history.length=0;addAssistant(t.greet);addAssistant(t.tip);}
     const chips=$('chips');chips.innerHTML='';t.chips.forEach((c,i)=>{const b=el('button','qchip',esc(c));b.onclick=()=>ask(QKEYS[i]);chips.appendChild(b);});
     $('askin').placeholder=t.ph;$('askbtn').textContent=t.ask;$('langnote').textContent=t.note+(API?' · Connected to the knowledge box.':'');}
-  $('ask').addEventListener('submit',e=>{e.preventDefault();const inp=$('askin');const v=inp.value.trim();if(!v)return;addUser(v);inp.value='';if(API)askApi(v);else setTimeout(()=>addAssistant(T[lang].free,[['kb','ARAG · /ask · not connected on this host']]),400);});
+  $('ask').addEventListener('submit',e=>{e.preventDefault();const inp=$('askin');const v=inp.value.trim();if(!v)return;addUser(v);inp.value='';logEvent('ask',{questionLength:v.length,lang,modelId:cfg.model});if(API)askApi(v);else setTimeout(()=>addAssistant(T[lang].free,[['kb','ARAG · /ask · not connected on this host']]),400);});
   $('langs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.lang;document.querySelectorAll('#langs button').forEach(x=>x.classList.toggle('on',x===b));renderAssistant(true);addSys(T[lang].switched);});
 
   const HOW={
-    version:'0.6.0',updated:'14 Oct 2026',
+    version:'0.7.0',updated:'14 Oct 2026',
     intro:'Two systems do the work. Domo turns dealer management system data into stock intelligence. Progress Agentic RAG turns product knowledge plus that intelligence into a conversation. The configurator is where they meet. Every feature below says what the customer sees, what powers it, and how the data gets there.',
     systems:[
       {k:'dms',name:'Dealer management system',d:'System of record: stock by VIN, orders, deals, leads, bookings.'},
@@ -1006,18 +1018,24 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
       {from:'agent',to:'cfg',label:'build changes'},{from:'cfg',to:'wb',label:'reserve · test drive'}
     ]},
     features:[
-      {id:'dealer-priorities',name:'Dealer priorities (business-editable nudge)',target:'f-offers',
-        sees:'Nothing labelled as such. A sales manager sets four weights in the Dealer console in the band: prefer cars on the lot, clear aged stock, lead with promotions, push a model. The finder ranking and the offers strip change immediately, and each nudged recommendation carries a plain-language reason.',
+      {id:'domo-nudges',name:'Nudges from Domo Intelligence',target:'f-offers',
+        sees:'Nothing labelled as such. Some cars rank a little higher in the finder and lead the offers strip, and every nudged recommendation says why in plain words: "we have two on the lot and can include servicing". No one at the dealership edits this in the configurator.',
         powered:['domo','rag','page'],
-        how:['The weights live in a small dataset the DMS vendor owns (dealer_priorities). Business users edit it; no code changes.','The finder scores fit first, then adds a dealer factor: up to 6 points for stock on the lot, 6 for aged stock with headroom, 8 for the pushed model, 4 for a promotion, capped at 12 points in total. Order is fit plus dealer factor.','The agent is given the priorities as context and writes the customer-safe reason ("we have two on the lot and can include servicing"), so the nudge is explained, never hidden.','The offers strip re-sorts on the same weights. The data-layer toggle shows the factor on every nudged card.'],
-        contract:'<b>Domo · dealer_priorities</b>  { updatedAt, updatedBy, weights:{ stockOnLot 0-100, agedStock 0-100, promotions 0-100, pushModel:{modelId, weight} }, note }\n<i>GET/PUT /api/dealer/priorities</i>  ·  recommendations gain { dealerFactor, nudge:{reason, promotionId?} }',
-        diagram:{cols:4,rows:2,nodes:[{id:'m',label:'Sales manager',sub:'Dealer console',kind:'cust',c:0,r:0},{id:'p',label:'dealer_priorities',sub:'weights · note',kind:'domo',c:1,r:0},{id:'f',label:'Finder scoring',sub:'fit + dealer factor',kind:'page',c:2,r:0},{id:'a',label:'Agent',sub:'writes the reason',kind:'rag',c:2,r:1},{id:'o',label:'Ranking + offers',sub:'nudge stated',kind:'page',c:3,r:0}],edges:[{from:'m',to:'p',label:'PUT'},{from:'p',to:'f'},{from:'p',to:'a',label:'context'},{from:'f',to:'o'},{from:'a',to:'o',label:'reason'}]}},
-      {id:'promotions',name:'Promotions as first-class offers',target:'f-avail',
-        sees:'Green promotion chips on availability cards and offer tiles: complimentary servicing, an accessories bundle, a trade-in bonus, a free Towing Pack, delivery to your door. Hover for the dealer’s reason. The assistant can quote them, and only them.',
+        how:['A nightly Domo dataflow reads the ERP: days of supply by model, next month’s allocation, the target gap, average days in stock and margin headroom. It publishes dealer_signals.','The server derives four weights from those signals: prefer cars on the lot, clear aged stock, lead with promotions, push a model. The derivation is explained line by line ("Kluger allocation next month is 14 against a target gap of 6 → push Kluger").','The finder scores fit first, then adds a dealer factor from the weights, capped at 12 points. The agent is given the signals as context and writes the customer-safe reason; a filter blocks any mention of margin, age or targets.','Open the signals view from this drawer to see what Domo is currently telling the page.'],
+        contract:'<b>Domo · dealer_signals (nightly)</b>  per model { daysOfSupply, allocationNextMonth, targetGap, avgDaysInStock, marginHeadroomAvg }\n<i>GET /api/dealer/priorities</i>  → { weights:{ stockOnLot, agedStock, promotions, pushModel:{modelId, weight} }, derivedFrom:[{signal, value, effect}], source, computedAt }  (read-only)',
+        diagram:{cols:4,rows:2,nodes:[{id:'e',label:'ERP (DMS)',sub:'stock · allocation · margin',kind:'dms',c:0,r:0},{id:'d',label:'Domo dataflow',sub:'dealer_signals, nightly',kind:'domo',c:1,r:0},{id:'w',label:'Derived weights',sub:'explained line by line',kind:'page',c:2,r:0},{id:'a',label:'Agent',sub:'customer-safe reason',kind:'rag',c:2,r:1},{id:'o',label:'Ranking + offers',sub:'nudge stated',kind:'page',c:3,r:0}],edges:[{from:'e',to:'d',label:'nightly'},{from:'d',to:'w',label:'API'},{from:'d',to:'a',label:'context'},{from:'w',to:'o'},{from:'a',to:'o',label:'reason'}]}},
+      {id:'promotions',name:'Promotions composed from Domo and the knowledge box',target:'f-avail',
+        sees:'Green promotion chips on availability cards and offer tiles: complimentary servicing, an accessories bundle, a trade-in bonus, a free Towing Pack, delivery to your door. Hover for the customer-facing reason. The assistant can quote them, and only them.',
         powered:['domo','rag','page'],
-        how:['Promotions are rows in a dealer dataset with rules for what they apply to: models, specific VINs, aged stock, body types, cars on the lot.','The page evaluates the rules per card. The server passes the applicable promotions into the agent’s extra context with an instruction to state the reason and never invent one.','Promotions also feed the dealer-priority nudge, so a promoted model can rank higher when the manager wants it to.'],
-        contract:'<b>Domo · promotions</b>  { id, title, kind: accessory-bundle | servicing | trade-in | finance | delivery, value, desc, reason, appliesTo:{ models?, units?, aged?, bodies?, onLot? }, validUntil }\n<i>GET /api/promotions?model=&unit=&body=</i>',
-        diagram:{cols:3,rows:1,nodes:[{id:'p',label:'promotions',sub:'rules per row',kind:'domo',c:0,r:0},{id:'e',label:'Rule evaluation',sub:'per card',kind:'page',c:1,r:0},{id:'r',label:'Chips + assistant context',sub:'reason stated',kind:'page',c:2,r:0}],edges:[{from:'p',to:'e',label:'API'},{from:'e',to:'r'}]}},
+        how:['Domo decides what needs selling: aged units with headroom, the pushed model, models with a target gap, body types with high days of supply.','For each target the Progress Agentic RAG agent composes the promotion from the knowledge box: real Genuine accessory prices, Toyota Service Advantage terms, Towing Pack contents, finance basics. The result is JSON with a fixed shape, and the code validates the value against the catalogue before it is shown.','Each promotion carries its provenance: which Domo signal selected it and which documents it was composed from. The data-layer toggle shows this on every chip.','The composed set is cached and persisted, so a restart or an unreachable agent falls back to the last good set.'],
+        contract:'<i>GET /api/promotions?model=&unit=&body=</i>  → [{ id, title, kind, value, desc, why (customer-safe), reason (dealer-side), appliesTo, validUntil, source:{ domo, kb[] }, composedBy: arag | fallback }]\n<i>GET /api/promotions/explain</i>  → Domo targets and the promotion each produced',
+        diagram:{cols:4,rows:2,nodes:[{id:'d',label:'Domo targets',sub:'what to sell',kind:'domo',c:0,r:0},{id:'k',label:'Knowledge box',sub:'accessories · service · finance',kind:'kb',c:0,r:1},{id:'a',label:'Agent composes',sub:'answer_json_schema',kind:'rag',c:1,r:0},{id:'v',label:'Validate + cache',sub:'value ≤ catalogue',kind:'page',c:2,r:0},{id:'c',label:'Chips + assistant',sub:'provenance shown',kind:'page',c:3,r:0}],edges:[{from:'d',to:'a',label:'targets'},{from:'k',to:'a',label:'retrieval'},{from:'a',to:'v'},{from:'v',to:'c'}]}},
+      {id:'handover-report',name:'Salesperson handover and first-party data report',target:'f-cta',
+        sees:'On the booking confirmation, "What your salesperson will see": the car, what else they looked at, their finder answers, their three pre-visit answers, the promotions to offer, the incentive and talking points. Separately, an aggregate report of everything customers do in the configurator.',
+        powered:['dms','rag','domo','page'],
+        how:['Every meaningful action is logged as a first-party event with a session id and no personal details: finder answers, builds, offers shown and clicked, questions asked, bookings and pre-visit answers.','When a booking is made, the agent writes a sales-manager briefing from the spec sheets and the customer’s answers. It is stored on the booking so the DMS carries it to the salesperson.','The event log aggregates into a report Domo can consume: answers by question, models and colours configured, offer exposure and clicks, bookings by site and model, finder-to-booking conversion.'],
+        contract:'<i>POST /api/events</i>  { sid, type, data }  ·  <u>DMS · events.jsonl</u>\n<i>GET /api/testdrive/handover/:bookingId</i>  → { car, viewed, finderAnswers, questions, promotionsToOffer, incentive, talkingPoints, prep }\n<b>Domo · GET /api/report/configurator?days=30</b>  → { sessions, finderCompletions, answersByQuestion, modelsConfigured, coloursChosen, offersShown, offersClicked, bookings, conversion }',
+        diagram:{cols:4,rows:2,nodes:[{id:'p',label:'Page events',sub:'no PII, session id',kind:'cust',c:0,r:0},{id:'l',label:'events.jsonl',sub:'first-party log',kind:'dms',c:1,r:0},{id:'r',label:'Report',sub:'aggregates for Domo',kind:'domo',c:2,r:0},{id:'b',label:'Booking',sub:'answers + build',kind:'dms',c:1,r:1},{id:'a',label:'Agent briefing',sub:'talking points',kind:'rag',c:2,r:1},{id:'s',label:'Salesperson',sub:'handover sheet',kind:'page',c:3,r:1}],edges:[{from:'p',to:'l'},{from:'l',to:'r'},{from:'b',to:'a'},{from:'a',to:'s'}]}},
       {id:'test-drive',name:'Test-drive booking with timeslots',target:'f-cta',
         sees:'“Test drive” opens a three-step booking: pick a site, day and 45-minute slot; answer three questions; get a confirmation with a show-up incentive. The booking is against this car at this site, with a booking id.',
         powered:['dms','rag','page'],
@@ -1123,6 +1141,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
     ],
     assumptions:['Harbourline Toyota is a fictional dealership. Toyota models, grades and specifications are real; prices, stock, ages and bonuses are illustrative and chosen so each behaviour appears at least once.','When the page is served by its API server, every question goes to the Progress Agentic RAG knowledge box. On a host without the server (for example the claude.ai artifact) the four suggested questions are scripted and the finder uses a local rule engine.','Domo is consumed through its API. The page never embeds a Domo card.','Discounts are always explained. The customer should never feel steered without knowing why.'],
     changelog:[
+      {v:'0.7.0',d:'14 Oct 2026',items:['Nudges now derived from a simulated Domo dealer_signals dataflow; the business-user panel is gone','Promotions composed by the agent from the knowledge box for the targets Domo selects, with provenance','Salesperson handover sheet on every booking','First-party event log and an aggregate configurator report for Domo']},
       {v:'0.6.0',d:'14 Oct 2026',items:['Dealer console: business-editable priorities that nudge the finder and offers, with the reason stated','Promotions as first-class offers on cards and in the assistant’s context','Test-drive booking with per-site timeslots written back as a booking','Three agent-chosen salesperson questions after booking, plus a show-up incentive matched to the answers']},
       {v:'0.5.0',d:'13 Oct 2026',items:['Switched to the current Toyota Australia lineup, 15 models','Progress Agentic RAG kit styling: ink band with the Progress wordmark, prototype label, three scrolling panes','Find the right car: five dynamic JSON-driven questions ending in ranked recommendations','This week at Harbourline: Domo-driven offers strip and build ribbon','For you rows built from semantic /find queries','Knowledge box provisioned; API server for /ask, /finder, /foryou, /find with local fallback']},
       {v:'0.3.0',d:'13 Oct 2026',items:['Rebuilt in Progress Agentic RAG palette with a navy stage','Added this half-page “How it works” drawer with per-feature diagrams','Fixed the column-order bug that squeezed the stage into the options column','Added the three-fact summary strip under the car']},
@@ -1171,6 +1190,10 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
         ${f.diagram?`<div class="diagram">${diagram(f.diagram)}</div>`:''}
         <div class="drow">${f.target?`<button class="btn secondary sm" data-target="${f.target}">Show me on the page</button>`:''}</div>`;
       body.appendChild(s);});
+    // Domo signals + first-party report (live when the server is present)
+    addNav('signals','Domo signals');const sg=el('section','dsec');sg.id='hw-signals';
+    sg.innerHTML=`<div class="n">Live</div><h3>What Domo is telling the page right now</h3><p class="lede">The weights below are derived from the dealer_signals dataflow and drive the nudges in the finder and the offers strip.</p><div class="drow"><button class="btn secondary sm" id="hw-openSignals">Open the signals view</button></div>`;body.appendChild(sg);sg.querySelector('#hw-openSignals').onclick=openDealer;
+    addNav('report','First-party report');const rp=el('section','dsec');rp.id='hw-report';rp.innerHTML=`<div class="n">Live</div><h3>Configurator report for Domo</h3><p class="lede">Aggregated from the first-party event log. ${API?'Live from the server.':'This host has no server, so this shows the current session only.'}</p><div class="dbox" style="margin-top:12px"><div id="hw-reportBody">Loading…</div></div>`;body.appendChild(rp);renderReport();
     // assumptions + changelog
     addNav('assumptions','Assumptions');const as=el('section','dsec');as.id='hw-assumptions';
     as.innerHTML=`<div class="n">Read before reviewing</div><h3>Assumptions in this mockup</h3><div class="dbox" style="margin-top:12px"><ul>${HOW.assumptions.map(a=>`<li>${a}</li>`).join('')}</ul></div>`;body.appendChild(as);
@@ -1178,6 +1201,16 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
     cl.innerHTML=`<div class="n">Changelog</div><h3>What changed</h3><div class="changelog">${HOW.changelog.map(c=>`<div class="cl"><span class="v">v${c.v}</span><span class="dt">${c.d}</span><ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>`;body.appendChild(cl);
   }
 
+  function localReport(){const c=(t,k)=>EVENTS.filter(e=>e.type===t).reduce((m,e)=>{const v=k(e.data);if(v!==undefined){m[v]=(m[v]||0)+1;}return m;},{});
+    return{since:'this session',sessions:1,finderStarts:EVENTS.some(e=>e.type==='finder_answer')?1:0,finderCompletions:EVENTS.filter(e=>e.type==='finder_result').length,answersByQuestion:EVENTS.filter(e=>e.type==='finder_answer').reduce((m,e)=>{(m[e.data.questionId]=m[e.data.questionId]||{})[e.data.value]=((m[e.data.questionId]||{})[e.data.value]||0)+1;return m;},{}),modelsConfigured:c('build_change',d=>d.modelId),coloursChosen:c('build_change',d=>d.colourId),offersShown:c('offer_view',d=>d.unitId),offersClicked:c('offer_click',d=>d.unitId),questionsAsked:EVENTS.filter(e=>e.type==='ask').length,bookings:{count:EVENTS.filter(e=>e.type==='booking').length,bySite:c('booking',d=>d.site),byModel:c('booking',d=>d.modelId)}};}
+  async function renderReport(){const host=$('hw-reportBody');if(!host)return;let r=null;if(API){try{const x=await fetch('/api/report/configurator?days=30');if(x.ok)r=await x.json();}catch(e){}}if(!r)r=localReport();
+    const top=(o,n,name)=>Object.entries(o||{}).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([k,v])=>`<tr><td>${esc(name?name(k):k)}</td><td class="num">${v}</td></tr>`).join('')||'<tr><td colspan="2">none yet</td></tr>';
+    const mname=id=>(by(CAT.models,id)||{}).name||id;const cname=id=>(COL(id)||{}).name||id;
+    host.innerHTML=`<div class="rgrid"><div><h4>Volume · ${esc(String(r.since||''))}</h4><table class="rt"><tr><td>Sessions</td><td class="num">${r.sessions||0}</td></tr><tr><td>Finder completions</td><td class="num">${r.finderCompletions||0}</td></tr><tr><td>Questions asked</td><td class="num">${r.questionsAsked||0}</td></tr><tr><td>Bookings</td><td class="num">${(r.bookings||{}).count||0}</td></tr>${r.conversion?`<tr><td>Finder → booking</td><td class="num">${Math.round((r.conversion.finderToBooking||0)*100)}%</td></tr>`:''}</table></div>
+      <div><h4>Models configured</h4><table class="rt">${top(r.modelsConfigured,6,mname)}</table></div><div><h4>Colours chosen</h4><table class="rt">${top(r.coloursChosen,6,cname)}</table></div>
+      <div><h4>Offers shown → clicked</h4><table class="rt">${Object.entries(r.offersShown||{}).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="num">${v} → ${(r.offersClicked||{})[k]||0}</td></tr>`).join('')||'<tr><td colspan="2">none yet</td></tr>'}</table></div>
+      <div><h4>Finder answers</h4><table class="rt">${Object.entries(r.answersByQuestion||{}).slice(0,6).map(([q,vals])=>`<tr><td>${esc(q)}</td><td>${Object.entries(vals).sort((a,b)=>b[1]-a[1]).map(([v,c])=>esc(v)+' '+c).join(' · ')}</td></tr>`).join('')||'<tr><td colspan="2">none yet</td></tr>'}</table></div>
+      <div><h4>Bookings by model</h4><table class="rt">${top((r.bookings||{}).byModel,6,mname)}</table></div></div><div class="trace" style="margin-top:10px"><span class="tr domo">${API?'Domo · GET /api/report/configurator':'local aggregate (offline)'}</span></div>`;}
   // --- drawer open/close ---
   const drawer=$('drawer');let drawerBuilt=false;
   function openDrawer(){if(!drawerBuilt){renderDrawer();drawerBuilt=true;}if(typeof closeDealer==='function')closeDealer();document.body.classList.add('drawer-open');drawer.classList.add('open');drawer.setAttribute('aria-hidden','false');document.getElementById('openDrawer').setAttribute('aria-expanded','true');}
@@ -1203,7 +1236,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   function promosFor(mid,u){const m=by(CAT.models,mid)||{};return PROMOS.filter(p=>{const a=p.appliesTo||{};
     if(a.models&&!a.models.includes(mid))return false;if(a.bodies&&!a.bodies.includes(m.body))return false;if(a.units&&!(u&&a.units.includes(u.id)))return false;
     if(a.aged&&!(u&&u.bonus>0))return false;if(a.onLot&&!(u&&u.site==='par'&&!u.transit))return false;return true;});}
-  function promoChips(list){return list.length?`<span class="promos">${list.map(p=>`<span class="promo" title="${esc(p.desc||'')}">${esc(p.title)}</span><span class="ann domo">why: ${esc(p.reason||'')}</span>`).join('')}</span>`:'';}
+  function promoChips(list){return list.length?`<span class="promos">${list.map(p=>`<span class="promo" title="${esc(p.why||p.desc||'')}">${esc(p.title)}</span><span class="ann domo">${esc(p.source&&p.source.domo?'Domo · '+p.source.domo:'Domo · aged_stock_actions')}${p.source&&p.source.kb&&p.source.kb.length?' + KB · '+esc(p.source.kb[0]):''}${p.composedBy?' · '+esc(p.composedBy):''}</span>`).join('')}</span>`:'';}
   // dealer factor used by the local finder and offers (mirrors the server formula)
   function dealerFactor(mid){const w=PRIOS.weights||{};const u=units().filter(x=>x.model===mid);let f=0;const why=[];
     if(u.some(x=>!x.transit&&x.site==='par')){f+=(w.stockOnLot||0)/100*6;why.push('on the lot now');}
@@ -1215,29 +1248,29 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   async function savePrios(){PRIOS.updatedAt=new Date().toISOString();PRIOS.updatedBy='Sales manager (demo)';try{localStorage.setItem('hl-prios',JSON.stringify(PRIOS));}catch(e){}
     if(API){try{const r=await fetch('/api/dealer/priorities',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(PRIOS)});if(r.ok)PRIOS=await r.json();}catch(e){}}
     toast('Dealer priorities saved. Rankings and offers updated.');update();renderDealer();}
-  function renderDealer(){const b=$('dealerBody');const w=PRIOS.weights;const opts=['<option value="">No pushed model</option>'].concat(CAT.models.map(m=>`<option value="${m.id}" ${w.pushModel&&w.pushModel.modelId===m.id?'selected':''}>${esc(m.name)}</option>`)).join('');
-    const slider=(k,label,d)=>`<label class="row"><b>${label}</b><span class="val" data-val="${k}">${w[k]}</span><span class="d">${d}</span><input type="range" min="0" max="100" step="5" value="${w[k]}" data-w="${k}" id="w-${k}"></label>`;
+  function renderDealer(){const b=$('dealerBody');const w=PRIOS.weights||{};const pm=w.pushModel&&w.pushModel.modelId?by(CAT.models,w.pushModel.modelId):null;
+    const bar=(label,v,d)=>`<div class="row"><b>${label}</b><span class="val">${v}</span><span class="d">${d}</span><div class="sig"><i style="width:${v}%"></i></div></div>`;
+    const derived=(PRIOS.derivedFrom||[]).map(x=>`<li><b>${esc(x.signal||'')}</b>${x.value!==undefined?' · '+esc(String(x.value)):''}${x.effect?' → '+esc(x.effect):''}</li>`).join('');
     b.innerHTML=`<div class="prio">
-      ${slider('stockOnLot','Prefer cars on the lot','Rank models we can hand over today above factory orders.')}
-      ${slider('agedStock','Clear aged stock','Rank models with a ready-now bonus higher and feature them in offers.')}
-      ${slider('promotions','Lead with promotions','Weight models that carry a current promotion.')}
-      <div class="row"><b>Push a model</b><span class="val" data-val="push">${w.pushModel?w.pushModel.weight:0}</span><span class="d">Allocation is strong or a target needs hitting.</span><select id="w-pushModel">${opts}</select><input type="range" min="0" max="100" step="5" value="${w.pushModel?w.pushModel.weight:0}" id="w-pushWeight"></div>
-      <div class="row"><b>Note to the team</b><span></span><textarea id="w-note">${esc(PRIOS.note||'')}</textarea></div>
-      <div class="save"><button class="btn" id="w-save">Save priorities</button><button class="btn ghost" id="w-reset">Reset to defaults</button><span class="meta">last saved ${esc(PRIOS.updatedAt?new Date(PRIOS.updatedAt).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'never')} by ${esc(PRIOS.updatedBy||'')}</span></div>
-      <div class="effect" id="w-effect"></div></div>`;
-    const sync=()=>{w.stockOnLot=+$('w-stockOnLot').value;w.agedStock=+$('w-agedStock').value;w.promotions=+$('w-promotions').value;const pm=$('w-pushModel').value;w.pushModel=pm?{modelId:pm,weight:+$('w-pushWeight').value}:{modelId:null,weight:0};PRIOS.note=$('w-note').value;
-      b.querySelectorAll('[data-val]').forEach(e=>{const k=e.dataset.val;e.textContent=k==='push'?(w.pushModel.weight||0):w[k];});renderEffect();};
-    b.querySelectorAll('input,select,textarea').forEach(e=>e.addEventListener('input',sync));
-    $('w-save').onclick=savePrios;$('w-reset').onclick=()=>{PRIOS=JSON.parse(JSON.stringify(DEFAULT_PRIOS));renderDealer();savePrios();};renderEffect();}
+      ${bar('Prefer cars on the lot',w.stockOnLot||0,'From days of supply across the group: the lower the supply, the more we rank what we can hand over today.')}
+      ${bar('Clear aged stock',w.agedStock||0,'From the count and age of units with incentive headroom.')}
+      ${bar('Lead with promotions',w.promotions||0,'From average margin headroom: room to fund servicing, accessories or trade-in bonuses.')}
+      <div class="row"><b>Push a model</b><span class="val">${pm?esc(pm.name)+' · '+(w.pushModel.weight||0):'none'}</span><span class="d">The model with the strongest allocation next month against its target gap.</span></div>
+      <div class="row"><b>Why</b><span></span><ul class="derived">${derived||'<li>Derived signals are not available on this host; the weights shown are the shipped defaults.</li>'}</ul></div>
+      <div class="save"><span class="meta">${esc(PRIOS.source||'Domo · dealer_signals (nightly)')} · computed ${esc(PRIOS.computedAt||PRIOS.updatedAt?new Date(PRIOS.computedAt||PRIOS.updatedAt).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'')}</span></div>
+      <div class="effect" id="w-effect"></div></div>`;renderEffect();}
   function renderEffect(){const e=$('w-effect');if(!e)return;const rows=CAT.models.map(m=>({m,d:dealerFactor(m.id)})).filter(x=>x.d.factor>0).sort((a,b)=>b.d.factor-a.d.factor).slice(0,5);
     e.innerHTML=`<b>Effect right now</b> · the finder adds up to 12 fit points and the offers strip re-sorts. Top nudges: ${rows.map(x=>`<b>${esc(x.m.name)}</b> +${x.d.factor}`).join(', ')||'none'}.`;}
   const dealer=$('dealer');
   function openDealer(){closeDrawer();renderDealer();document.body.classList.add('drawer-open');dealer.setAttribute('aria-hidden','false');dealer.classList.add('open');}
   function closeDealer(){dealer.classList.remove('open');dealer.setAttribute('aria-hidden','true');if(!drawer.classList.contains('open'))document.body.classList.remove('drawer-open');}
-  $('openDealer').onclick=()=>dealer.classList.contains('open')?closeDealer():openDealer();$('closeDealer').onclick=closeDealer;
+  $('closeDealer').onclick=closeDealer;
 
+  // ---- first-party data: every meaningful action is logged (no PII) so Domo can report on it ----
+  let SID='';try{SID=sessionStorage.getItem('hl-sid')||'';}catch(e){}if(!SID){SID='s-'+Math.random().toString(36).slice(2,10);try{sessionStorage.setItem('hl-sid',SID);}catch(e){}}
+  const EVENTS=[];function logEvent(type,data){const ev={sid:SID,type,data:data||{},at:new Date().toISOString()};EVENTS.push(ev);if(EVENTS.length>500)EVENTS.shift();if(API){try{fetch('/api/events',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(ev),keepalive:true}).catch(()=>{});}catch(e){}}}
   // ---- what the customer has looked at (feeds the booking questions) ----
-  const viewed=[];function noteViewed(){const g=G();const u=matches(cfg).exact[0];const e={modelId:cfg.model,gradeId:g.id,unitId:u?u.u.id:null,at:Date.now()};const i=viewed.findIndex(v=>v.modelId===e.modelId);if(i>=0)viewed.splice(i,1);viewed.unshift(e);if(viewed.length>6)viewed.length=6;}
+  const viewed=[];function noteViewed(){const g=G();const u=matches(cfg).exact[0];const e={modelId:cfg.model,gradeId:g.id,unitId:u?u.u.id:null,at:Date.now()};const i=viewed.findIndex(v=>v.modelId===e.modelId);const changed=i!==0;if(i>=0)viewed.splice(i,1);viewed.unshift(e);if(viewed.length>6)viewed.length=6;if(changed||!noteViewed.last||noteViewed.last!==cfg.model+cfg.grade+cfg.colour+cfg.packs.join())logEvent('build_change',{modelId:cfg.model,gradeId:g.id,colourId:cfg.colour,packs:cfg.packs.slice()});noteViewed.last=cfg.model+cfg.grade+cfg.colour+cfg.packs.join();}
 
   // ---- test-drive booking with timeslots, three salesperson questions, show-up incentive ----
   const booking={step:1,site:'par',unitId:null,slots:null,day:null,slot:null,result:null,answers:{}};
@@ -1264,9 +1297,11 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
     if(a.use==='family'||a.people==='more'||m.seats>=7)return{id:'childseat',title:'Child-seat fitting and safety check',desc:'Certified fitter installs and checks your seats at the dealership.',value:150,reason:'Because you told us this is a family car.'};
     if(a.distance==='over80'||a.use==='commute')return{id:'fuel',title:'$100 fuel card',desc:'Yours when you come in for the drive.',value:100,reason:'Because you cover real kilometres.'};
     return{id:'detail',title:'Complimentary interior detail',desc:'For your current car while you are with us.',value:120,reason:'A thank-you for coming in.'};}
-  async function bookSlot(){const payload={site:booking.site,slotId:booking.slot.id,unitId:booking.unitId,build:{modelId:cfg.model,gradeId:cfg.grade,colourId:cfg.colour,interiorId:cfg.interior,packs:cfg.packs},viewed:viewed.map(v=>({modelId:v.modelId,gradeId:v.gradeId,unitId:v.unitId})),finder:{answers:finder.answers},lang};
+  async function bookSlot(){const payload={sid:SID,site:booking.site,slotId:booking.slot.id,unitId:booking.unitId,build:{modelId:cfg.model,gradeId:cfg.grade,colourId:cfg.colour,interiorId:cfg.interior,packs:cfg.packs},viewed:viewed.map(v=>({modelId:v.modelId,gradeId:v.gradeId,unitId:v.unitId})),finder:{answers:finder.answers},lang};
     if(API){try{const r=await fetch('/api/testdrive/book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});if(r.ok){const j=await r.json();if(j&&j.questions&&j.questions.length===3)return j;}}catch(e){}}
     const g=G();const dt=new Date(booking.day.date+'T00:00:00');return{bookingId:'TD-'+Math.random().toString(36).slice(2,7).toUpperCase(),site:booking.site,siteName:SITES[booking.site].name,whenLabel:dt.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'})+' at '+booking.slot.time,unitId:booking.unitId,model:M().name,grade:g.name,questions:localQuestions(),incentive:localIncentive(),trace:[{kind:'kb',label:'local picker (offline) · same JSON contract'}]};}
+  async function getHandover(){if(API&&booking.result){try{const r=await fetch('/api/testdrive/handover/'+encodeURIComponent(booking.result.bookingId));if(r.ok)return await r.json();}catch(e){}}
+    const m=M(),g=G();const r=booking.result||{};return{bookingId:r.bookingId,customerRef:SID.slice(0,6),car:{model:m.name,grade:g.name,colour:COL(cfg.colour)?.name,interior:INT(cfg.interior)?.name,packs:cfg.packs.map(p=>ACC(p)?.name),unitId:booking.unitId,price:price()},viewed:viewed.map(v=>{const mm=by(CAT.models,v.modelId);return mm?mm.name+' '+(by(mm.grades,v.gradeId)?.name||''):v.modelId;}),finderAnswers:finder.answers.map(a=>({question:(FQ[a.id]||{}).text||a.id,answer:a.label})),questions:Object.values(booking.answers).map(a=>({question:a.q,answer:a.label})),promotionsToOffer:promosFor(cfg.model,booking.unitId?by(units(),booking.unitId):null).map(p=>({title:p.title,why:p.why||p.desc})),incentive:r.incentive,talkingPoints:[`${m.name} ${g.name}: lead with ${(g.highlights||[]).slice(0,2).join(' and ')}`,finder.answers.length?'They came through the finder: '+finder.answers.map(a=>a.label.toLowerCase()).join(', '):'No finder answers; ask about use and timing early',booking.unitId?'This is a specific car on the lot; have the keys and the drive-away quote ready':'Factory order likely; have the order-bank ETA ready'],prep:(booking.reply||{}).prep||[],trace:[{kind:'kb',label:'local briefing (offline)'}]};}
   async function sendAnswers(){const answers=Object.entries(booking.answers).map(([id,v])=>({id,value:v.id,label:v.label,question:v.q}));if(API){try{const r=await fetch('/api/testdrive/answers',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({bookingId:booking.result.bookingId,answers})});if(r.ok)return await r.json();}catch(e){}}
     const m=M(),g=G();return{ok:true,reply:`Thanks, that helps. I'll have the ${m.name} ${g.name} ready at ${booking.slot.time} and we'll cover ${answers.map(a=>(a.question||a.id).replace(/\?$/,'').toLowerCase()+' ('+a.label.toLowerCase()+')').join(', ')} while you're here.`,prep:[`${m.name} ${g.name} fuelled and ready at ${booking.slot.time}`,answers.some(a=>a.id==='trade-in'&&a.value==='yes')?'Trade-in valuation on arrival':'Drive route that suits how you will use the car',answers.some(a=>a.id==='finance'&&a.value==='yes')?'Finance figures printed for you to take away':'Drive-away quote ready to take away']};}
   function openBooking(unitId){const u=unitId?by(units(),unitId):(matches(cfg).exact[0]||{}).u;booking.step=1;booking.unitId=u?u.id:null;booking.site=u&&!u.transit?u.site:'par';booking.day=null;booking.slot=null;booking.result=null;booking.answers={};booking.slots=null;$('mback').classList.add('open');renderBooking();}
@@ -1284,12 +1319,12 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
       body.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{booking.day=s.days.find(d=>d.date===b.dataset.day);booking.slot=null;renderBooking();});
       body.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{booking.slot=booking.day.slots.find(x=>x.id===b.dataset.slot);renderBooking();});
       $('mnext').onclick=async()=>{booking.step=2;$('mkick').textContent='Book a test drive · step 2 of 3';$('mtitle').textContent='Three quick questions';$('msub').textContent='So the right car, and the right answers, are ready when you arrive';
-        const wait=mwork(body,['Looking at the cars you have been configuring','Reading their spec sheets and the towing, finance and trade-in guides','Choosing the three questions that matter for you']);const t0=Date.now();booking.result=await bookSlot();await new Promise(r=>setTimeout(r,Math.max(0,wait-(Date.now()-t0))));renderBooking();};}
+        const wait=mwork(body,['Looking at the cars you have been configuring','Reading their spec sheets and the towing, finance and trade-in guides','Choosing the three questions that matter for you']);const t0=Date.now();booking.result=await bookSlot();logEvent('booking',{bookingId:booking.result.bookingId,modelId:cfg.model,unitId:booking.unitId,site:booking.site,whenLabel:booking.result.whenLabel});await new Promise(r=>setTimeout(r,Math.max(0,wait-(Date.now()-t0))));renderBooking();};}
     else if(booking.step===2){const r=booking.result;const qs=r.questions;
       body.innerHTML=`${steps}${qs.map((q,i)=>`<div class="qcard"><div class="qn">Question ${i+1} of 3 · ${q.type==='yesno'?'yes or no':'choose one'}</div><b>${esc(q.text)}</b>${q.why?`<div class="why">${esc(q.why)}</div>`:''}<div class="qopts" data-q="${esc(q.id)}">${(q.type==='yesno'?[{id:'yes',label:'Yes'},{id:'no',label:'No'}]:q.options).map(o=>`<button data-o="${esc(o.id)}" data-l="${esc(o.label)}" class="${booking.answers[q.id]&&booking.answers[q.id].id===o.id?'on':''}">${esc(o.label)}</button>`).join('')}</div></div>`).join('')}
         <div class="trace">${(r.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">${API?'ARAG · /ask · answer_json_schema · salesperson prompt':'local question bank (offline)'}</span></div>
         <div class="mfoot"><button class="btn ghost" id="mback1">Back</button><button class="btn" id="mnext" ${Object.keys(booking.answers).length===3?'':'disabled'}>Confirm booking</button></div>`;
-      body.querySelectorAll('.qopts').forEach(g=>g.querySelectorAll('button').forEach(b=>b.onclick=()=>{const q=qs.find(x=>x.id===g.dataset.q);booking.answers[g.dataset.q]={id:b.dataset.o,label:b.dataset.l,q:q?q.text:''};renderBooking();}));
+      body.querySelectorAll('.qopts').forEach(g=>g.querySelectorAll('button').forEach(b=>b.onclick=()=>{const q=qs.find(x=>x.id===g.dataset.q);booking.answers[g.dataset.q]={id:b.dataset.o,label:b.dataset.l,q:q?q.text:''};logEvent('booking_answer',{bookingId:booking.result.bookingId,questionId:g.dataset.q,value:b.dataset.o});renderBooking();}));
       $('mback1').onclick=()=>{booking.step=1;renderBooking();};
       $('mnext').onclick=async()=>{booking.step=3;$('mkick').textContent='Book a test drive · step 3 of 3';$('mtitle').textContent='You are booked in';$('msub').textContent='';const wait=mwork(body,['Writing the booking to the DMS','Preparing your visit']);const t0=Date.now();booking.reply=await sendAnswers();await new Promise(r=>setTimeout(r,Math.max(0,wait-(Date.now()-t0))));renderBooking();};}
     else{const r=booking.result,a=booking.reply||{},inc=r.incentive;
@@ -1297,7 +1332,10 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
         ${a.reply?`<div class="msg a" style="max-width:100%"><div class="bub">${esc(a.reply)}</div></div>`:''}
         ${(a.prep||[]).length?`<div><div class="label" style="margin-bottom:6px">We will have ready</div><ul class="prep">${a.prep.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>`:''}
         ${inc?`<div class="voucher"><div class="vk">${inc.value?'$'+inc.value:'GIFT'}</div><b>${esc(inc.title)}</b><div class="vd">${esc(inc.desc)}</div><div class="vr">${esc(inc.reason)} · show this at reception</div></div>`:''}
-        <div class="mfoot"><span class="ann dms">DMS · write-back: booking + lead + transcript</span><button class="btn" id="mdone">Done</button></div>`;
+        <details class="handover" id="handover"><summary>What your salesperson will see <span class="ann dms">DMS · handover sheet · GET /api/testdrive/handover/${esc(r.bookingId)}</span></summary><div class="hbody">Loading the briefing…</div></details>
+        <div class="mfoot"><span class="ann dms">DMS · write-back: booking + lead + transcript + first-party events</span><button class="btn" id="mdone">Done</button></div>`;
+      $('handover').addEventListener('toggle',async function(){if(!this.open||this.dataset.loaded)return;this.dataset.loaded='1';const h=await getHandover();const kv=(k,v)=>`<div class="hk">${k}</div><div class="hv">${v}</div>`;
+        this.querySelector('.hbody').innerHTML=`<div class="hgrid">${kv('Customer',esc(h.customerRef||SID.slice(0,6))+' · '+esc(h.whenLabel||r.whenLabel))}${kv('Car',esc([h.car.model,h.car.grade,h.car.colour,h.car.interior].filter(Boolean).join(' · '))+(h.car.packs&&h.car.packs.length?' · '+esc(h.car.packs.join(', ')):'')+(h.car.unitId?' · stock '+esc(h.car.unitId):'')+(h.car.price?' · '+fmt(h.car.price):''))}${kv('Also looked at',esc((h.viewed||[]).slice(1).join(', ')||'nothing else'))}${kv('Finder answers',(h.finderAnswers||[]).map(a=>esc(a.question)+' → <b>'+esc(a.answer)+'</b>').join('<br>')||'did not use the finder')}${kv('Pre-visit answers',(h.questions||[]).map(a=>esc(a.question)+' → <b>'+esc(a.answer)+'</b>').join('<br>'))}${kv('Offer',(h.promotionsToOffer||[]).map(p=>esc(p.title)).join(', ')||'none')}${kv('Incentive',h.incentive?esc(h.incentive.title):'none')}${kv('Talking points','<ul class="prep">'+(h.talkingPoints||[]).map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>')}</div><div class="trace">${(h.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}</div>`;});
       $('mdone').onclick=()=>{closeBooking();addAssistant(`You're booked for ${r.whenLabel} at ${r.siteName} (${r.bookingId}). ${a.reply||''}${inc?' Your '+inc.title.toLowerCase()+' is noted on the booking.':''}`,[{kind:'domo',label:'DMS · booking '+r.bookingId},{kind:'kb',label:'KB · salesperson prep'}]);};}}
   document.body.addEventListener('click',e=>{const b=e.target.closest('[data-book]');if(b){openBooking(b.dataset.book||null);}});
 
@@ -1305,7 +1343,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   const toastEl=$('toast');let tt;
   function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('show'),2400);}
   document.body.addEventListener('click',e=>{const t=e.target.closest('[data-toast]');if(t){toast(t.dataset.toast);return;}
-    const u=e.target.closest('[data-unit]');if(u){applyUnit(u.dataset.unit);return;}
+    const u=e.target.closest('[data-unit]');if(u){if(u.hasAttribute('data-offer'))logEvent('offer_click',{unitId:u.dataset.unit});applyUnit(u.dataset.unit);return;}
     const h=e.target.closest('[data-target]');if(h){highlight(h.dataset.target);}});
   const rv=$('reveal');rv.addEventListener('click',()=>{const on=document.body.classList.toggle('reveal');rv.classList.toggle('on',on);rv.setAttribute('aria-pressed',on);rv.querySelector('.lbl').textContent=on?'Data layer on':'Data layer';});
 
