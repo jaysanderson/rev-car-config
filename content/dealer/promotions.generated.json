@@ -1,0 +1,456 @@
+{
+  "composedAt": "2026-10-13T23:32:17.489Z",
+  "signature": "2026-10-14T02:00:00+11:00|aged-rav4:HL-2231+HL-2104,aged-kluger:HL-1941,aged-hilux:HL-2399,aged-camry:HL-2488,aged-c-hr:HL-2650,push-kluger:,gap-hilux:,body-suv-mid:|2026-10-14",
+  "signalsRefreshedAt": "2026-10-14T02:00:00+11:00",
+  "composedBy": "arag",
+  "latencyMs": 21362,
+  "targets": [
+    {
+      "id": "aged-rav4",
+      "type": "aged-stock",
+      "models": [
+        "rav4"
+      ],
+      "units": [
+        "HL-2231",
+        "HL-2104"
+      ],
+      "signal": "aged_stock_actions: HL-2231 RAV4 94 days in stock, $1,800 headroom; HL-2104 RAV4 67 days in stock, $1,200 headroom",
+      "kinds": [
+        "servicing",
+        "trade-in",
+        "accessory-bundle"
+      ],
+      "promotionId": "promo-aged-rav4",
+      "composedBy": "arag",
+      "kb": [
+        "Toyota Service Advantage - capped-price servicing and intervals",
+        "Towing guide - capacities, tow ball download and what you can tow",
+        "Accessory packs and popular Genuine accessories",
+        "Car finance explained - comparison rates, balloons, GFV and novated leases"
+      ],
+      "ms": 9284
+    },
+    {
+      "id": "aged-kluger",
+      "type": "aged-stock",
+      "models": [
+        "kluger"
+      ],
+      "units": [
+        "HL-1941"
+      ],
+      "signal": "aged_stock_actions: HL-1941 Kluger 110 days in stock, $2,400 headroom",
+      "kinds": [
+        "servicing",
+        "trade-in",
+        "accessory-bundle"
+      ],
+      "promotionId": "promo-aged-kluger",
+      "composedBy": "arag",
+      "kb": [
+        "Toyota Service Advantage - capped-price servicing and intervals",
+        "Towing guide - capacities, tow ball download and what you can tow",
+        "Accessory packs and popular Genuine accessories",
+        "Car finance explained - comparison rates, balloons, GFV and novated leases"
+      ],
+      "ms": 10148
+    },
+    {
+      "id": "aged-hilux",
+      "type": "aged-stock",
+      "models": [
+        "hilux"
+      ],
+      "units": [
+        "HL-2399"
+      ],
+      "signal": "aged_stock_actions: HL-2399 HiLux 88 days in stock, $1,500 headroom",
+      "kinds": [
+        "servicing",
+        "trade-in",
+        "accessory-bundle"
+      ],
+      "promotionId": "promo-aged-hilux",
+      "composedBy": "arag",
+      "kb": [
+        "Accessory packs and popular Genuine accessories",
+        "Toyota Service Advantage - capped-price servicing and intervals",
+        "Towing guide - capacities, tow ball download and what you can tow",
+        "Car finance explained - comparison rates, balloons, GFV and novated leases"
+      ],
+      "ms": 13124
+    },
+    {
+      "id": "aged-camry",
+      "type": "aged-stock",
+      "models": [
+        "camry"
+      ],
+      "units": [
+        "HL-2488"
+      ],
+      "signal": "aged_stock_actions: HL-2488 Camry 75 days in stock, $900 headroom",
+      "kinds": [
+        "servicing",
+        "trade-in",
+        "accessory-bundle"
+      ],
+      "promotionId": "promo-aged-camry",
+      "composedBy": "arag",
+      "kb": [
+        "Toyota Service Advantage - capped-price servicing and intervals",
+        "Towing guide - capacities, tow ball download and what you can tow",
+        "Accessory packs and popular Genuine accessories",
+        "Car finance explained - comparison rates, balloons, GFV and novated leases"
+      ],
+      "ms": 21344
+    },
+    {
+      "id": "aged-c-hr",
+      "type": "aged-stock",
+      "models": [
+        "c-hr"
+      ],
+      "units": [
+        "HL-2650"
+      ],
+      "signal": "aged_stock_actions: HL-2650 C-HR 60 days in stock, $700 headroom",
+      "kinds": [
+        "servicing",
+        "trade-in",
+        "accessory-bundle"
+      ],
+      "promotionId": "promo-aged-c-hr",
+      "composedBy": "arag",
+      "kb": [
+        "Toyota Service Advantage - capped-price servicing and intervals",
+        "Towing guide - capacities, tow ball download and what you can tow",
+        "Accessory packs and popular Genuine accessories",
+        "Car finance explained - comparison rates, balloons, GFV and novated leases"
+      ],
+      "ms": 6153
+    },
+    {
+      "id": "push-kluger",
+      "type": "push-model",
+      "models": [
+        "kluger"
+      ],
+      "units": null,
+      "signal": "dealer_signals: Kluger allocationNextMonth 14, targetGap 6 → pushModel (weight 65)",
+      "kinds": [
+        "accessory-bundle",
+        "servicing",
+        "finance"
+      ],
+      "promotionId": "promo-push-kluger",
+      "composedBy": "arag",
+      "kb": [
+        "Toyota Service Advantage - capped-price servicing and intervals",
+        "Accessory packs and popular Genuine accessories",
+        "Towing guide - capacities, tow ball download and what you can tow"
+      ],
+      "ms": 6366
+    },
+    {
+      "id": "gap-hilux",
+      "type": "target-gap",
+      "models": [
+        "hilux"
+      ],
+      "units": null,
+      "signal": "dealer_signals: HiLux targetGap 5 this month, allocationNextMonth 6",
+      "kinds": [
+        "accessory-bundle",
+        "trade-in",
+        "servicing"
+      ],
+      "promotionId": "promo-gap-hilux",
+      "composedBy": "arag",
+      "kb": [
+        "Accessory packs and popular Genuine accessories",
+        "Toyota Service Advantage - capped-price servicing and intervals",
+        "Towing guide - capacities, tow ball download and what you can tow",
+        "Car finance explained - comparison rates, balloons, GFV and novated leases"
+      ],
+      "ms": 6094
+    },
+    {
+      "id": "body-suv-mid",
+      "type": "body-supply",
+      "models": [
+        "rav4",
+        "bz4x"
+      ],
+      "units": null,
+      "signal": "dealer_signals: Mid-size SUV days of supply 68 across 8 units (RAV4 60, bZ4X 90)",
+      "kinds": [
+        "finance",
+        "delivery"
+      ],
+      "promotionId": "promo-body-suv-mid",
+      "composedBy": "arag",
+      "kb": [
+        "Accessory packs and popular Genuine accessories",
+        "Toyota Service Advantage - capped-price servicing and intervals",
+        "Towing guide - capacities, tow ball download and what you can tow"
+      ],
+      "ms": 5881
+    }
+  ],
+  "promotions": [
+    {
+      "id": "promo-aged-rav4",
+      "title": "Complimentary 3-Year RAV4 Servicing — $975",
+      "short": "complimentary 3-year servicing",
+      "kind": "servicing",
+      "value": 975,
+      "desc": "Includes three scheduled RAV4 services at the Toyota Service Advantage capped price of $325 per service, up to $975 in value. Available on selected RAV4 vehicles and subject to Toyota Service Advantage terms, including scheduled service intervals and normal operating conditions; additional work is quoted separately.",
+      "why": "A practical benefit for RAV4 hybrid ownership, with annual scheduled servicing",
+      "reason": "2 RAV4s are aged (94 days, 67 days) with $1,200+ approved headroom; a value-add moves them without cutting the advertised price.",
+      "appliesTo": {
+        "models": [
+          "rav4"
+        ],
+        "units": [
+          "HL-2231",
+          "HL-2104"
+        ],
+        "aged": true,
+        "bodies": null
+      },
+      "validUntil": "2026-11-30",
+      "source": {
+        "domo": "aged_stock_actions: HL-2231 RAV4 94 days in stock, $1,800 headroom; HL-2104 RAV4 67 days in stock, $1,200 headroom",
+        "kb": [
+          "Toyota Service Advantage - capped-price servicing and intervals",
+          "Towing guide - capacities, tow ball download and what you can tow",
+          "Accessory packs and popular Genuine accessories",
+          "Car finance explained - comparison rates, balloons, GFV and novated leases"
+        ]
+      },
+      "composedBy": "arag",
+      "years": 3
+    },
+    {
+      "id": "promo-aged-kluger",
+      "title": "$1,050 3-Year Kluger Servicing",
+      "short": "complimentary 3-year servicing",
+      "kind": "servicing",
+      "value": 1050,
+      "desc": "Includes three scheduled Toyota Service Advantage services for a Kluger hybrid, capped at $350 per service under normal operating conditions. Extra work, including tyres, brake pads, wiper blades, repairs and severe-use items, is quoted separately.",
+      "why": "A simple way to cover your Kluger hybrid’s annual scheduled servicing",
+      "reason": "HL-1941 is aged (110 days) with $2,400+ approved headroom; a value-add moves it without cutting the advertised price.",
+      "appliesTo": {
+        "models": [
+          "kluger"
+        ],
+        "units": [
+          "HL-1941"
+        ],
+        "aged": true,
+        "bodies": null
+      },
+      "validUntil": "2026-11-30",
+      "source": {
+        "domo": "aged_stock_actions: HL-1941 Kluger 110 days in stock, $2,400 headroom",
+        "kb": [
+          "Toyota Service Advantage - capped-price servicing and intervals",
+          "Towing guide - capacities, tow ball download and what you can tow",
+          "Accessory packs and popular Genuine accessories",
+          "Car finance explained - comparison rates, balloons, GFV and novated leases"
+        ]
+      },
+      "composedBy": "arag",
+      "years": 3
+    },
+    {
+      "id": "promo-aged-hilux",
+      "title": "Save $1,400 on 2-Year HiLux Servicing",
+      "short": "complimentary 2-year servicing",
+      "kind": "servicing",
+      "value": 1400,
+      "desc": "Includes four scheduled HiLux diesel logbook services over two years under Toyota Service Advantage, capped at $350 per service. Covers standard scheduled servicing under normal operating conditions; extra work is quoted separately.",
+      "why": "Built for HiLux owners who value predictable servicing costs every six months",
+      "reason": "HL-2399 is aged (88 days) with $1,500+ approved headroom; a value-add moves it without cutting the advertised price.",
+      "appliesTo": {
+        "models": [
+          "hilux"
+        ],
+        "units": [
+          "HL-2399"
+        ],
+        "aged": true,
+        "bodies": null
+      },
+      "validUntil": "2026-11-30",
+      "source": {
+        "domo": "aged_stock_actions: HL-2399 HiLux 88 days in stock, $1,500 headroom",
+        "kb": [
+          "Accessory packs and popular Genuine accessories",
+          "Toyota Service Advantage - capped-price servicing and intervals",
+          "Towing guide - capacities, tow ball download and what you can tow",
+          "Car finance explained - comparison rates, balloons, GFV and novated leases"
+        ]
+      },
+      "composedBy": "arag",
+      "years": 2
+    },
+    {
+      "id": "promo-aged-camry",
+      "title": "$650 Camry Scheduled Servicing Included",
+      "short": "complimentary 2-year scheduled servicing",
+      "kind": "servicing",
+      "value": 650,
+      "desc": "Includes two scheduled Camry services under Toyota Service Advantage, capped at $325 per service. Covers standard logbook servicing under normal operating conditions; additional items or repairs are quoted separately.",
+      "why": "A simple way to cover the Camry hybrid’s first two annual scheduled services",
+      "reason": "HL-2488 is aged (75 days) with $900+ approved headroom; a value-add moves it without cutting the advertised price.",
+      "appliesTo": {
+        "models": [
+          "camry"
+        ],
+        "units": [
+          "HL-2488"
+        ],
+        "aged": true,
+        "bodies": null
+      },
+      "validUntil": "2026-11-30",
+      "source": {
+        "domo": "aged_stock_actions: HL-2488 Camry 75 days in stock, $900 headroom",
+        "kb": [
+          "Toyota Service Advantage - capped-price servicing and intervals",
+          "Towing guide - capacities, tow ball download and what you can tow",
+          "Accessory packs and popular Genuine accessories",
+          "Car finance explained - comparison rates, balloons, GFV and novated leases"
+        ]
+      },
+      "composedBy": "arag",
+      "years": 2
+    },
+    {
+      "id": "promo-aged-c-hr",
+      "title": "C-HR $650 Two-Year Scheduled Servicing",
+      "short": "complimentary 2-year scheduled servicing",
+      "kind": "servicing",
+      "value": 650,
+      "desc": "Includes two scheduled logbook services for your C-HR, capped at $325 per service under Toyota Service Advantage. Available under normal operating conditions; extra work and severe-use items are quoted separately.",
+      "why": "Supports predictable servicing costs for your C-HR hybrid",
+      "reason": "HL-2650 is aged (60 days) with $700+ approved headroom; a value-add moves it without cutting the advertised price.",
+      "appliesTo": {
+        "models": [
+          "c-hr"
+        ],
+        "units": [
+          "HL-2650"
+        ],
+        "aged": true,
+        "bodies": null
+      },
+      "validUntil": "2026-11-30",
+      "source": {
+        "domo": "aged_stock_actions: HL-2650 C-HR 60 days in stock, $700 headroom",
+        "kb": [
+          "Toyota Service Advantage - capped-price servicing and intervals",
+          "Towing guide - capacities, tow ball download and what you can tow",
+          "Accessory packs and popular Genuine accessories",
+          "Car finance explained - comparison rates, balloons, GFV and novated leases"
+        ]
+      },
+      "composedBy": "arag",
+      "years": 2
+    },
+    {
+      "id": "promo-push-kluger",
+      "title": "Kluger Towing Pack — $1,650 Value",
+      "short": "a complimentary $1,650 Kluger Towing Pack",
+      "kind": "accessory-bundle",
+      "value": 1650,
+      "desc": "Includes a Genuine Toyota tow bar and tongue rated to the Kluger’s 2,000 kg braked towing capacity, wiring harness and trailer plug, fitted before delivery. Available on a new Kluger from Harbourline Toyota; trailer brakes and other legal requirements may apply depending on trailer weight.",
+      "why": "A practical fit for Kluger owners planning to tow with their hybrid AWD SUV",
+      "reason": "Kluger allocation next month is 14 against a target gap of 6; a value-add moves volume while protecting the drive-away price.",
+      "appliesTo": {
+        "models": [
+          "kluger"
+        ],
+        "units": null,
+        "aged": false,
+        "bodies": null
+      },
+      "validUntil": "2026-12-31",
+      "source": {
+        "domo": "dealer_signals: Kluger allocationNextMonth 14, targetGap 6 → pushModel (weight 65)",
+        "kb": [
+          "Toyota Service Advantage - capped-price servicing and intervals",
+          "Accessory packs and popular Genuine accessories",
+          "Towing guide - capacities, tow ball download and what you can tow"
+        ]
+      },
+      "composedBy": "arag",
+      "packs": [
+        "tow"
+      ]
+    },
+    {
+      "id": "promo-gap-hilux",
+      "title": "$1,650 HiLux Towing Pack",
+      "short": "a complimentary $1,650 HiLux Towing Pack",
+      "kind": "accessory-bundle",
+      "value": 1650,
+      "desc": "Includes a Genuine Toyota tow bar and tongue rated to the HiLux’s braked towing capacity, plus a wiring harness and trailer plug, fitted before delivery. Trailer brakes and an electric brake controller may be required depending on the trailer and loaded weight.",
+      "why": "Built for HiLux buyers who need a ready-to-tow setup",
+      "reason": "HiLux is 5 units short of this month's retail target with 6 more arriving next month.",
+      "appliesTo": {
+        "models": [
+          "hilux"
+        ],
+        "units": null,
+        "aged": false,
+        "bodies": null
+      },
+      "validUntil": "2026-12-31",
+      "source": {
+        "domo": "dealer_signals: HiLux targetGap 5 this month, allocationNextMonth 6",
+        "kb": [
+          "Accessory packs and popular Genuine accessories",
+          "Toyota Service Advantage - capped-price servicing and intervals",
+          "Towing guide - capacities, tow ball download and what you can tow",
+          "Car finance explained - comparison rates, balloons, GFV and novated leases"
+        ]
+      },
+      "composedBy": "arag",
+      "packs": [
+        "tow"
+      ]
+    },
+    {
+      "id": "promo-body-suv-mid",
+      "title": "Flexible finance for your RAV4 or bZ4X",
+      "short": "flexible finance with eligible accessories included",
+      "kind": "finance",
+      "value": null,
+      "desc": "Ask Harbourline Toyota about finance options for a new RAV4 or bZ4X. Toyota Genuine accessories fitted before delivery, including available packs, can be included in the finance amount. Approved credit; fees, charges and conditions apply.",
+      "why": "It lets you tailor your SUV with Genuine accessories before delivery",
+      "reason": "Mid-size SUV stock is running at 68 days of supply; an offer across the body type lifts the rate of sale.",
+      "appliesTo": {
+        "models": null,
+        "units": null,
+        "aged": false,
+        "bodies": [
+          "suv-mid"
+        ]
+      },
+      "validUntil": "2026-12-31",
+      "source": {
+        "domo": "dealer_signals: Mid-size SUV days of supply 68 across 8 units (RAV4 60, bZ4X 90)",
+        "kb": [
+          "Accessory packs and popular Genuine accessories",
+          "Toyota Service Advantage - capped-price servicing and intervals",
+          "Towing guide - capacities, tow ball download and what you can tow"
+        ]
+      },
+      "composedBy": "arag"
+    }
+  ]
+}

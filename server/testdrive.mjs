@@ -10,16 +10,25 @@
 //  POST /api/testdrive/answers → answers()    validates answers against the booking's own
 //                                questions, builds the prep list (deterministic) and asks
 //                                ARAG for a two-sentence salesperson reply (fallback).
+//  GET  /api/testdrive/handover/:id → handover()  the salesperson's pre-visit sheet: car,
+//                                what they viewed, finder and booking answers, promotions to
+//                                offer, incentive, prep, and 3-5 talking points written by
+//                                the ARAG agent as a sales-manager briefing (deterministic
+//                                fallback). Written into the booking record (`handover`) so
+//                                the DMS write-back carries it; regenerated when the answers
+//                                change. Generated in the background after book and answers.
 //
 // Client free text never reaches a prompt: models/grades/units resolve against the
 // catalogue and stock, finder answers are canonical slugs, and answer labels come
 // from the booking's stored options.
 import { randomInt } from 'node:crypto';
 import * as arag from './arag.mjs';
-import { modelById, gradeOf, siteName, stockSummary } from './data.mjs';
-import { readDealer, writeDealer } from './dealer.mjs';
+import { modelById, gradeOf, siteName, stockSummary, colourById, interiorById, packById, priceOf, fmtAud } from './data.mjs';
+import { readDealer, updateDealer } from './state.mjs';
+import { promotionsFor } from './dealer.mjs';
 import { cleanAnswers, buildText, LANG } from './assistant.mjs';
-import { canon } from './finder-fallback.mjs';
+import { canon, describeAnswer } from './finder-fallback.mjs';
+import { logServer, eventsForSession } from './events.mjs';
 import { pickQuestions, pickIncentive, prepFor, replyFor, bankGroup, bankQuestion } from './testdrive-fallback.mjs';
 
 const TZ = 'Australia/Sydney';
@@ -206,8 +215,8 @@ function newBookingId() {
   for (;;) { let id = 'TD-'; for (let i = 0; i < 5; i++) id += A[randomInt(A.length)]; if (!used.has(id)) return id; }
 }
 
-/** Returns {status, body}. */
-export async function book(input, s) {
+/** Returns {status, body}. `sid` = the page's session id (first-party events, handover). */
+export async function book(input, s, { sid = null } = {}) {
   const b = input || {};
   const site = siteOf(String(b.site || ''));
   if (!site) return { status: 400, body: { error: `site must be one of ${siteIds().join(', ')}` } };
@@ -277,10 +286,11 @@ export async function book(input, s) {
       when: isoAt(m[2], mins), whenLabel, time: slot.time, unitId: unit?.id || null, transferFrom: ctx.transferFrom,
       modelId, gradeId, build: build ? { modelId: build.modelId, gradeId: gradeOf(build.modelId, build.gradeId)?.id || null, colourId: typeof build.colourId === 'string' ? build.colourId.slice(0, 40) : null, interiorId: typeof build.interiorId === 'string' ? build.interiorId.slice(0, 40) : null, packs: (Array.isArray(build.packs) ? build.packs : []).filter((p) => typeof p === 'string').slice(0, 6) } : null,
       viewed: viewed.map((v) => ({ modelId: v.modelId, gradeId: gradeOf(v.modelId, v.gradeId)?.id || null, unitId: s.stock_by_site.some((u) => u.id === v.unitId) ? v.unitId : null })),
-      finderAnswers, lang, questions, incentive, answers: null,
+      finderAnswers, lang, questions, incentive, answers: null, sid: sid || null,
     };
-    const data = bookingsData();
-    await writeDealer('bookings.json', { ...data, bookings: [...(data.bookings || []), record].slice(-500) });
+    await updateDealer('bookings.json', (data) => ({ ...data, bookings: [...(data.bookings || []), record].slice(-500) }), { bookings: [] });
+    logServer(sid, 'booking', { bookingId, modelId, unitId: record.unitId, site: site.id, whenLabel }, s);
+    scheduleHandover(bookingId, s);
     trace.push({ kind: 'domo', label: `Booking ${bookingId} written to the DMS diary (stand-in) at ${site.name}${unit ? ` for ${unit.id}` : ''}` });
     if (ctx.transferFrom) trace.push({ kind: 'domo', label: `Transfer from ${ctx.transferFrom} flagged for ${unit.id}` });
 
@@ -289,7 +299,7 @@ export async function book(input, s) {
       body: {
         bookingId, site: site.id, siteName: site.name, when: record.when, whenLabel, unitId: record.unitId,
         model: modelById(modelId).name, grade: gradeOf(modelId, gradeId)?.name || null, modelId, gradeId,
-        questions, incentive, trace,
+        questions, incentive, handover: `/api/testdrive/handover/${bookingId}`, trace,
       },
     };
   } finally {
@@ -304,7 +314,7 @@ const REPLY_SCHEMA = {
 };
 const twoSentences = (t) => (String(t).replace(/\s+/g, ' ').trim().match(/[^.!?。！？]+[.!?。！？]+/g) || [String(t)]).slice(0, 2).map((x) => x.trim()).join(' ');
 
-export async function answers(input, s) {
+export async function answers(input, s, { sid = null } = {}) {
   const b = input || {};
   const id = String(b.bookingId || '').toUpperCase();
   if (!/^TD-[A-Z0-9]{5}$/.test(id)) return { status: 400, body: { error: 'bookingId is required' } };
@@ -338,8 +348,156 @@ export async function answers(input, s) {
   }
   if (!reply) { reply = replyFor(booking, valid, prep); trace.push({ kind: 'kb', label: 'Reply from the deterministic template' }); }
 
-  const fresh = bookingsData();
-  await writeDealer('bookings.json', { ...fresh, bookings: (fresh.bookings || []).map((x) => (x.bookingId === id ? { ...x, answers: valid.map(({ questionText, ...a }) => a), prep, answeredAt: new Date().toISOString() } : x)) });
+  await updateDealer('bookings.json', (fresh) => ({ ...fresh, bookings: (fresh.bookings || []).map((x) => (x.bookingId === id ? { ...x, answers: valid.map(({ questionText, ...a }) => a), prep, answeredAt: new Date().toISOString() } : x)) }), { bookings: [] });
+  for (const a of valid) logServer(sid || booking.sid, 'booking_answer', { bookingId: id, questionId: a.id, value: a.value }, s);
+  scheduleHandover(id, s, { force: true });
   trace.push({ kind: 'domo', label: `Answers and prep list saved to booking ${id} (DMS stand-in)` });
   return { status: 200, body: { ok: true, reply, prep, trace } };
+}
+
+// ── salesperson handover ─────────────────────────────────────────────────────
+const HANDOVER_SCHEMA = {
+  name: 'sales_briefing', description: 'Sales-manager briefing for the salesperson',
+  parameters: { type: 'object', properties: { talkingPoints: { type: 'array', items: { type: 'string' } } }, required: ['talkingPoints'] },
+};
+const HANDOVER_SYSTEM = `You are the sales manager at Harbourline Toyota (Sydney) briefing the salesperson who will take this customer on a test drive.
+Write 3 to 5 talking points, one sentence each (at most 35 words), best first.
+Rules:
+- Every point links something the customer told us (FINDER ANSWERS, BOOKING ANSWERS, what they viewed) to a specific fact about the booked car from the spec-sheet passages or the CAR block (towing capacity, seats, powertrain, drive, safety, servicing), or to a listed PROMOTION / INCENTIVE.
+- Use only facts in the passages and blocks. Never invent prices, specs, rates or stock.
+- Practical and respectful: what to show, what to check, what to have ready. No pressure tactics.
+- English.`;
+
+const handoverJobs = new Map(); // bookingId → in-flight promise
+/** Generate (or refresh) a booking's handover in the background after book / answers. */
+function scheduleHandover(bookingId, s, { force = false } = {}) {
+  const cur = handoverJobs.get(bookingId);
+  if (cur) return force ? cur.then(() => scheduleHandover(bookingId, s)) : cur;
+  const job = buildHandover(bookingId, s).catch((e) => { console.warn(`[handover] ${bookingId}: ${e.message}`); return null; })
+    .finally(() => handoverJobs.delete(bookingId));
+  handoverJobs.set(bookingId, job);
+  return job;
+}
+
+function carOf(booking, s) {
+  const unit = booking.unitId ? s.stock_by_site.find((u) => u.id === booking.unitId) : null;
+  const b = booking.build && booking.build.modelId === booking.modelId ? booking.build : null;
+  const spec = unit
+    ? { modelId: unit.model, gradeId: unit.grade, colourId: unit.colour, interiorId: unit.interior, packs: unit.packs || [] }
+    : { modelId: booking.modelId, gradeId: booking.gradeId, colourId: b?.colourId || null, interiorId: b?.interiorId || null, packs: b?.packs || [] };
+  const m = modelById(spec.modelId);
+  return {
+    modelId: spec.modelId, model: m?.name || spec.modelId, gradeId: spec.gradeId, grade: gradeOf(spec.modelId, spec.gradeId)?.name || null,
+    colour: colourById(spec.colourId)?.name || null, interior: interiorById(spec.interiorId)?.name || null,
+    packs: spec.packs.map((p) => packById(p)?.name).filter(Boolean), unitId: unit?.id || null,
+    price: priceOf(spec), priceNote: 'NSW drive-away estimate', ...(booking.transferFrom ? { transferFrom: booking.transferFrom } : {}),
+    _spec: spec,
+  };
+}
+
+function viewedOf(booking, s) {
+  const out = []; const seen = new Set();
+  const add = (modelId, gradeId, unitId, source) => {
+    const key = `${modelId}|${unitId || ''}`; if (!modelById(modelId) || seen.has(key)) return; seen.add(key);
+    out.push({ modelId, model: modelById(modelId).name, grade: gradeOf(modelId, gradeId)?.name || null, unitId: unitId || null, source });
+  };
+  for (const v of booking.viewed || []) add(v.modelId, v.gradeId, v.unitId, 'booking');
+  for (const e of eventsForSession(booking.sid)) {
+    if (e.type === 'build_change') add(e.data.modelId, e.data.gradeId, null, 'configurator');
+    if (e.type === 'offer_click' || e.type === 'offer_view') { const u = s.stock_by_site.find((x) => x.id === e.data.unitId); if (u) add(u.model, u.grade, u.id, e.type === 'offer_click' ? 'offer clicked' : 'offer seen'); }
+  }
+  return out.slice(0, 10);
+}
+
+/** Deterministic talking points (fallback and top-up). */
+function talkingPointsFallback(booking, car, finder, qa, promos) {
+  const m = modelById(car.modelId); const pts = [];
+  const tow = finder.find((a) => a.id === 'towing' && a.value !== 'none') || qa.find((x) => /tow/i.test(x.question) && x.answer && !/nothing|^no$/i.test(x.answer));
+  if (tow && m) pts.push(`They tow (${tow.answer || tow.value}): the ${m.name} is rated to ${(m.towKg || 0).toLocaleString('en-AU')} kg braked, so confirm their loaded weight and show the Towing Pack.`);
+  const seats = finder.find((a) => a.id === 'people') || qa.find((x) => /seat|third row/i.test(x.question));
+  if (seats && m) pts.push(`Seating matters to them (${seats.answer || seats.value}): the ${m.name} has ${m.seats} seats, so let them try the back${m.seats >= 7 ? ' and third' : ''} row with their own setup.`);
+  if (m?.powertrain === 'hybrid' && qa.some((x) => /hybrid/i.test(x.question) && /^no$/i.test(x.answer || ''))) pts.push(`First hybrid for them: explain how the ${m.powertrainLabel || 'hybrid system'} starts in EV mode and charges itself; no plugging in.`);
+  if (m?.powertrain === 'ev') pts.push(`Electric: walk through home and public charging on the ${m.name}, using their answer on home charging.`);
+  if (promos[0]) pts.push(`Offer ${promos[0].title}: ${promos[0].why}.`);
+  if (qa.some((x) => /trad/i.test(x.question) && /^yes$/i.test(x.answer || ''))) pts.push('They plan to trade in: have the valuation done while they are out on the drive.');
+  if (booking.incentive) pts.push(`Confirm their test-drive incentive in writing: ${booking.incentive.title}.`);
+  pts.push(`Have the ${car.model}${car.grade ? ` ${car.grade}` : ''}${car.unitId ? ` (${car.unitId})` : ''} clean, fuelled and ready at ${booking.time}.`);
+  return pts.slice(0, 5);
+}
+
+async function buildHandover(bookingId, s) {
+  const booking = (bookingsData().bookings || []).find((x) => x.bookingId === bookingId);
+  if (!booking) return null;
+  const car = carOf(booking, s);
+  const finder = (booking.finderAnswers || []).map((a) => ({ id: a.id, value: a.value, ...describeAnswer(a, booking.finderAnswers) }));
+  const qa = (booking.questions || []).map((q) => {
+    const a = (booking.answers || []).find((x) => x.id === q.id);
+    return { id: q.id, question: q.text, answer: a ? (a.label || q.options.find((o) => o.id === a.value)?.label || a.value) : null };
+  });
+  const promosFull = promotionsFor(s, car.unitId ? { unit: car.unitId } : { model: car.modelId }, { internal: true }).slice(0, 3);
+  const promos = promosFull.map((p) => ({ id: p.id, title: p.title, why: p.why || p.short || '' }));
+  const trace = [];
+  let points = []; let by = 'fallback';
+  if (arag.configured()) {
+    const t0 = Date.now();
+    try {
+      const m = modelById(car.modelId);
+      const blocks = [
+        `CAR: ${car.model} ${car.grade || ''}${car.unitId ? ` (stock unit ${car.unitId})` : ''} | ${m?.bodyLabel || m?.body} | ${m?.powertrainLabel || m?.powertrain} | ${m?.seats} seats | braked tow ${(m?.towKg || 0).toLocaleString('en-AU')} kg | ${car.colour || 'colour tbc'}${car.packs.length ? ` | packs: ${car.packs.join(', ')}` : ''} | ${car.price ? `${fmtAud(car.price)} NSW drive-away estimate` : ''}`,
+        `FINDER ANSWERS: ${finder.length ? finder.map((a) => `${a.question} → ${a.answer}`).join('; ') : 'none (did not use the finder)'}`,
+        `BOOKING ANSWERS: ${qa.filter((x) => x.answer).map((x) => `${x.question} → ${x.answer}`).join('; ') || 'not answered yet'}`,
+        `PROMOTIONS TO OFFER: ${promosFull.map((p) => `${p.title}${p.value ? ` (${fmtAud(p.value)})` : ''}: ${p.desc}`).join(' | ') || 'none'}`,
+        `INCENTIVE: ${booking.incentive ? `${booking.incentive.title} (${booking.incentive.reason})` : 'none'}`,
+      ];
+      const r = await arag.ask({
+        query: `${car.model} ${car.grade || ''} specifications, towing, seating, powertrain and safety for a customer who said: ${[...finder.map((a) => a.answer), ...qa.filter((x) => x.answer).map((x) => x.answer)].join(', ')}`,
+        system: HANDOVER_SYSTEM, extraContext: blocks, jsonSchema: HANDOVER_SCHEMA, timeoutMs: 25000, topK: 10,
+        filterExpression: arag.anyLabel('model', [car.modelId, 'all']),
+      });
+      const known = new Set([car.price, ...promosFull.map((p) => p.value), booking.incentive?.value, ...[1650, 890, 1290]].filter(Boolean));
+      points = (Array.isArray(r.json?.talkingPoints) ? r.json.talkingPoints : []).map((x) => String(x || '').replace(/\s+/g, ' ').trim())
+        .filter((x) => x.length >= 20 && x.length <= 300 && !/^not enough data/i.test(x))
+        .filter((x) => (x.match(/\$\s?[\d,]+/g) || []).every((a) => known.has(Number(a.replace(/[^\d]/g, ''))))).slice(0, 5);
+      if (points.length >= 3) { by = 'arag'; trace.push({ kind: 'kb', label: `Knowledge base: ${r.sources.length} document(s) (${r.sources.slice(0, 3).map((x) => x.title).join('; ')}) used to write ${points.length} talking points in ${Date.now() - t0} ms` }); }
+      else { trace.push({ kind: 'kb', label: `Agent wrote ${points.length} usable talking point(s); topped up from the deterministic briefing` }); }
+    } catch (e) {
+      console.warn(`[handover] talking points: ${e.message}`);
+      trace.push({ kind: 'kb', label: 'Knowledge base unavailable; deterministic briefing' });
+    }
+  } else trace.push({ kind: 'kb', label: 'Knowledge base not configured; deterministic briefing' });
+  if (points.length < 3) {
+    const fb = talkingPointsFallback(booking, car, finder, qa, promos);
+    points = [...points, ...fb.filter((x) => !points.includes(x))].slice(0, Math.max(3, Math.min(5, points.length + fb.length)));
+  }
+  const prep = booking.prep || prepFor(booking, []);
+  trace.push({ kind: 'domo', label: `Promotions to offer: ${promos.length} (Domo-selected, composed ${promosFull[0]?.composedBy === 'arag' ? 'by the ARAG agent' : 'from the fallback'})` });
+  trace.push({ kind: 'domo', label: `Handover sheet written to booking ${bookingId} (DMS stand-in)` });
+  const { _spec, ...carPublic } = car;
+  const sheet = {
+    bookingId, whenLabel: booking.whenLabel, when: booking.when, site: booking.site, siteName: booking.siteName,
+    customerRef: booking.sid ? `${booking.sid.slice(0, 8)}…` : null, lang: booking.lang,
+    car: carPublic, viewed: viewedOf(booking, s),
+    finderAnswers: finder.map(({ question, answer }) => ({ question, answer })),
+    questions: qa.map(({ question, answer }) => ({ question, answer })),
+    promotionsToOffer: promos.map(({ title, why }) => ({ title, why })),
+    incentive: booking.incentive || null,
+    talkingPoints: points, talkingPointsBy: by, prep,
+    generatedAt: new Date().toISOString(), basis: booking.answeredAt || booking.createdAt,
+    trace,
+  };
+  await updateDealer('bookings.json', (data) => ({ ...data, bookings: (data.bookings || []).map((x) => (x.bookingId === bookingId ? { ...x, handover: sheet } : x)) }), { bookings: [] });
+  return sheet;
+}
+
+/** GET /api/testdrive/handover/:bookingId → {status, body}. */
+export async function handover(bookingIdRaw, s) {
+  const id = String(bookingIdRaw || '').toUpperCase();
+  if (!/^TD-[A-Z0-9]{5}$/.test(id)) return { status: 400, body: { error: 'bookingId must look like TD-XXXXX' } };
+  const booking = (bookingsData().bookings || []).find((x) => x.bookingId === id);
+  if (!booking) return { status: 404, body: { error: 'booking not found' } };
+  if (handoverJobs.has(id)) await handoverJobs.get(id);
+  const fresh = (bookingsData().bookings || []).find((x) => x.bookingId === id);
+  if (fresh?.handover && fresh.handover.basis === (fresh.answeredAt || fresh.createdAt)) return { status: 200, body: fresh.handover };
+  const sheet = await scheduleHandover(id, s);
+  return sheet ? { status: 200, body: sheet } : { status: 500, body: { error: 'could not build the handover sheet' } };
 }

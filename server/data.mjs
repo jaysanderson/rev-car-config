@@ -8,6 +8,10 @@
 //     scope=data) and mapped into the same shape. Optional DOMO_DATASET_AGED,
 //     DOMO_DATASET_TRANSFER, DOMO_DATASET_INBOUND, DOMO_DATASET_ORDERBANK override
 //     the matching stand-in file. Any live failure falls back to the stand-in.
+//   • dealer_signals (Domo Intelligence dataflow output, nightly; DOMO_DATASET_SIGNALS
+//     when live) feeds the derived dealer priorities and promotion targets
+//     (server/dealer.mjs, server/promotions.mjs). It is internal: /api/stock does not
+//     expose it.
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './env.mjs';
@@ -53,8 +57,11 @@ export function modelsMentioned(text) {
 }
 
 // ── stock (Domo) ─────────────────────────────────────────────────────────────
-const DATASETS = ['stock_by_site', 'aged_stock_actions', 'transfer_feasibility', 'inbound_pipeline', 'order_bank_eta'];
-const DOMO_ENV = { stock_by_site: 'DOMO_DATASET_STOCK', aged_stock_actions: 'DOMO_DATASET_AGED', transfer_feasibility: 'DOMO_DATASET_TRANSFER', inbound_pipeline: 'DOMO_DATASET_INBOUND', order_bank_eta: 'DOMO_DATASET_ORDERBANK' };
+const DATASETS = ['stock_by_site', 'aged_stock_actions', 'transfer_feasibility', 'inbound_pipeline', 'order_bank_eta', 'dealer_signals'];
+const DOMO_ENV = { stock_by_site: 'DOMO_DATASET_STOCK', aged_stock_actions: 'DOMO_DATASET_AGED', transfer_feasibility: 'DOMO_DATASET_TRANSFER', inbound_pipeline: 'DOMO_DATASET_INBOUND', order_bank_eta: 'DOMO_DATASET_ORDERBANK', dealer_signals: 'DOMO_DATASET_SIGNALS' };
+const SIGNAL_NUM = ['unitsInStock', 'sales90d', 'daysOfSupply', 'allocationNextMonth', 'targetGap', 'avgDaysInStock', 'marginHeadroomAvg'];
+/** dealer_signals rows → {model, …numbers}; live Domo columns may be strings. */
+const normaliseSignal = (r) => ({ ...r, model: String(r.model || r.model_id || ''), ...Object.fromEntries(SIGNAL_NUM.map((k) => [k, Number(r[k] ?? 0) || 0])) });
 export const domoMode = () => (process.env.DOMO_CLIENT_ID && process.env.DOMO_CLIENT_SECRET && process.env.DOMO_DATASET_STOCK ? 'live' : 'stand-in');
 
 function readStandIn(name) {
@@ -98,17 +105,18 @@ function normaliseUnit(u) {
 let stockCache = { at: 0, data: null };
 export async function stock() {
   if (stockCache.data && Date.now() - stockCache.at < 60_000) return stockCache.data;
-  const out = {}; let refreshed = null;
+  const out = { _refreshed: {} }; let refreshed = null;
   for (const name of DATASETS) {
     const s = readStandIn(name);
-    out[name] = s.rows; refreshed = refreshed || s.refreshed_at;
+    out[name] = s.rows; out._refreshed[name] = s.refreshed_at;
+    if (name !== 'dealer_signals') refreshed = refreshed || s.refreshed_at;
     if (name === 'stock_by_site') out._sites = s.sites || [];
   }
   if (domoMode() === 'live') {
     try {
       for (const name of DATASETS) {
         const id = process.env[DOMO_ENV[name]];
-        if (id) out[name] = await domoQuery(id);
+        if (id) { out[name] = await domoQuery(id); out._refreshed[name] = new Date().toISOString(); }
       }
       refreshed = new Date().toISOString();
     } catch (e) {
@@ -116,6 +124,7 @@ export async function stock() {
     }
   }
   out.stock_by_site = out.stock_by_site.map(normaliseUnit);
+  out.dealer_signals = (out.dealer_signals || []).map(normaliseSignal).filter((r) => r.model);
   out.refreshed_at = refreshed || new Date().toISOString();
   stockCache = { at: Date.now(), data: out };
   return out;
@@ -211,3 +220,11 @@ export function catalogSummary() {
   const c = catalog();
   return c.models.map((m) => `${m.id} | ${m.name} | ${m.bodyLabel || m.body} | ${m.powertrainLabel || m.powertrain} | ${m.seats} seats | tow ${m.towKg || 0} kg | from ${fmt$(m.fromPrice)} | grades: ${m.grades.map((g) => `${g.id} ${fmt$(g.price)}${g.drive ? ` ${g.drive}` : ''}`).join(', ')} | tags: ${(m.tags || []).join(',')}`).join('\n');
 }
+
+/** True when the unit is on the Domo aged-stock actions list (or aged with a bonus). */
+export function isAged(s, u) {
+  return s.aged_stock_actions.some((a) => (a.unit_id || a.unitId) === u.id) || (u.age >= 60 && u.bonus > 0);
+}
+/** Manager-approvable incentive headroom for a unit (aged_stock_actions, else the unit's bonus). */
+export const headroomOf = (s, u) => { const a = s.aged_stock_actions.find((x) => (x.unit_id || x.unitId) === u.id); return a?.incentive_headroom ?? u.bonus ?? 0; };
+export const fmtAud = (n) => `$${Number(n).toLocaleString('en-AU')}`;

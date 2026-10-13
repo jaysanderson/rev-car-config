@@ -1,5 +1,5 @@
 {
-  "source": "Harbourline Toyota promotions register (stand-in). Fictional offers for the prototype.",
+  "source": "Harbourline Toyota promotions register (static stand-in). Served only when Progress Agentic RAG is not configured or unreachable and no composed set (promotions.generated.json) exists. Fictional offers for the prototype.",
   "notes": "appliesTo: every non-null constraint must match. models/units/bodies null = any. aged:true = only units in the Domo aged-stock actions list. onLot:true (extension) = only units physically on a lot (not in transit).",
   "promotions": [
     {
@@ -9,8 +9,17 @@
       "kind": "servicing",
       "value": 975,
       "desc": "Your first three years of capped-price logbook servicing are on us.",
+      "why": "Toyota Service Advantage servicing included for the first three years on this car",
       "reason": "Clears aged RAV4 and Kluger units before the December model-year changeover without cutting the advertised price.",
-      "appliesTo": { "models": ["rav4", "kluger"], "units": null, "aged": true, "bodies": null },
+      "appliesTo": {
+        "models": [
+          "rav4",
+          "kluger"
+        ],
+        "units": null,
+        "aged": true,
+        "bodies": null
+      },
       "validUntil": "2026-12-20"
     },
     {
@@ -20,8 +29,16 @@
       "kind": "accessory-bundle",
       "value": 1500,
       "desc": "Choose $1,500 of Toyota Genuine accessories, such as a tow bar, roof racks or cargo liner, fitted before delivery.",
+      "why": "Pick the Genuine accessories you want, fitted before delivery",
       "reason": "Kluger hybrid allocation is strong this quarter; a bundle moves volume while protecting the drive-away price.",
-      "appliesTo": { "models": ["kluger"], "units": null, "aged": false, "bodies": null },
+      "appliesTo": {
+        "models": [
+          "kluger"
+        ],
+        "units": null,
+        "aged": false,
+        "bodies": null
+      },
       "validUntil": "2026-12-31"
     },
     {
@@ -31,8 +48,14 @@
       "kind": "trade-in",
       "value": 1000,
       "desc": "We add $1,000 to the valuation of your trade-in on this car.",
+      "why": "A little extra for the car you trade in",
       "reason": "Units over 60 days carry floorplan interest; a trade-in bonus moves them faster than a price cut.",
-      "appliesTo": { "models": null, "units": null, "aged": true, "bodies": null },
+      "appliesTo": {
+        "models": null,
+        "units": null,
+        "aged": true,
+        "bodies": null
+      },
       "validUntil": "2026-11-30"
     },
     {
@@ -42,8 +65,18 @@
       "kind": "accessory-bundle",
       "value": 1650,
       "desc": "A genuine tow bar, tongue and wiring harness, fitted and rated to the vehicle's braked towing capacity, at no charge.",
+      "why": "Ready to tow from day one with a Genuine Towing Pack",
       "reason": "Co-op accessory funding for towing-focused models runs to the end of the year, and towing buyers decide faster with the pack fitted.",
-      "appliesTo": { "models": ["prado", "hilux", "landcruiser-300"], "units": null, "aged": false, "bodies": null },
+      "appliesTo": {
+        "models": [
+          "prado",
+          "hilux",
+          "landcruiser-300"
+        ],
+        "units": null,
+        "aged": false,
+        "bodies": null
+      },
       "validUntil": "2026-12-31"
     },
     {
@@ -53,8 +86,15 @@
       "kind": "delivery",
       "value": null,
       "desc": "We deliver your new Toyota to your home or work anywhere within 50 km of our sites and walk you through it there.",
+      "why": "We bring your new Toyota to you",
       "reason": "On-lot units free up yard space, and our delivery runs within 50 km are already scheduled.",
-      "appliesTo": { "models": null, "units": null, "aged": false, "bodies": null, "onLot": true },
+      "appliesTo": {
+        "models": null,
+        "units": null,
+        "aged": false,
+        "bodies": null,
+        "onLot": true
+      },
       "validUntil": "2026-12-31"
     },
     {
@@ -64,8 +104,20 @@
       "kind": "finance",
       "value": null,
       "desc": "Ask about a reduced comparison rate with Toyota Finance on approved credit; fees, charges and conditions apply.",
+      "why": "Finance options to suit a small hybrid SUV",
       "reason": "Manufacturer-supported rate on small-SUV hybrids this quarter (fictional demo terms).",
-      "appliesTo": { "models": ["corolla-cross", "c-hr", "yaris-cross"], "units": null, "aged": false, "bodies": ["suv-small"] },
+      "appliesTo": {
+        "models": [
+          "corolla-cross",
+          "c-hr",
+          "yaris-cross"
+        ],
+        "units": null,
+        "aged": false,
+        "bodies": [
+          "suv-small"
+        ]
+      },
       "validUntil": "2026-12-31"
     },
     {
@@ -75,8 +127,16 @@
       "kind": "accessory-bundle",
       "value": 750,
       "desc": "We contribute $750 to having a 7 kW wallbox installed at your home by our accredited electrician.",
+      "why": "Help getting home charging set up",
       "reason": "Home charging is the most common objection from EV buyers, and the Hornsby bZ4X is past 50 days in stock.",
-      "appliesTo": { "models": ["bz4x"], "units": null, "aged": false, "bodies": null },
+      "appliesTo": {
+        "models": [
+          "bz4x"
+        ],
+        "units": null,
+        "aged": false,
+        "bodies": null
+      },
       "validUntil": "2026-12-31"
     },
     {
@@ -86,8 +146,18 @@
       "kind": "accessory-bundle",
       "value": 690,
       "desc": "A heavy-duty tub liner and tie-down kit fitted to this HiLux before you take it home.",
+      "why": "A tub liner and tie-downs fitted before you collect",
       "reason": "HL-2399 is 88 days in stock; the manager approved an accessory add-in rather than a price cut.",
-      "appliesTo": { "models": ["hilux"], "units": ["HL-2399"], "aged": false, "bodies": null },
+      "appliesTo": {
+        "models": [
+          "hilux"
+        ],
+        "units": [
+          "HL-2399"
+        ],
+        "aged": false,
+        "bodies": null
+      },
       "validUntil": "2026-11-30"
     }
   ]

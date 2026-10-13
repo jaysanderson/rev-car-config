@@ -56,7 +56,7 @@ export function canon(a) {
 }
 const val = (answers, id) => { const a = answers.find((x) => x.id === id); return a ? canon(a) : undefined; };
 
-function questionFor(id, answers) {
+export function questionFor(id, answers) {
   const use = val(answers, 'use');
   const people = val(answers, 'people');
   const towing = val(answers, 'towing');
@@ -208,7 +208,7 @@ export function nextQuestion(answers) {
   return { step: answers.length + 1, of: 5, question: { id, ...q } };
 }
 
-export function recommend(answers, stockData, pr = priorities()) {
+export function recommend(answers, stockData, pr = priorities(stockData)) {
   const ranked = catalog().models.map((m) => ({ m, ...scoreModel(m, answers) })).sort((a, b) => b.s - a.s);
   const top = ranked[0]?.s || 1;
   const scored = ranked.map((x, i) => {
@@ -232,4 +232,13 @@ export function recommend(answers, stockData, pr = priorities()) {
   const lead = modelById(recommendations[0]?.modelId);
   const summary = `Based on your answers (${answers.map((a) => a.label || a.value).join(', ')}), the ${lead?.name || 'top pick'} is the strongest fit, with two alternatives worth a look.`;
   return { done: true, summary, recommendations };
+}
+
+/** Readable {question, answer} for a canonical finder answer (handover sheet). */
+export function describeAnswer(a, answers = []) {
+  const q = questionFor(a.id, answers);
+  const opt = q?.options?.find((o) => o.id === a.value);
+  let answer = opt?.label;
+  if (!answer && a.id === 'budget' && String(a.value).startsWith('max:')) answer = `Up to $${Number(String(a.value).slice(4)).toLocaleString('en-AU')}`;
+  return { question: q?.text || a.id, answer: answer || String(a.value).replace(/-/g, ' ') };
 }

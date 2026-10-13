@@ -3,7 +3,9 @@
 A car-configurator prototype from a dealer-management-system vendor, built for a fictional Toyota dealer (Harbourline Toyota, Parramatta, with Hornsby, Penrith and Liverpool sister sites).
 
 - **Progress Agentic RAG (Nuclia)** drives the consultative parts: cited answers in the customer's language, a 5-question finder that branches on every answer, and "For you" rows built from semantic search.
-- **Domo** supplies stock intelligence from the DMS: stock by site, aged-stock actions, transfer feasibility, inbound pipeline and order-bank ETAs. It shapes offers, availability and answers.
+- **Domo** supplies stock intelligence from the DMS: stock by site, aged-stock actions, transfer feasibility, inbound pipeline and order-bank ETAs. Its nightly Intelligence output `dealer_signals` (days of supply, allocation, target gap, margin headroom per model, from the ERP) decides the dealer nudges and which promotions exist. It shapes offers, availability and answers.
+- **Domo + ARAG together** compose the promotions: Domo picks what to push, the ARAG agent writes the offer from the accessories, servicing and finance documents, and the server validates it against the catalogue.
+- **First-party data**: the configurator logs anonymous session events, gives the salesperson a pre-visit handover sheet for every test drive, and aggregates a report for Domo.
 
 Harbourline is fictional. All prices, stock and ages are illustrative.
 
@@ -18,20 +20,26 @@ server/index.mjs  (Node 20 + Express; holds the ARAG token, never ships it)
    ├── server/assistant.mjs       /api/ask and /api/finder/next (ARAG + validation)
    ├── server/finder-fallback.mjs deterministic 5-question finder (used whenever ARAG fails validation)
    ├── server/foryou.mjs          "Because you…" rows from composed /find queries (rules in the file header)
-   ├── server/dealer.mjs          dealer priorities, promotions, dealer factor, offer re-ranking, atomic state writes
-   ├── server/testdrive.mjs       test-drive slots, booking (ARAG questions), answers (ARAG reply)
+   ├── server/dealer.mjs          derivePriorities() from Domo signals, promotion filters, dealer factor, offer re-ranking
+   ├── server/promotions.mjs      Domo targets → ARAG-composed promotions, validation, 30-min cache, persisted last good set
+   ├── server/events.mjs          first-party events (JSON lines), /api/report/configurator aggregate, synthetic seed
+   ├── server/state.mjs           dealer state files: atomic JSON writes, JSONL appends, read-only fallback to tmp
+   ├── server/testdrive.mjs       test-drive slots, booking (ARAG questions), answers (ARAG reply), salesperson handover
    ├── server/testdrive-fallback.mjs  question bank, incentive picker, prep list, template reply
    └── server/data.mjs            catalogue, Domo datasets (stand-in or live), pricing, availability, offers
 content/
    ├── catalog.json               models, grades, colours, interiors, packs, drive-away prices
    ├── kb/*.md                    Toyota knowledge corpus (frontmatter: title, model, topic)
    ├── domo/*.json                Domo stand-in datasets
+   │    └── dealer_signals.json   Domo Intelligence dataflow output (nightly): per model unitsInStock, sales90d,
+   │                              daysOfSupply, allocationNextMonth, targetGap, avgDaysInStock, marginHeadroomAvg
    └── dealer/                    dealer stand-in data (fictional)
-        ├── priorities.json       business-editable weights (written by PUT /api/dealer/priorities)
-        ├── promotions.json       8 promotions with appliesTo rules and an honest dealer-side reason
+        ├── promotions.generated.json  last good ARAG-composed promotion set (state; read at start-up so restarts are instant)
+        ├── promotions.json       static promotions register: served only when ARAG is unreachable and no generated set exists
+        ├── events.jsonl          first-party events, append-only JSON lines (state; seeded by scripts/seed-events.mjs)
         ├── calendar.json         per-site hours, 45-min slots, recurring stand-in diary of taken slots
         ├── incentives.json       11 test-drive incentives with matching rules
-        └── bookings.json         test-drive bookings (stand-in DMS write-back; appended by the API)
+        └── bookings.json         test-drive bookings incl. the handover sheet (stand-in DMS write-back; appended by the API)
 ```
 
 ### ARAG assets (zone `aws-ap-southeast-2-1`)
@@ -50,11 +58,13 @@ content/
 
 ### Domo source
 
-`content/domo/*.json` is the stand-in. To go live, set `DOMO_CLIENT_ID`, `DOMO_CLIENT_SECRET` and `DOMO_DATASET_STOCK`. You can also set `DOMO_DATASET_AGED`, `DOMO_DATASET_TRANSFER`, `DOMO_DATASET_INBOUND` and `DOMO_DATASET_ORDERBANK`. The server then queries Domo's dataset API (client credentials, `scope=data`), maps the results to the same shapes and falls back to the stand-in if a call fails. `/api/health` reports `domo: "live" | "stand-in"`.
+`content/domo/*.json` is the stand-in. To go live, set `DOMO_CLIENT_ID`, `DOMO_CLIENT_SECRET` and `DOMO_DATASET_STOCK`. You can also set `DOMO_DATASET_AGED`, `DOMO_DATASET_TRANSFER`, `DOMO_DATASET_INBOUND`, `DOMO_DATASET_ORDERBANK` and `DOMO_DATASET_SIGNALS` (the `dealer_signals` dataflow output; columns as in the stand-in). The server then queries Domo's dataset API (client credentials, `scope=data`), maps the results to the same shapes and falls back to the stand-in if a call fails. `/api/health` reports `domo: "live" | "stand-in"`.
 
 ## API
 
-All responses are JSON, `Cache-Control: no-store`, same-origin only (cross-origin POSTs get 403). The ARAG-backed endpoints (`/api/ask`, `/api/finder/next`, `/api/foryou`, `/api/find`, `/api/testdrive/book`, `/api/testdrive/answers`) and `PUT /api/dealer/priorities` share a per-IP token bucket (`RATE_BURST`, `RATE_PER_MIN`).
+All responses are JSON, `Cache-Control: no-store`, same-origin only (cross-origin POSTs get 403). The ARAG-backed endpoints (`/api/ask`, `/api/finder/next`, `/api/foryou`, `/api/find`, `/api/testdrive/book`, `/api/testdrive/answers`, `/api/testdrive/handover`, `POST /api/promotions/refresh`) share a per-IP token bucket (`RATE_BURST`, `RATE_PER_MIN`). `POST /api/events` has its own bucket (`EVENTS_BURST` 120, `EVENTS_PER_MIN` 90) and a 2 KB body limit (413 above it).
+
+**Session id.** The page generates a random `sid` per browser session (8-64 chars of `A-Z a-z 0-9 _ -`, e.g. `crypto.randomUUID()`) and sends it as the `x-sid` header (or a body `sid`) on `/api/events`, `/api/ask`, `/api/finder/next`, `/api/testdrive/book` and `/api/testdrive/answers`. No other identifier is stored. Finder prefetches must send `x-prefetch: 1` (or body `prefetch: true`) so they are not logged.
 
 | Endpoint | Returns |
 |---|---|
@@ -66,22 +76,32 @@ All responses are JSON, `Cache-Control: no-store`, same-origin only (cross-origi
 | `POST /api/finder/next` | `{answers[]}` → the next question (`{step, of:5, question, trace}`) or, at 5 answers, `{done, summary, recommendations[], trace}` |
 | `GET /api/foryou?model=&grade=&answers=id:value,…&colour=&packs=` | An array of `{id, title, reason, query, items[]}` |
 | `GET /api/find?q=` | An array of `{title, modelId, topic, text, score, resourceId}` |
-| `GET /api/dealer/priorities` | `{updatedAt, updatedBy, weights:{stockOnLot, agedStock, promotions, pushModel:{modelId, weight}}, note}` (weights 0-100) |
-| `PUT /api/dealer/priorities` | Same shape in; integers 0-100, `pushModel.modelId` a catalogue id or null. Written atomically; returns the saved object (server sets `updatedAt`). 400 `{error}` on invalid input. **No auth (prototype).** |
-| `GET /api/promotions?model=&unit=&body=` | Array of `{id, title, kind, value, desc, reason, appliesTo:{models, units, aged, bodies, onLot?}, validUntil}` matching every given filter; all live promotions when none. Unknown model/unit/body → 400. |
+| `GET /api/dealer/priorities` | Derived from Domo: `{source:"Domo · dealer_signals (nightly)", refreshedAt, computedAt, updatedAt, updatedBy, weights:{stockOnLot, agedStock, promotions, pushModel:{modelId, weight}}, derivedFrom:[{signal, value, effect}], note}` (weights integers 0-100). |
+| `PUT` (any non-GET) `/api/dealer/priorities` | 405 `{error}`: priorities are produced by Domo and cannot be edited. |
+| `GET /api/promotions?model=&unit=&body=` | Array of `{id, title, kind, value, desc, why, reason, appliesTo:{models, units, aged, bodies, onLot?}, validUntil, source:{domo, kb[]}, composedBy:"arag"\|"fallback"}` matching every given filter; all live promotions when none. `why` is the customer-safe line; `reason` and `source.domo` are dealer-side. Unknown model/unit/body → 400. |
+| `GET /api/promotions/explain` | `{source, composedAt, composedBy:"arag"\|"mixed"\|"fallback"\|"static", latencyMs, ttlMinutes, refreshing, signalsRefreshedAt, targets:[{target, type, models, units, signal, allowedKinds, promotion:{id, title, kind, value, why}, composedBy, kb[], rejected?, ms}]}`: the Domo targets and the promotion each produced (How-it-works drawer; dealer-internal signals). |
+| `POST /api/promotions/refresh` | Recompose now (awaits ARAG, ~20 s); returns the explain object. |
+| `POST /api/events` | `{sid, type, data}` → 201 `{ok, logged:true}`; 202 `{ok, logged:false, note}` for a duplicate or a server-logged type; 400 `{error}` on an unknown type or invalid data; 413 over 2 KB. Types and `data`: `finder_answer {questionId, value}`, `finder_result {recommended:[modelId]}`, `build_change {modelId, gradeId, colourId, interiorId?, packs[]}`, `offer_view {unitId}`, `offer_click {unitId}`; `ask`, `booking`, `booking_answer` are logged by the server. |
+| `GET /api/report/configurator?days=30` | `{since, days, generatedAt, events, sessions, finderStarts, finderCompletions, answersByQuestion:{questionId:{value:n}}, modelsConfigured:{modelId:n}, coloursChosen:{colourId:n}, packsChosen:{packId:n}, offersShown:{unitId:n}, offersClicked:{unitId:n}, questionsAsked, bookings:{count, bySite, byModel}, bookingAnswers:{questionId:{value:n}}, conversion:{finderToBooking, offerClickToBooking}}` (days 1-365). |
 | `GET /api/testdrive/slots?site=par&unit=` | `{site, siteName, unitId?, transferNote?, days:[{date, label, closed?, slots:[{id, time, available}]}]}` for 10 days from today (Australia/Sydney). `transferNote` when the unit is at another site or in transit; slots before it can arrive are unavailable. |
-| `POST /api/testdrive/book` | `{site, slotId, unitId?, build, viewed[], finder:{answers}, lang}` → `{bookingId, site, siteName, when, whenLabel, unitId, model, grade, modelId, gradeId, questions[3], incentive, trace}`. 409 if the slot was taken. |
+| `POST /api/testdrive/book` | `{site, slotId, unitId?, build, viewed[], finder:{answers}, lang}` → `{bookingId, site, siteName, when, whenLabel, unitId, model, grade, modelId, gradeId, questions[3], incentive, handover, trace}` (`handover` = the sheet's URL). 409 if the slot was taken. |
 | `POST /api/testdrive/answers` | `{bookingId, answers:[{id, value}]}` → `{ok, reply, prep[≤3], trace}`. 404 unknown booking; 400 if no answer matches the booking's questions. |
+| `GET /api/testdrive/handover/:bookingId` | Salesperson pre-visit sheet: `{bookingId, whenLabel, when, site, siteName, customerRef, lang, car:{modelId, model, gradeId, grade, colour, interior, packs[], unitId, price, priceNote, transferFrom?}, viewed:[{modelId, model, grade, unitId, source}], finderAnswers:[{question, answer}], questions:[{question, answer\|null}], promotionsToOffer:[{title, why}], incentive, talkingPoints[3-5], talkingPointsBy:"arag"\|"fallback", prep[], generatedAt, basis, trace}`. 400 bad id, 404 unknown. Dealer-side, no auth (prototype). |
 
 `/api/offers` rows also carry `promotions:[promotionId]` (empty when none) and are re-ranked by the dealer weights (below). Finder recommendations (`done:true`) carry `dealerFactor` (number, 0-12) and `nudge` (`{reason, promotionId?}` or null).
 
 ### Dealer priorities, promotions, test drives
 
+- **Priorities are computed, not edited** (`derivePriorities(signals, stock)` in `server/dealer.mjs`), from `dealer_signals` and the aged-stock list, every time the stock snapshot refreshes (60 s cache): `stockOnLot` = unit-weighted average days of supply scaled 20 → 0 … 90 → 100; `agedStock` = aged units with headroom × 7 + (average age − 60) × 1.2; `promotions` = unit-weighted `marginHeadroomAvg` scaled $0 → 0 … $2,500 → 100; `pushModel` = the model with the highest `allocationNextMonth + 2 × targetGap` (score ≥ 8, never a supply-constrained model), weight = score × 2.5. With the stand-in: 44 / 69 / 39 / Kluger 65. `derivedFrom` explains each weight in plain language.
+- **Promotions** (`server/promotions.mjs`). Domo picks the targets: `aged-<model>` (aged units with headroom), `push-<model>`, `gap-<model>` (target gap ≥ 3) and `body-<body>` (unit-weighted days of supply ≥ 55 over ≥ 4 units). Each target gets one ARAG `/ask` (4 in parallel, retrieval limited to the accessories, service, finance, towing, dealer-policy and warranty documents) with an `answer_json_schema` limited to the target's allowed kinds (`accessory-bundle | servicing | trade-in | finance | delivery`) and a numeric `value`. The server rejects: a kind not allowed; packs the model does not take or the unit already has; an accessory value that is not the exact catalogue price of the chosen packs or that exceeds headroom ÷ 0.7; servicing beyond 3 years or above years × the capped price (`content/kb/service.md`); a trade-in bonus outside $250-headroom; any percentage or rate; a $ amount that is not the value or a catalogue price; a model outside the target; and customer text that mentions age, headroom, margins, targets or allocation. A rejected target gets a deterministic promotion (`composedBy:"fallback"`, reason in `/explain`). Ids are stable (`promo-aged-rav4`, `promo-push-kluger`, `promo-gap-hilux`, `promo-body-suv-mid`, …). The set is cached in memory for `PROMO_TTL_MIN` (30) minutes or until the Domo signature changes, recomposed in the background (~20 s), and the last set with any ARAG-composed promotion is written to `promotions.generated.json`. ARAG not configured or unreachable with no previous set → `promotions.json`.
+- **First-party events** (`server/events.mjs`, `events.jsonl`): `{ts, sid, type, data, src}`; no PII, no free text. The server logs `ask {questionLength, lang, modelId}`, `booking {bookingId, modelId, unitId, site, whenLabel}`, `booking_answer {bookingId, questionId, value}`, and from `/api/finder/next` (sid present, not a prefetch) `finder_answer` for the newest answer and `finder_result` on the final step. The page posts `build_change`, `offer_view`, `offer_click`, and may post `finder_answer` / `finder_result` for prefetched steps; repeats within 30 min are dropped. `node scripts/seed-events.mjs` writes ~485 synthetic events over 30 days across ~60 sessions when the file is missing or empty.
+- **Handover**: built in the background after each booking and again after the answers; the GET waits for an in-flight build, otherwise serves the sheet stored on the booking (`bookings.json` → `handover`, so the DMS write-back carries it) or rebuilds it. Talking points: one ARAG `/ask` as a sales-manager briefing over the model's spec documents (`model` label = the car or `all`), the finder and booking answers, the promotions and the incentive. Points quoting a $ amount that is not the car price, a promotion, the incentive or a pack price are dropped; fewer than 3 → topped up from a deterministic briefing.
+
 - **Dealer factor** (finder, both paths): `stockOnLot/100×6` if the model has a unit on any lot, `agedStock/100×6` if it has an aged unit with incentive headroom, `pushModel.weight/100×8` for the pushed model, `promotions/100×4` if a promotion applies; capped at 12. Recommendations are ordered by `fit + dealerFactor`. The ARAG path asks the agent for 4 ranked picks with a `nudge` sentence (the prompt carries a DEALER PRIORITIES block and the promotions), computes `dealerFactor` in code, re-sorts and keeps 3. The agent's sentence is used only when it passes a filter (no stock age, margins, bonuses, targets, or dollar amounts that are not a listed promotion's value); otherwise the deterministic sentence is used. `fit` itself is untouched.
 - **Offers**: same-body first as before, then `move priority − pushModel.weight/100×3 (pushed model) − promotions/100×2 (unit has a promotion)`.
 - **Assistant**: `/api/ask` adds a DEALER PROMOTIONS block for the models in play, a rule that the agent may quote only those and must say honestly why each is offered, and a trace `{kind:"domo", label:"Promotions: N applicable"}`.
 - **Test drives**: questions come from the ARAG agent (`answer_json_schema`, salesperson prompt over the viewed cars, current build, finder answers and the KB) and are validated: shape, 2-4 options for `choice`, `yes`/`no` for `yesno`, no topic the finder already answered, one per topic. `server/testdrive-fallback.mjs` tops up to exactly 3 from a bank keyed by tags, body, powertrain and finder answers. The incentive is deterministic (`incentives.json`). The answers reply is ARAG (two sentences, limited to the prep list), with a template fallback; the prep list is always deterministic. A slot is held in memory while the booking is prepared, so two concurrent bookings cannot take it.
-- **State**: `priorities.json` and `bookings.json` are written to `DEALER_STATE_DIR` when set, else `content/dealer/`. If that directory is read-only (the Docker image's `content/` belongs to root), the server switches to `<tmpdir>/harbourline-dealer` with a warning, so on Fly the edits and bookings last only until the machine restarts. The smoke test points `DEALER_STATE_DIR` at a temp dir.
+- **State**: `bookings.json`, `events.jsonl` and `promotions.generated.json` are written to `DEALER_STATE_DIR` when set, else `content/dealer/` (a state file missing there is read from `content/dealer/`, and copied across on the first write). If that directory is read-only (the Docker image's `content/` belongs to root), the server switches to `<tmpdir>/harbourline-dealer` with a warning, so on Fly bookings, new events and recomposed promotions last only until the machine restarts (the seeded events and the last generated promotions ship in the image). The smoke test points `DEALER_STATE_DIR` at a temp dir.
 
 Platform notes, verified live:
 
@@ -97,6 +117,12 @@ To provision from scratch (both steps are idempotent; the first is vendored from
 ```sh
 node scripts/create-kb.mjs --title harbourline-toyota-configurator --slug harbourline-toyota-configurator
 node scripts/provision.mjs        # labelsets, search configs, retrieval agent (or: provision labelsets|search|agent)
+```
+
+## Seed the first-party events
+
+```sh
+node scripts/seed-events.mjs   # only when content/dealer/events.jsonl is missing or empty
 ```
 
 ## Ingest the corpus

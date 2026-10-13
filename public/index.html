@@ -673,6 +673,8 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   function units(){return STOCK.stock_by_site||[];}
   function eta(mid){const w=STOCK.order_bank_eta&&STOCK.order_bank_eta[mid];return (w&&w[0])?w:[12,18];}
   let API=false; // true once /api/health answers; then ARAG + Domo paths are used
+  let SID='';try{SID=sessionStorage.getItem('hl-sid')||'';}catch(e){}if(!SID){SID='s-'+Math.random().toString(36).slice(2,10);try{sessionStorage.setItem('hl-sid',SID);}catch(e){}}
+  const H=extra=>Object.assign({'content-type':'application/json','x-sid':SID},extra||{});
   const cfg={model:'rav4',grade:'cruiser',colour:'graphite',interior:'leather-black',packs:['protection']};
   const finder={answers:[],done:false,recs:null,summary:''};
   let lang='en';
@@ -888,12 +890,12 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
     return{done:true,summary:`Based on your five answers, the ${top.name} is the best fit. Here is why, and two alternatives worth a look.`,recommendations:recs,trace:[{kind:'kb',label:'KB · finder-guide'},{kind:'kb',label:'KB · spec sheets, towing guide'},{kind:'domo',label:'Domo · stock_by_site'},{kind:'domo',label:'Domo · order_bank_eta'}]};}
   // The agent takes several seconds per question, so once a question is on screen we prefetch the next one for every option.
   const finderCache=new Map();
-  function fetchNext(answers){const key=JSON.stringify(answers.map(a=>[a.id,a.value]));if(finderCache.has(key))return finderCache.get(key);
-    const p=(async()=>{let res=null;if(API){try{const r=await fetch('/api/finder/next',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({answers})});if(r.ok)res=await r.json();}catch(e){}}
+  function fetchNext(answers,prefetch){const key=JSON.stringify(answers.map(a=>[a.id,a.value]));if(finderCache.has(key))return finderCache.get(key);const _pf=prefetch;
+    const p=(async()=>{let res=null;if(API){try{const r=await fetch('/api/finder/next',{method:'POST',headers:H(prefetch?{'x-prefetch':'1'}:{}),body:JSON.stringify({answers})});if(r.ok)res=await r.json();}catch(e){}}
       return res&&(res.question||res.done)?res:localNext(answers);})();
     finderCache.set(key,p);p.catch(()=>finderCache.delete(key));return p;}
   function finderNext(){return fetchNext(finder.answers.slice());}
-  function prefetchOptions(q){if(!API)return;q.options.slice(0,4).forEach((o,i)=>setTimeout(()=>fetchNext(finder.answers.concat({id:q.id,value:o.id,label:o.label})),150*i));}
+  function prefetchOptions(q){if(!API)return;q.options.slice(0,4).forEach((o,i)=>setTimeout(()=>fetchNext(finder.answers.concat({id:q.id,value:o.id,label:o.label}),true),150*i));}
   let finderOpen=false;
   function openFinder(){finderOpen=true;$('stageView').style.display='none';const v=$('finderView');v.hidden=false;renderFinderStep();v.scrollIntoView({behavior:'smooth',block:'start'});}
   function closeFinder(){finderOpen=false;showStage();}
@@ -980,7 +982,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
     btn.disabled=true;btn.style.opacity=.6;}
   function working(steps){const w=el('div','msg a');const box=el('div','working');w.appendChild(box);thread.appendChild(w);const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;steps.forEach((s,i)=>setTimeout(()=>{box.appendChild(el('div','step',esc(s)));scrollT();},reduce?0:350*i));return{el:w,ms:reduce?50:350*steps.length+400};}
   async function askApi(question){const w=working(['Reading the knowledge box','Checking your build and live stock','Writing the answer']);
-    try{const r=await fetch('/api/ask',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question,lang,build:{modelId:cfg.model,gradeId:cfg.grade,colourId:cfg.colour,interiorId:cfg.interior,packs:cfg.packs},finder:{answers:finder.answers},history:history.slice(-8)})});
+    try{const r=await fetch('/api/ask',{method:'POST',headers:H(),body:JSON.stringify({question,lang,build:{modelId:cfg.model,gradeId:cfg.grade,colourId:cfg.colour,interiorId:cfg.interior,packs:cfg.packs},finder:{answers:finder.answers},history:history.slice(-8)})});
       if(!r.ok)throw new Error('ask '+r.status);const res=await r.json();w.el.remove();
       const tr=[...(res.trace||[]),...(res.citations||[]).map(c=>({kind:'kb',label:'KB · '+c.title}))];addAssistant(res.answer||'…',tr,res.actions||[]);}
     catch(e){w.el.remove();addAssistant('I couldn’t reach the knowledge box just now. Try again in a moment.',[{kind:'kb',label:'ARAG · /ask · error'}]);}}
@@ -1268,8 +1270,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   $('closeDealer').onclick=closeDealer;
 
   // ---- first-party data: every meaningful action is logged (no PII) so Domo can report on it ----
-  let SID='';try{SID=sessionStorage.getItem('hl-sid')||'';}catch(e){}if(!SID){SID='s-'+Math.random().toString(36).slice(2,10);try{sessionStorage.setItem('hl-sid',SID);}catch(e){}}
-  const EVENTS=[];function logEvent(type,data){const ev={sid:SID,type,data:data||{},at:new Date().toISOString()};EVENTS.push(ev);if(EVENTS.length>500)EVENTS.shift();if(API){try{fetch('/api/events',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(ev),keepalive:true}).catch(()=>{});}catch(e){}}}
+  const EVENTS=[];function logEvent(type,data){const ev={sid:SID,type,data:data||{},at:new Date().toISOString()};EVENTS.push(ev);if(EVENTS.length>500)EVENTS.shift();if(API&&!['ask','booking','booking_answer'].includes(type)){try{fetch('/api/events',{method:'POST',headers:H(),body:JSON.stringify(ev),keepalive:true}).catch(()=>{});}catch(e){}}}
   // ---- what the customer has looked at (feeds the booking questions) ----
   const viewed=[];function noteViewed(){const g=G();const u=matches(cfg).exact[0];const e={modelId:cfg.model,gradeId:g.id,unitId:u?u.u.id:null,at:Date.now()};const i=viewed.findIndex(v=>v.modelId===e.modelId);const changed=i!==0;if(i>=0)viewed.splice(i,1);viewed.unshift(e);if(viewed.length>6)viewed.length=6;if(changed||!noteViewed.last||noteViewed.last!==cfg.model+cfg.grade+cfg.colour+cfg.packs.join())logEvent('build_change',{modelId:cfg.model,gradeId:g.id,colourId:cfg.colour,packs:cfg.packs.slice()});noteViewed.last=cfg.model+cfg.grade+cfg.colour+cfg.packs.join();}
 
@@ -1299,11 +1300,11 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
     if(a.distance==='over80'||a.use==='commute')return{id:'fuel',title:'$100 fuel card',desc:'Yours when you come in for the drive.',value:100,reason:'Because you cover real kilometres.'};
     return{id:'detail',title:'Complimentary interior detail',desc:'For your current car while you are with us.',value:120,reason:'A thank-you for coming in.'};}
   async function bookSlot(){const payload={sid:SID,site:booking.site,slotId:booking.slot.id,unitId:booking.unitId,build:{modelId:cfg.model,gradeId:cfg.grade,colourId:cfg.colour,interiorId:cfg.interior,packs:cfg.packs},viewed:viewed.map(v=>({modelId:v.modelId,gradeId:v.gradeId,unitId:v.unitId})),finder:{answers:finder.answers},lang};
-    if(API){try{const r=await fetch('/api/testdrive/book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});if(r.ok){const j=await r.json();if(j&&j.questions&&j.questions.length===3)return j;}}catch(e){}}
+    if(API){try{const r=await fetch('/api/testdrive/book',{method:'POST',headers:H(),body:JSON.stringify(payload)});if(r.ok){const j=await r.json();if(j&&j.questions&&j.questions.length===3)return j;}}catch(e){}}
     const g=G();const dt=new Date(booking.day.date+'T00:00:00');return{bookingId:'TD-'+Math.random().toString(36).slice(2,7).toUpperCase(),site:booking.site,siteName:SITES[booking.site].name,whenLabel:dt.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'})+' at '+booking.slot.time,unitId:booking.unitId,model:M().name,grade:g.name,questions:localQuestions(),incentive:localIncentive(),trace:[{kind:'kb',label:'local picker (offline) · same JSON contract'}]};}
   async function getHandover(){if(API&&booking.result){try{const r=await fetch('/api/testdrive/handover/'+encodeURIComponent(booking.result.bookingId));if(r.ok)return await r.json();}catch(e){}}
     const m=M(),g=G();const r=booking.result||{};return{bookingId:r.bookingId,customerRef:SID.slice(0,6),car:{model:m.name,grade:g.name,colour:COL(cfg.colour)?.name,interior:INT(cfg.interior)?.name,packs:cfg.packs.map(p=>ACC(p)?.name),unitId:booking.unitId,price:price()},viewed:viewed.map(v=>{const mm=by(CAT.models,v.modelId);return mm?mm.name+' '+(by(mm.grades,v.gradeId)?.name||''):v.modelId;}),finderAnswers:finder.answers.map(a=>({question:(FQ[a.id]||{}).text||a.id,answer:a.label})),questions:Object.values(booking.answers).map(a=>({question:a.q,answer:a.label})),promotionsToOffer:promosFor(cfg.model,booking.unitId?by(units(),booking.unitId):null).map(p=>({title:p.title,why:p.why||p.desc})),incentive:r.incentive,talkingPoints:[`${m.name} ${g.name}: lead with ${(g.highlights||[]).slice(0,2).join(' and ')}`,finder.answers.length?'They came through the finder: '+finder.answers.map(a=>a.label.toLowerCase()).join(', '):'No finder answers; ask about use and timing early',booking.unitId?'This is a specific car on the lot; have the keys and the drive-away quote ready':'Factory order likely; have the order-bank ETA ready'],prep:(booking.reply||{}).prep||[],trace:[{kind:'kb',label:'local briefing (offline)'}]};}
-  async function sendAnswers(){const answers=Object.entries(booking.answers).map(([id,v])=>({id,value:v.id,label:v.label,question:v.q}));if(API){try{const r=await fetch('/api/testdrive/answers',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({bookingId:booking.result.bookingId,answers})});if(r.ok)return await r.json();}catch(e){}}
+  async function sendAnswers(){const answers=Object.entries(booking.answers).map(([id,v])=>({id,value:v.id,label:v.label,question:v.q}));if(API){try{const r=await fetch('/api/testdrive/answers',{method:'POST',headers:H(),body:JSON.stringify({bookingId:booking.result.bookingId,answers})});if(r.ok)return await r.json();}catch(e){}}
     const m=M(),g=G();return{ok:true,reply:`Thanks, that helps. I'll have the ${m.name} ${g.name} ready at ${booking.slot.time} and we'll cover ${answers.map(a=>(a.question||a.id).replace(/\?$/,'').toLowerCase()+' ('+a.label.toLowerCase()+')').join(', ')} while you're here.`,prep:[`${m.name} ${g.name} fuelled and ready at ${booking.slot.time}`,answers.some(a=>a.id==='trade-in'&&a.value==='yes')?'Trade-in valuation on arrival':'Drive route that suits how you will use the car',answers.some(a=>a.id==='finance'&&a.value==='yes')?'Finance figures printed for you to take away':'Drive-away quote ready to take away']};}
   function openBooking(unitId){const u=unitId?by(units(),unitId):(matches(cfg).exact[0]||{}).u;booking.step=1;booking.unitId=u?u.id:null;booking.site=u&&!u.transit?u.site:'par';booking.day=null;booking.slot=null;booking.result=null;booking.answers={};booking.slots=null;$('mback').classList.add('open');renderBooking();}
   function closeBooking(){$('mback').classList.remove('open');}

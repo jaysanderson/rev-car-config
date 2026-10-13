@@ -77,7 +77,15 @@ const promoOk = (p, where) => {
   for (const k of ['models', 'units', 'bodies']) must(p.appliesTo[k] === null || Array.isArray(p.appliesTo[k]), `${where}.appliesTo.${k}`);
   (p.appliesTo.models || []).forEach((m) => must(MODELS.has(m), `${where} model ${m}`));
   must(/^\d{4}-\d{2}-\d{2}$/.test(p.validUntil), `${where}.validUntil`);
+  must(isStr(p.why) && !/\b(aged|days in stock|headroom|margin|target|allocation)\b/i.test(p.why), `${where}.why missing or not customer-safe: "${p.why}"`);
+  must(p.source && isStr(p.source.domo) && Array.isArray(p.source.kb) && p.source.kb.every(isStr), `${where}.source {domo, kb[]}`);
+  must(['arag', 'fallback'].includes(p.composedBy), `${where}.composedBy "${p.composedBy}"`);
+  if (p.composedBy === 'arag') must(p.source.kb.length > 0, `${where}: ARAG-composed but no kb sources`);
+  if (p.kind === 'accessory-bundle' && isNum(p.value)) must(p.value <= ACCESSORY_SUM, `${where}: accessory value ${p.value} > catalogue sum ${ACCESSORY_SUM}`);
 };
+const ACCESSORY_SUM = CAT.accessories.reduce((n, a) => n + a.price, 0);
+const SID = `smoke_${Date.now().toString(36)}`;
+const SIDH = { 'x-sid': SID };
 const recsSortedByDealer = (recs) => recs.every((r, i) => i === 0 || (recs[i - 1].fit + recs[i - 1].dealerFactor) >= (r.fit + r.dealerFactor));
 const recDealerOk = (r, i) => {
   must(isNum(r.dealerFactor) && r.dealerFactor >= 0 && r.dealerFactor <= 12, `rec ${i} dealerFactor ${r.dealerFactor}`);
@@ -105,9 +113,9 @@ function questionsOk(qs) {
 }
 const traceOk = (tr, where) => { must(Array.isArray(tr), `${where}: trace not an array`); tr.forEach((t, i) => must(['kb', 'domo'].includes(t.kind) && isStr(t.label), `${where}: trace[${i}] bad {kind,label}`)); };
 
-async function call(method, path, body, timeoutMs = 90000) {
+async function call(method, path, body, timeoutMs = 90000, headers = {}) {
   const t0 = Date.now();
-  const r = await fetch(BASE + path, { method, headers: body ? { 'content-type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(timeoutMs) });
+  const r = await fetch(BASE + path, { method, headers: { ...(body ? { 'content-type': 'application/json' } : {}), ...headers }, body: body ? (typeof body === 'string' ? body : JSON.stringify(body)) : undefined, signal: AbortSignal.timeout(timeoutMs) });
   const text = await r.text();
   const ms = Date.now() - t0;
   for (const v of SECRETS) if (text.includes(v)) throw new Fail(`${path}: response contains a secret from .env`);
@@ -257,62 +265,58 @@ const paths = {
     });
   }
 
-  // ── dealer priorities ──
-  let originalPriorities;
-  await check('GET /api/dealer/priorities', async () => {
+  // ── dealer priorities (derived from Domo dealer_signals) ──
+  await check('GET /api/dealer/priorities (derived from Domo)', async () => {
     const r = await call('GET', '/api/dealer/priorities'); must(r.status === 200, `status ${r.status}`);
-    const p = r.json; originalPriorities = p;
-    must(isStr(p.updatedAt) && isStr(p.updatedBy) && typeof p.note === 'string', 'updatedAt/updatedBy/note');
-    for (const k of ['stockOnLot', 'agedStock', 'promotions']) must(Number.isInteger(p.weights?.[k]), `weights.${k}`);
-    must(p.weights.pushModel === null || (Number.isInteger(p.weights.pushModel.weight) && (p.weights.pushModel.modelId === null || MODELS.has(p.weights.pushModel.modelId))), 'pushModel');
+    const p = r.json;
+    must(p.source === 'Domo · dealer_signals (nightly)', `source "${p.source}"`); must(isStr(p.computedAt) && !Number.isNaN(Date.parse(p.computedAt)), 'computedAt');
+    for (const k of ['stockOnLot', 'agedStock', 'promotions']) must(Number.isInteger(p.weights?.[k]) && p.weights[k] >= 0 && p.weights[k] <= 100, `weights.${k}`);
+    const pm = p.weights.pushModel; must(pm && Number.isInteger(pm.weight) && pm.weight >= 0 && pm.weight <= 100 && (pm.modelId === null || MODELS.has(pm.modelId)), 'pushModel');
+    must(pm.modelId === 'kluger', `pushModel ${pm.modelId} (dealer_signals: Kluger has the strongest allocation + target gap)`);
+    must(Array.isArray(p.derivedFrom) && p.derivedFrom.length >= 4 && p.derivedFrom.every((d) => isStr(d.signal) && isStr(d.effect) && 'value' in d), 'derivedFrom[] {signal, value, effect}');
+    must(p.derivedFrom.some((d) => /push Kluger/.test(d.effect)), 'no "push Kluger" explanation');
     record('GET /api/dealer/priorities', null, p);
-    return JSON.stringify(p.weights);
+    return `${JSON.stringify(p.weights)}; ${p.derivedFrom.length} derivations`;
   });
-  await check('PUT /api/dealer/priorities invalid → 400', async () => {
-    for (const body of [{ weights: { stockOnLot: 150, agedStock: 0, promotions: 0, pushModel: null } }, { weights: { stockOnLot: 1, agedStock: 1, promotions: 1, pushModel: { modelId: 'delorean', weight: 5 } } }, { weights: { stockOnLot: 1.5, agedStock: 1, promotions: 1 } }, []]) {
-      const r = await call('PUT', '/api/dealer/priorities', body); must(r.status === 400, `status ${r.status} for ${JSON.stringify(body)}`);
-    }
-    return '4 × 400';
+  await check('PUT /api/dealer/priorities → 405 (Domo-produced)', async () => {
+    const r = await call('PUT', '/api/dealer/priorities', { weights: { stockOnLot: 0, agedStock: 0, promotions: 0, pushModel: null } });
+    must(r.status === 405, `status ${r.status}`); must(/Domo/.test(r.json?.error || ''), 'error should say priorities come from Domo');
+    return `${r.status}: ${r.json.error}`;
   });
-  await check('PUT priorities (all 0) → finder: no nudges', async () => {
-    const put = { updatedBy: 'smoke test', weights: { stockOnLot: 0, agedStock: 0, promotions: 0, pushModel: { modelId: null, weight: 0 } }, note: 'smoke: all zero' };
-    const r = await call('PUT', '/api/dealer/priorities', put); must(r.status === 200, `status ${r.status}`);
-    must(JSON.stringify(r.json.weights) === JSON.stringify(put.weights) && r.json.note === put.note, 'PUT did not echo');
-    const g = await call('GET', '/api/dealer/priorities'); must(JSON.stringify(g.json) === JSON.stringify(r.json), 'GET != PUT result (round-trip)');
-    const f = await call('POST', '/api/finder/next', { answers: TOW_ANSWERS }, 120000); must(f.status === 200 && f.json.done, `finder status ${f.status}`);
-    f.json.recommendations.forEach(recDealerOk);
-    must(f.json.recommendations.every((x) => x.dealerFactor === 0 && x.nudge === null), 'nudges present with zero weights');
-    return f.json.recommendations.map((x) => `${x.modelId} ${x.fit}+${x.dealerFactor}`).join(', ');
-  });
-  await check('PUT priorities (push hilux 100) → finder order', async () => {
-    const put = { weights: { stockOnLot: 0, agedStock: 0, promotions: 0, pushModel: { modelId: 'hilux', weight: 100 } }, note: 'smoke: push HiLux' };
-    const r = await call('PUT', '/api/dealer/priorities', put); must(r.status === 200, `status ${r.status}`);
-    const f = await call('POST', '/api/finder/next', { answers: TOW_ANSWERS }, 120000); must(f.status === 200 && f.json.done, `finder status ${f.status}`);
-    const recs = f.json.recommendations; recs.forEach(recDealerOk);
-    must(recsSortedByDealer(recs), 'recommendations not ordered by fit + dealerFactor');
-    recs.forEach((x) => must(x.modelId === 'hilux' ? x.dealerFactor === 8 && x.nudge : x.dealerFactor === 0, `${x.modelId} dealerFactor ${x.dealerFactor}`));
-    record('POST /api/finder/next (done; priorities push HiLux 100)', { answers: TOW_ANSWERS }, f.json);
-    return recs.map((x) => `${x.modelId} ${x.fit}+${x.dealerFactor}`).join(', ');
-  });
-  await check('PUT priorities restore → finder dealer factor ≤ 12', async () => {
-    const r = await call('PUT', '/api/dealer/priorities', originalPriorities); must(r.status === 200, `status ${r.status}`);
-    must(JSON.stringify(r.json.weights) === JSON.stringify(originalPriorities.weights), 'weights not restored');
+  await check('finder: dealer factor ≤ 12 and order = fit + dealerFactor', async () => {
     const f = await call('POST', '/api/finder/next', { answers: TOW_ANSWERS }, 120000); must(f.status === 200 && f.json.done, `finder status ${f.status}`);
     f.json.recommendations.forEach(recDealerOk); must(recsSortedByDealer(f.json.recommendations), 'not ordered by fit + dealerFactor');
+    record('POST /api/finder/next (done; Domo-derived priorities)', { answers: TOW_ANSWERS }, f.json);
     return f.json.recommendations.map((x) => `${x.modelId} ${x.fit}+${x.dealerFactor}${x.nudge?.promotionId ? ` (${x.nudge.promotionId})` : ''}`).join(', ');
   });
 
-  // ── promotions ──
-  await check('GET /api/promotions (all + filters)', async () => {
+  // ── promotions (Domo targets + ARAG composition) ──
+  let promosAll = [];
+  await check('GET /api/promotions (all + filters, source/why/composedBy)', async () => {
     const all = await call('GET', '/api/promotions'); must(all.status === 200 && Array.isArray(all.json) && all.json.length >= 6, `all: ${all.status} ${all.json?.length}`);
-    all.json.forEach((p, i) => promoOk(p, `promo[${i}]`));
-    const k = await call('GET', '/api/promotions?model=kluger'); must(k.json.some((p) => p.id === 'promo-kluger-accessories'), 'kluger bundle missing');
-    const u = await call('GET', '/api/promotions?unit=HL-2231'); must(u.json.some((p) => p.kind === 'servicing'), 'HL-2231 servicing missing');
-    must(!u.json.some((p) => p.id === 'promo-kluger-accessories'), 'kluger promo on a RAV4 unit');
-    const b = await call('GET', '/api/promotions?body=ute'); must(b.json.some((p) => p.id === 'promo-towing-pack'), 'ute towing pack missing');
+    all.json.forEach((p, i) => promoOk(p, `promo[${i}]`)); promosAll = all.json;
+    must(new Set(all.json.map((p) => p.id)).size === all.json.length, 'duplicate promotion ids');
+    const k = await call('GET', '/api/promotions?model=kluger'); must(k.json.length && k.json.every((p) => !p.appliesTo.models || p.appliesTo.models.includes('kluger')), 'kluger promotions missing or wrong model');
+    const u = await call('GET', '/api/promotions?unit=HL-2231'); must(u.json.length > 0, 'HL-2231 has no promotion');
+    must(u.json.every((p) => !p.appliesTo.models || p.appliesTo.models.includes('rav4')), 'non-RAV4 promotion on a RAV4 unit');
+    const b = await call('GET', '/api/promotions?body=ute'); must(b.json.some((p) => (p.appliesTo.models || []).includes('hilux')), 'no HiLux promotion for body=ute');
     const bad = await call('GET', '/api/promotions?model=nope'); must(bad.status === 400, `bad model status ${bad.status}`);
     record('GET /api/promotions?model=kluger', null, k.json.slice(0, 2));
-    return `${all.json.length} total; kluger ${k.json.length}, HL-2231 ${u.json.length}, ute ${b.json.length}`;
+    const by = all.json.reduce((o, p) => ({ ...o, [p.composedBy]: (o[p.composedBy] || 0) + 1 }), {});
+    return `${all.json.length} total (${Object.entries(by).map(([x, n]) => `${n} ${x}`).join(', ')}); kluger ${k.json.length}, HL-2231 ${u.json.length}, ute ${b.json.length}`;
+  });
+  await check('GET /api/promotions/explain', async () => {
+    const r = await call('GET', '/api/promotions/explain'); must(r.status === 200, `status ${r.status}`);
+    const e = r.json; must(isStr(e.source) && Array.isArray(e.targets) && e.targets.length >= 4, 'source/targets');
+    must(isNum(e.ttlMinutes) && typeof e.refreshing === 'boolean', 'ttlMinutes/refreshing');
+    e.targets.forEach((t, i) => {
+      must(isStr(t.target) && isStr(t.type) && isStr(t.signal) && Array.isArray(t.allowedKinds) && ['arag', 'fallback'].includes(t.composedBy), `target[${i}] shape`);
+      must(t.promotion === null || (isStr(t.promotion.id) && isStr(t.promotion.title)), `target[${i}].promotion`);
+    });
+    must(e.targets.some((t) => t.type === 'aged-stock') && e.targets.some((t) => t.type === 'push-model' && t.models.includes('kluger')) && e.targets.some((t) => t.target === 'gap-hilux'), 'expected aged, push-kluger and gap-hilux targets');
+    if (e.composedBy !== 'static') e.targets.forEach((t) => must(!t.promotion || promosAll.some((p) => p.id === t.promotion.id) || e.refreshing, `explain promotion ${t.promotion?.id} not in /api/promotions`));
+    record('GET /api/promotions/explain (first 3 targets)', null, { ...e, targets: e.targets.slice(0, 3) });
+    return `${e.targets.length} targets, composedBy=${e.composedBy}, ${e.latencyMs ?? '?'} ms`;
   });
   await check('GET /api/offers carries promotions[]', async () => {
     const r = await call('GET', '/api/offers?model=kluger&body=suv-large'); must(r.status === 200, `status ${r.status}`);
@@ -321,11 +325,56 @@ const paths = {
     return r.json.map((o) => `${o.unitId}:${o.promotions.length}`).join(' ');
   });
   await check('POST /api/ask (kluger) → Promotions trace', async () => {
-    const r = await call('POST', '/api/ask', { question: 'Is there any deal on the Kluger right now?', lang: 'en', build: { modelId: 'kluger', gradeId: 'grande', colourId: 'glacier-white', interiorId: 'leather-black', packs: [] }, finder: { answers: [] }, history: [] }, 120000);
+    const r = await call('POST', '/api/ask', { question: 'Is there any deal on the Kluger right now?', lang: 'en', build: { modelId: 'kluger', gradeId: 'grande', colourId: 'glacier-white', interiorId: 'leather-black', packs: [] }, finder: { answers: [] }, history: [] }, 120000, SIDH);
     must(r.status === 200 && isStr(r.json.answer), `status ${r.status}`); traceOk(r.json.trace, 'ask');
     must(r.json.trace.some((t) => t.kind === 'domo' && /^Promotions: \d+ applicable$/.test(t.label)), 'no Promotions trace');
     record('POST /api/ask (kluger promotions)', null, r.json);
     return r.json.trace.find((t) => /^Promotions/.test(t.label)).label;
+  });
+
+  // ── first-party events + report ──
+  const REPORT_KEYS = ['since', 'sessions', 'finderStarts', 'finderCompletions', 'answersByQuestion', 'modelsConfigured', 'coloursChosen', 'packsChosen', 'offersShown', 'offersClicked', 'questionsAsked', 'bookings', 'bookingAnswers', 'conversion'];
+  const reportOk = (j) => {
+    REPORT_KEYS.forEach((k) => must(k in j, `report.${k} missing`));
+    for (const k of ['sessions', 'finderStarts', 'finderCompletions', 'questionsAsked']) must(Number.isInteger(j[k]) && j[k] >= 0, `report.${k}`);
+    for (const k of ['modelsConfigured', 'coloursChosen', 'packsChosen', 'offersShown', 'offersClicked']) must(j[k] && typeof j[k] === 'object' && Object.values(j[k]).every(Number.isInteger), `report.${k}`);
+    for (const k of ['answersByQuestion', 'bookingAnswers']) must(Object.values(j[k]).every((o) => Object.values(o).every(Number.isInteger)), `report.${k}`);
+    must(Number.isInteger(j.bookings.count) && typeof j.bookings.bySite === 'object' && typeof j.bookings.byModel === 'object', 'report.bookings');
+    must(isNum(j.conversion.finderToBooking) && isNum(j.conversion.offerClickToBooking), 'report.conversion');
+    Object.keys(j.modelsConfigured).forEach((m) => must(MODELS.has(m), `report model ${m}`));
+  };
+  await check('POST /api/events (valid, invalid, server-only, too large)', async () => {
+    const ok = await call('POST', '/api/events', { sid: SID, type: 'build_change', data: { modelId: 'rav4', gradeId: 'cruiser', colourId: 'graphite', packs: ['tow'] } });
+    must(ok.status === 201 && ok.json.ok === true && ok.json.logged === true, `build_change ${ok.status} ${ok.text.slice(0, 80)}`);
+    const hdr = await call('POST', '/api/events', { type: 'offer_click', data: { unitId: 'HL-2231' } }, 10000, SIDH); must(hdr.status === 201, `offer_click via x-sid ${hdr.status}`);
+    const view = await call('POST', '/api/events', { sid: SID, type: 'offer_view', data: { unitId: 'HL-1941' } }); must(view.status === 201, `offer_view ${view.status}`);
+    const dup = await call('POST', '/api/events', { sid: SID, type: 'offer_view', data: { unitId: 'HL-1941' } }); must(dup.status === 202 && dup.json.logged === false, `duplicate offer_view ${dup.status}`);
+    const srv = await call('POST', '/api/events', { sid: SID, type: 'booking', data: {} }); must(srv.status === 202 && srv.json.logged === false, `server-only ${srv.status}`);
+    for (const [body, want] of [[{ sid: SID, type: 'nope', data: {} }, 400], [{ type: 'build_change', data: { modelId: 'rav4' } }, 400], [{ sid: SID, type: 'build_change', data: { modelId: 'delorean' } }, 400], [{ sid: SID, type: 'offer_click', data: { unitId: 'ZZ-1' } }, 400]]) {
+      const r = await call('POST', '/api/events', body); must(r.status === want, `${JSON.stringify(body)} → ${r.status} (want ${want})`);
+    }
+    const big = await call('POST', '/api/events', JSON.stringify({ sid: SID, type: 'offer_view', data: { unitId: 'HL-2231', pad: 'x'.repeat(2100) } })); must(big.status === 413, `>2 KB body → ${big.status}`);
+    return 'created, header sid, dedupe, server-only 202, 4 × 400, 413';
+  });
+  await check('finder/next logs events (sid, not prefetch)', async () => {
+    const before = (await call('GET', '/api/report/configurator?days=1')).json;
+    const sid2 = `${SID}_f`;
+    await call('POST', '/api/finder/next', { answers: [{ id: 'use', value: 'family', label: 'Family duties' }] }, 120000, { 'x-sid': sid2, 'x-prefetch': '1' });
+    const mid = (await call('GET', '/api/report/configurator?days=1')).json;
+    must(mid.finderStarts === before.finderStarts, 'prefetch call was logged');
+    await call('POST', '/api/finder/next', { answers: [{ id: 'use', value: 'family', label: 'Family duties' }] }, 120000, { 'x-sid': sid2 });
+    const after = (await call('GET', '/api/report/configurator?days=1')).json;
+    must(after.finderStarts === before.finderStarts + 1, `finderStarts ${before.finderStarts} → ${after.finderStarts}`);
+    must((after.answersByQuestion.use?.family || 0) === (before.answersByQuestion.use?.family || 0) + 1, 'use=family not counted');
+    return `finderStarts ${before.finderStarts} → ${after.finderStarts}`;
+  });
+  await check('GET /api/report/configurator', async () => {
+    const r = await call('GET', '/api/report/configurator?days=30'); must(r.status === 200, `status ${r.status}`);
+    reportOk(r.json);
+    must(r.json.sessions >= 20 && r.json.bookings.count >= 1, `seeded data missing: ${r.json.sessions} sessions, ${r.json.bookings.count} bookings`);
+    must((r.json.modelsConfigured.rav4 || 0) >= 1 && (r.json.offersClicked['HL-2231'] || 0) >= 1, 'this run\'s build_change / offer_click not counted');
+    record('GET /api/report/configurator?days=30', null, r.json);
+    return `${r.json.events} events, ${r.json.sessions} sessions, ${r.json.bookings.count} bookings, finder→booking ${r.json.conversion.finderToBooking}`;
   });
 
   // ── test drives ──
@@ -351,11 +400,12 @@ const paths = {
     await check(`POST /api/testdrive/book (${c.name})`, async () => {
       const sl = await call('GET', `/api/testdrive/slots?site=${c.body.site}&unit=${c.unit}`);
       const slot = sl.json.days.flatMap((d) => d.slots).find((x) => x.available); must(slot, 'no available slot');
-      const r = await call('POST', '/api/testdrive/book', { ...c.body, slotId: slot.id }, 120000); must(r.status === 200, `status ${r.status} ${r.text.slice(0, 160)}`);
+      const r = await call('POST', '/api/testdrive/book', { ...c.body, slotId: slot.id }, 120000, SIDH); must(r.status === 200, `status ${r.status} ${r.text.slice(0, 160)}`);
       const b = r.json;
       must(/^TD-[A-Z0-9]{5}$/.test(b.bookingId), `bookingId ${b.bookingId}`); must(b.site === c.body.site && isStr(b.siteName), 'site');
       must(isStr(b.when) && !Number.isNaN(Date.parse(b.when)) && /[+-]\d{2}:\d{2}$/.test(b.when), `when ${b.when}`); must(isStr(b.whenLabel), 'whenLabel');
       must(b.unitId === c.unit, 'unitId'); must(isStr(b.model) && isStr(b.grade), 'model/grade');
+      must(b.handover === `/api/testdrive/handover/${b.bookingId}`, 'handover link');
       questionsOk(b.questions);
       const inc = b.incentive; must(inc && isStr(inc.id) && isStr(inc.title) && isStr(inc.desc) && isStr(inc.reason) && (inc.value === null || isNum(inc.value)), 'incentive shape');
       must(/^Because /.test(inc.reason) && c.incentive.test(`${inc.title} ${inc.reason}`), `incentive not matched: ${inc.title} / ${inc.reason}`);
@@ -376,12 +426,34 @@ const paths = {
   await check('POST /api/testdrive/answers', async () => {
     must(booked, 'no booking from previous check');
     const answers = booked.questions.map((q) => ({ id: q.id, value: q.options[0].id, label: q.options[0].label }));
-    const r = await call('POST', '/api/testdrive/answers', { bookingId: booked.bookingId, answers }, 120000); must(r.status === 200, `status ${r.status} ${r.text.slice(0, 160)}`);
+    const r = await call('POST', '/api/testdrive/answers', { bookingId: booked.bookingId, answers }, 120000, SIDH); must(r.status === 200, `status ${r.status} ${r.text.slice(0, 160)}`);
     must(r.json.ok === true && isStr(r.json.reply), 'ok/reply'); must(Array.isArray(r.json.prep) && r.json.prep.length >= 1 && r.json.prep.length <= 3 && r.json.prep.every(isStr), 'prep');
     const nf = await call('POST', '/api/testdrive/answers', { bookingId: 'TD-ZZZZZ', answers }); must(nf.status === 404, `unknown booking ${nf.status}`);
     const bad = await call('POST', '/api/testdrive/answers', { bookingId: booked.bookingId, answers: [{ id: 'nope', value: 'x' }] }); must(bad.status === 400, `bad answers ${bad.status}`);
     record('POST /api/testdrive/answers', { bookingId: booked.bookingId, answers }, r.json);
     return `${r.json.prep.length} prep; "${r.json.reply.slice(0, 80)}…"`;
+  });
+  await check('GET /api/testdrive/handover/:bookingId', async () => {
+    must(booked, 'no booking from previous check');
+    const r = await call('GET', `/api/testdrive/handover/${booked.bookingId}`, null, 120000); must(r.status === 200, `status ${r.status} ${r.text.slice(0, 160)}`);
+    const h = r.json;
+    must(h.bookingId === booked.bookingId && isStr(h.whenLabel) && isStr(h.siteName), 'bookingId/whenLabel/siteName');
+    must(isStr(h.customerRef) && SID.startsWith(h.customerRef.replace('…', '')), `customerRef "${h.customerRef}"`);
+    const c = h.car; must(c && isStr(c.model) && isStr(c.grade) && c.unitId === booked.unitId && isNum(c.price) && Array.isArray(c.packs), 'car shape');
+    must(Array.isArray(h.viewed) && h.viewed.every((v) => isStr(v.model)), 'viewed');
+    must(Array.isArray(h.finderAnswers) && h.finderAnswers.length >= 1 && h.finderAnswers.every((a) => isStr(a.question) && isStr(a.answer)), 'finderAnswers');
+    must(Array.isArray(h.questions) && h.questions.length === 3 && h.questions.every((q) => isStr(q.question) && isStr(q.answer)), 'questions (answered)');
+    must(Array.isArray(h.promotionsToOffer) && h.promotionsToOffer.every((p) => isStr(p.title) && isStr(p.why)), 'promotionsToOffer');
+    must(h.incentive && isStr(h.incentive.title), 'incentive');
+    must(Array.isArray(h.talkingPoints) && h.talkingPoints.length >= 3 && h.talkingPoints.length <= 5 && h.talkingPoints.every(isStr), `talkingPoints ${h.talkingPoints?.length}`);
+    must(['arag', 'fallback'].includes(h.talkingPointsBy), 'talkingPointsBy');
+    must(Array.isArray(h.prep) && h.prep.every(isStr), 'prep'); traceOk(h.trace, 'handover');
+    const nf = await call('GET', '/api/testdrive/handover/TD-ZZZZZ'); must(nf.status === 404, `unknown booking ${nf.status}`);
+    const bad = await call('GET', '/api/testdrive/handover/nope'); must(bad.status === 400, `bad id ${bad.status}`);
+    const rep = (await call('GET', '/api/report/configurator?days=1')).json;
+    must(rep.bookings.count >= 1 && (rep.bookingAnswers[booked.questions[0].id] || null), 'booking / booking_answer events not in the report');
+    record(`GET /api/testdrive/handover/${booked.bookingId}`, null, h);
+    return `${h.talkingPoints.length} talking points (${h.talkingPointsBy}), ${h.promotionsToOffer.length} promotions, ${h.viewed.length} viewed, ${r.ms} ms`;
   });
 
   await check('GET /api/foryou', async () => {
@@ -421,7 +493,7 @@ let child; const logs = [];
 async function main() {
   if (!BASE) {
     const port = await freePort(); BASE = `http://127.0.0.1:${port}`;
-    // Writable dealer state (priorities, bookings) goes to a temp dir so the repo's content/dealer stays clean.
+    // Writable dealer state (bookings, events, composed promotions) goes to a temp dir so the repo's content/dealer stays clean.
     const stateDir = mkdtempSync(join(tmpdir(), 'harbourline-smoke-'));
     child = spawn(process.execPath, [join(ROOT, 'server/index.mjs')], { cwd: ROOT, env: { ...loadEnv(), ...process.env, PORT: String(port), HOST: '127.0.0.1', DEALER_STATE_DIR: stateDir, RATE_BURST: process.env.RATE_BURST || '200' }, stdio: ['ignore', 'pipe', 'pipe'] });
     child.stdout.on('data', (d) => logs.push(String(d))); child.on('exit', (c, sig) => logs.push(`\n[smoke] server process exited code=${c} signal=${sig} at ${new Date().toISOString()}\n`)); child.stderr.on('data', (d) => logs.push(String(d)));

@@ -269,7 +269,7 @@ export async function finderNext(body, stockData) {
   const trace = [{ kind: 'domo', label: `Domo stock: ${stockData.stock_by_site.length} units across 4 sites checked for availability` }];
   const answered = answers.length ? answers.map((a, i) => `${i + 1}. ${a.id} = ${a.value}`).join('\n') : '(none yet)'; // canonical ids only: client labels never reach the system prompt
   const extra = [`CATALOGUE (id | name | body | powertrain | seats | braked tow | from price | grades | tags):\n${catalogSummary()}`, stockSummary(stockData)];
-  const pr = priorities();
+  const pr = priorities(stockData);
 
   if (arag.configured()) {
     try {
@@ -293,7 +293,7 @@ export async function finderNext(body, stockData) {
         const recs = applyDealer(validRecs(r.json, stockData), stockData, pr);
         trace.unshift({ kind: 'kb', label: `Knowledge base: ${r.sources.length} document(s) used to rank models` });
         if (recs.length) {
-          trace.push({ kind: 'domo', label: `Dealer priorities applied: ${recs.filter((x) => x.dealerFactor > 0).length} of ${recs.length} picks nudged (max +12 fit)` });
+          trace.push({ kind: 'domo', label: `Dealer priorities (derived from Domo dealer_signals) applied: ${recs.filter((x) => x.dealerFactor > 0).length} of ${recs.length} picks nudged (max +12 fit)` });
           const summary = String(r.json.summary || '').trim();
           return { done: true, summary: summary && recs[0].modelId === agentLead ? summary : `Based on your answers, the ${modelById(recs[0].modelId)?.name} is the strongest fit, with two alternatives worth a look.`, recommendations: recs, trace };
         }
@@ -306,7 +306,7 @@ export async function finderNext(body, stockData) {
   }
   if (done) {
     const out = fallback.recommend(answers, stockData, pr);
-    trace.push({ kind: 'domo', label: `Dealer priorities applied: ${out.recommendations.filter((x) => x.dealerFactor > 0).length} of ${out.recommendations.length} picks nudged (max +12 fit)` });
+    trace.push({ kind: 'domo', label: `Dealer priorities (derived from Domo dealer_signals) applied: ${out.recommendations.filter((x) => x.dealerFactor > 0).length} of ${out.recommendations.length} picks nudged (max +12 fit)` });
     return { ...out, trace };
   }
   return { ...fallback.nextQuestion(answers), trace };

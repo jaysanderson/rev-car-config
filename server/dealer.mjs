@@ -1,11 +1,20 @@
-// dealer.mjs — dealer-side business data: priorities (editable weights), promotions,
-// and the "dealer factor" that nudges finder and offer ranking.
+// dealer.mjs — dealer-side business logic: priorities (derived from Domo), the
+// promotion filters, and the "dealer factor" that nudges finder and offer ranking.
 //
-// Data: content/dealer/*.json (stand-in, fictional). Writable state
-// (priorities.json, bookings.json) lives in DEALER_STATE_DIR when set, else in
-// content/dealer. If that directory is not writable (e.g. the container's content/
-// is root-owned), the first write switches state to <os tmpdir>/harbourline-dealer
-// and logs a warning, so the prototype keeps working (state is then ephemeral).
+// Priorities are no longer edited by a business user. They are COMPUTED from the Domo
+// Intelligence output `dealer_signals` (content/domo/dealer_signals.json, refreshed
+// nightly from the ERP) plus the aged-stock list, by derivePriorities():
+//   stockOnLot  = unit-weighted average days of supply, scaled 20 → 0 … 90 → 100
+//   agedStock   = aged units with headroom: count × 7 + (average age − 60) × 1.2
+//   promotions  = unit-weighted average marginHeadroomAvg, scaled $0 → 0 … $2,500 → 100
+//   pushModel   = model with the highest allocationNextMonth + 2 × targetGap (only
+//                 when that score ≥ 8 and the model is not supply-constrained);
+//                 weight = score × 2.5
+// All weights are integers 0-100, the same `weights` shape as before, so the dealer
+// factor, offer ranking and prompts are unchanged. `derivedFrom` explains each one.
+//
+// Promotions are composed by server/promotions.mjs (Domo targets + ARAG); this file
+// only filters them.
 //
 // Dealer factor (applied after fit scoring, finder ARAG path and fallback alike):
 //   + stockOnLot/100 × 6   if the model has a unit on any Harbourline lot
@@ -14,122 +23,101 @@
 //   + promotions/100 × 4   if a live promotion applies to the model
 //   capped at 12 fit points. Recommendation order = fit + dealerFactor.
 // The customer-facing `nudge.reason` never mentions age, headroom, margins or targets.
-import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync, statSync, copyFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
-import { ROOT } from './env.mjs';
-import { catalog, modelById, siteName } from './data.mjs';
+import { catalog, modelById, siteName, isAged, headroomOf, fmtAud } from './data.mjs';
+import { readDealer, writeDealer } from './state.mjs';
+import { currentPromotions, usePriorities } from './promotions.mjs';
 
-const SEED_DIR = join(ROOT, 'content', 'dealer');
-let STATE_DIR = process.env.DEALER_STATE_DIR || SEED_DIR;
-const STATE_FILES = new Set(['priorities.json', 'bookings.json']);
+export { readDealer, writeDealer, isAged };
 
-// ── JSON IO ──────────────────────────────────────────────────────────────────
-const cache = new Map(); // path → {mtime, data}
-function pathFor(name) {
-  if (STATE_FILES.has(name)) {
-    const p = join(STATE_DIR, name);
-    if (existsSync(p)) return p;
-  }
-  return join(SEED_DIR, name);
-}
-export function readDealer(name, fallback) {
-  const p = pathFor(name);
-  if (!existsSync(p)) return fallback;
-  const m = statSync(p).mtimeMs;
-  const c = cache.get(p);
-  if (c && c.mtime === m) return c.data;
-  try {
-    const data = JSON.parse(readFileSync(p, 'utf8'));
-    cache.set(p, { mtime: m, data });
-    return data;
-  } catch (e) {
-    console.warn(`[dealer] cannot parse ${name}: ${e.message}`);
-    return c ? c.data : fallback;
-  }
-}
+// ── priorities (derived from Domo dealer_signals) ────────────────────────────
+const clamp100 = (n) => Math.max(0, Math.min(100, Math.round(n)));
+const nameOf = (id) => modelById(id)?.name || id;
+export const PRIORITIES_SOURCE = 'Domo · dealer_signals (nightly)';
 
-function writeAtomic(dir, name, data) {
-  mkdirSync(dir, { recursive: true });
-  const p = join(dir, name);
-  const tmp = `${p}.${process.pid}.${Date.now()}.tmp`;
-  writeFileSync(tmp, `${JSON.stringify(data, null, 2)}\n`);
-  renameSync(tmp, p); // atomic on the same filesystem
-  cache.set(p, { mtime: statSync(p).mtimeMs, data });
-}
-let writeChain = Promise.resolve();
-/** Serialised atomic write of a state file. Falls back to a tmp dir if the state dir is read-only. */
-export function writeDealer(name, data) {
-  const job = writeChain.then(() => {
-    try { writeAtomic(STATE_DIR, name, data); }
-    catch (e) {
-      if (!['EACCES', 'EROFS', 'EPERM'].includes(e.code)) throw e;
-      const alt = join(tmpdir(), 'harbourline-dealer');
-      console.warn(`[dealer] ${STATE_DIR} is not writable (${e.code}); dealer state now in ${alt} (ephemeral)`);
-      mkdirSync(alt, { recursive: true });
-      for (const f of STATE_FILES) if (f !== name && !existsSync(join(alt, f)) && existsSync(pathFor(f))) copyFileSync(pathFor(f), join(alt, f));
-      STATE_DIR = alt;
-      writeAtomic(STATE_DIR, name, data);
-    }
-    return data;
-  });
-  writeChain = job.catch(() => {});
-  return job;
-}
+/**
+ * Compute dealer priorities from Domo signals and stock.
+ * @param {Array<{model,unitsInStock,daysOfSupply,allocationNextMonth,targetGap,avgDaysInStock,marginHeadroomAvg}>} signals
+ * @param {object} s stock() datasets (stock_by_site, aged_stock_actions)
+ */
+export function derivePriorities(signals, s, { refreshedAt = null, now = new Date() } = {}) {
+  const rows = (signals || []).filter((r) => modelById(r.model));
+  const derivedFrom = [];
+  const stocked = rows.filter((r) => r.unitsInStock > 0);
+  const units = stocked.reduce((n, r) => n + r.unitsInStock, 0);
 
-// ── priorities ───────────────────────────────────────────────────────────────
-const DEFAULT_PRIORITIES = {
-  updatedAt: '2026-10-13T09:00:00+11:00', updatedBy: 'Sales manager (demo)',
-  weights: { stockOnLot: 60, agedStock: 70, promotions: 40, pushModel: { modelId: 'kluger', weight: 50 } },
-  note: 'Clear aged RAV4/Kluger before December; Kluger hybrid allocation is strong this quarter.',
-};
-export const priorities = () => readDealer('priorities.json', DEFAULT_PRIORITIES);
+  // stock on lot ← unit-weighted average days of supply
+  const avgDos = units ? stocked.reduce((n, r) => n + r.daysOfSupply * r.unitsInStock, 0) / units : 0;
+  const stockOnLot = clamp100(((avgDos - 20) / 70) * 100);
+  const longest = [...stocked].sort((a, b) => b.daysOfSupply - a.daysOfSupply).slice(0, 2);
+  derivedFrom.push({ signal: 'daysOfSupply (average, weighted by units in stock)', value: Math.round(avgDos),
+    effect: `${units} units in stock average ${Math.round(avgDos)} days of supply${longest.length ? ` (longest: ${longest.map((r) => `${nameOf(r.model)} ${r.daysOfSupply}`).join(', ')})` : ''} → stock-on-lot weight ${stockOnLot}` });
 
-/** Validate a PUT body. Returns {value} or {error}. */
-export function validatePriorities(body, current = priorities()) {
-  if (!body || typeof body !== 'object' || Array.isArray(body)) return { error: 'body must be an object' };
-  const w = body.weights;
-  if (!w || typeof w !== 'object' || Array.isArray(w)) return { error: 'weights is required' };
-  const int = (v) => Number.isInteger(v) && v >= 0 && v <= 100;
-  for (const k of ['stockOnLot', 'agedStock', 'promotions']) if (!int(w[k])) return { error: `weights.${k} must be an integer 0-100` };
+  // aged stock ← count and age of aged units that still have headroom
+  const aged = (s?.stock_by_site || []).filter((u) => isAged(s, u) && headroomOf(s, u) > 0);
+  const avgAge = aged.length ? aged.reduce((n, u) => n + (u.age || 0), 0) / aged.length : 0;
+  const agedStock = aged.length ? clamp100(aged.length * 7 + (avgAge - 60) * 1.2) : 0;
+  const oldest = [...aged].sort((a, b) => b.age - a.age)[0];
+  derivedFrom.push({ signal: 'aged units with incentive headroom', value: aged.length,
+    effect: aged.length ? `${aged.length} aged units with headroom, average ${Math.round(avgAge)} days in stock (oldest ${nameOf(oldest.model)} ${oldest.id} at ${oldest.age} days) → aged-stock weight ${agedStock}` : 'No aged units with headroom → aged-stock weight 0' });
+
+  // promotions ← margin headroom
+  const avgHeadroom = units ? stocked.reduce((n, r) => n + r.marginHeadroomAvg * r.unitsInStock, 0) / units : 0;
+  const promotions = clamp100((avgHeadroom / 2500) * 100);
+  const richest = [...stocked].sort((a, b) => b.marginHeadroomAvg - a.marginHeadroomAvg)[0];
+  derivedFrom.push({ signal: 'marginHeadroomAvg (average, weighted by units in stock)', value: Math.round(avgHeadroom),
+    effect: `Average incentive headroom is ${fmtAud(Math.round(avgHeadroom))} a unit${richest ? ` (highest ${nameOf(richest.model)} ${fmtAud(richest.marginHeadroomAvg)})` : ''} → promotions weight ${promotions}` });
+
+  // push model ← strongest allocation + target gap (never a supply-constrained model)
+  const constrained = (r) => r.allocationNextMonth <= 2 && r.daysOfSupply > 0 && r.daysOfSupply < 25;
+  const pushScore = (r) => r.allocationNextMonth + 2 * Math.max(0, r.targetGap);
+  const ranked = rows.filter((r) => !constrained(r)).sort((a, b) => pushScore(b) - pushScore(a) || b.allocationNextMonth - a.allocationNextMonth);
+  const best = ranked[0];
   let pushModel = { modelId: null, weight: 0 };
-  if (w.pushModel != null) {
-    if (typeof w.pushModel !== 'object' || Array.isArray(w.pushModel)) return { error: 'weights.pushModel must be an object or null' };
-    const { modelId = null, weight } = w.pushModel;
-    if (modelId !== null && (typeof modelId !== 'string' || !modelById(modelId))) return { error: 'weights.pushModel.modelId must be a catalogue model id or null' };
-    if (!int(weight)) return { error: 'weights.pushModel.weight must be an integer 0-100' };
-    pushModel = { modelId, weight };
+  if (best && pushScore(best) >= 8) {
+    pushModel = { modelId: best.model, weight: clamp100(pushScore(best) * 2.5) };
+    derivedFrom.push({ signal: 'allocationNextMonth + targetGap', value: pushScore(best),
+      effect: `${nameOf(best.model)} allocation next month is ${best.allocationNextMonth} against a target gap of ${best.targetGap} → push ${nameOf(best.model)} (weight ${pushModel.weight})` });
+  } else derivedFrom.push({ signal: 'allocationNextMonth + targetGap', value: best ? pushScore(best) : 0, effect: 'No model has a strong enough allocation and target gap → no pushed model' });
+  // Context lines (no weight of their own) so the drawer can show why others were not pushed.
+  for (const r of rows.filter(constrained).filter((r) => r.targetGap > 0).slice(0, 2)) {
+    derivedFrom.push({ signal: 'allocationNextMonth', value: r.allocationNextMonth, effect: `${nameOf(r.model)} allocation is constrained (${r.allocationNextMonth} next month, ${r.daysOfSupply} days of supply) → not pushed` });
   }
-  if (body.note != null && typeof body.note !== 'string') return { error: 'note must be a string' };
-  if (body.updatedBy != null && typeof body.updatedBy !== 'string') return { error: 'updatedBy must be a string' };
-  const clip = (s, n) => String(s).replace(/[\u0000-\u001f]+/g, ' ').trim().slice(0, n);
+  const runnerUp = ranked.find((r) => r !== best && r.targetGap >= 3);
+  if (runnerUp) derivedFrom.push({ signal: 'targetGap', value: runnerUp.targetGap, effect: `${nameOf(runnerUp.model)} is ${runnerUp.targetGap} units short of this month's target (allocation ${runnerUp.allocationNextMonth}) → gets its own promotion, not the push` });
+
+  const computedAt = now.toISOString();
+  const parts = [aged.length ? `clear ${aged.length} aged units` : null, pushModel.modelId ? `push ${nameOf(pushModel.modelId)} on allocation` : null, runnerUp ? `close the ${nameOf(runnerUp.model)} target gap` : null].filter(Boolean);
   return {
-    value: {
-      updatedAt: new Date().toISOString(),
-      updatedBy: body.updatedBy && body.updatedBy.trim() ? clip(body.updatedBy, 80) : (current.updatedBy || 'Sales manager (demo)'),
-      weights: { stockOnLot: w.stockOnLot, agedStock: w.agedStock, promotions: w.promotions, pushModel },
-      note: body.note != null ? clip(body.note, 500) : (current.note || ''),
-    },
+    source: PRIORITIES_SOURCE, refreshedAt, computedAt,
+    updatedAt: computedAt, updatedBy: 'Domo Intelligence (derived)',
+    weights: { stockOnLot, agedStock, promotions, pushModel },
+    derivedFrom,
+    note: parts.length ? `${parts.join('; ').replace(/^./, (c) => c.toUpperCase())}.` : 'No strong signals tonight.',
   };
 }
-export const savePriorities = (value) => writeDealer('priorities.json', value);
+
+// One derivation per stock() snapshot (stock is cached for 60 s).
+const derivedCache = new WeakMap();
+let lastDerived = null;
+/** Derived priorities for a stock snapshot (the last one when `s` is omitted). */
+export function priorities(s) {
+  if (!s) return lastDerived || derivePriorities([], { stock_by_site: [], aged_stock_actions: [] });
+  let p = derivedCache.get(s);
+  if (!p) { p = derivePriorities(s.dealer_signals, s, { refreshedAt: s._refreshed?.dealer_signals || null }); derivedCache.set(s, p); lastDerived = p; }
+  return p;
+}
+usePriorities(priorities);
 
 // ── promotions ───────────────────────────────────────────────────────────────
 const todayYmd = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney' }).format(new Date());
-const PUBLIC_PROMO_KEYS = ['id', 'title', 'kind', 'value', 'desc', 'reason', 'appliesTo', 'validUntil'];
+const PUBLIC_PROMO_KEYS = ['id', 'title', 'kind', 'value', 'desc', 'why', 'reason', 'appliesTo', 'validUntil', 'source', 'composedBy'];
 const publicPromo = (p) => Object.fromEntries(PUBLIC_PROMO_KEYS.map((k) => [k, p[k] ?? null]));
 
-/** Live (not expired) promotions with the internal `short` phrase. */
-export function allPromotions() {
+/** Live (not expired) promotions with the internal `short` phrase (composed set; see promotions.mjs). */
+export function allPromotions(s) {
   const t = todayYmd();
-  return (readDealer('promotions.json', { promotions: [] }).promotions || []).filter((p) => p && p.id && (!p.validUntil || p.validUntil >= t));
+  return currentPromotions(s).filter((p) => p && p.id && (!p.validUntil || p.validUntil >= t));
 }
-
-/** True when the unit is on the Domo aged-stock actions list (or aged with a bonus). */
-export function isAged(s, u) {
-  return s.aged_stock_actions.some((a) => (a.unit_id || a.unitId) === u.id) || (u.age >= 60 && u.bonus > 0);
-}
-const headroomOf = (s, u) => { const a = s.aged_stock_actions.find((x) => (x.unit_id || x.unitId) === u.id); return a?.incentive_headroom ?? u.bonus ?? 0; };
 
 function promoMatchesUnit(p, u, s) {
   const a = p.appliesTo || {};
@@ -160,7 +148,7 @@ const sortPromos = (arr) => arr.sort((a, b) => specificity(a) - specificity(b) |
  * Returns internal objects (with `short`) when `internal`, else the public shape.
  */
 export function promotionsFor(s, { model, unit, body } = {}, { internal = false } = {}) {
-  let list = allPromotions();
+  let list = allPromotions(s);
   if (unit) {
     const u = s.stock_by_site.find((x) => x.id === unit);
     list = u ? list.filter((p) => promoMatchesUnit(p, u, s)) : [];
@@ -170,7 +158,7 @@ export function promotionsFor(s, { model, unit, body } = {}, { internal = false 
   sortPromos(list);
   return internal ? list : list.map(publicPromo);
 }
-export const promotionById = (id) => allPromotions().find((p) => p.id === id);
+export const promotionById = (id, s) => allPromotions(s).find((p) => p.id === id);
 
 // ── dealer factor ────────────────────────────────────────────────────────────
 const NUM = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
@@ -180,7 +168,7 @@ const round1 = (n) => Math.round(n * 10) / 10;
  * Dealer factor for a model under the given priorities.
  * Returns {dealerFactor, nudge, parts} — `parts` is for tracing/prompting only.
  */
-export function dealerFactorFor(modelId, s, pr = priorities()) {
+export function dealerFactorFor(modelId, s, pr = priorities(s)) {
   const w = pr?.weights || {};
   const m = modelById(modelId);
   const units = s.stock_by_site.filter((u) => u.model === modelId);
@@ -221,7 +209,7 @@ export function dealerFactorFor(modelId, s, pr = priorities()) {
 export function prioritiesText(pr, modelIds, s) {
   const w = pr.weights;
   const push = w.pushModel?.modelId ? `${modelById(w.pushModel.modelId)?.name || w.pushModel.modelId} (${w.pushModel.weight})` : 'none';
-  const lines = [`DEALER PRIORITIES (business weights 0-100; a small tie-breaker only, never a reason to recommend a car that does not fit): stock on lot ${w.stockOnLot}, aged stock ${w.agedStock}, promotions ${w.promotions}, push model ${push}.`];
+  const lines = [`DEALER PRIORITIES (weights 0-100 derived nightly by Domo from ERP signals; a small tie-breaker only, never a reason to recommend a car that does not fit): stock on lot ${w.stockOnLot}, aged stock ${w.agedStock}, promotions ${w.promotions}, push model ${push}.`];
   for (const id of modelIds) {
     const df = dealerFactorFor(id, s, pr);
     if (df.dealerFactor) lines.push(`- ${id}: dealer factor ${df.dealerFactor}; customer-safe angle: ${df.nudge.reason}${df.promo ? ` Promotion ${df.promo.id}: ${df.promo.title}.` : ''}`);
@@ -232,11 +220,11 @@ export function prioritiesText(pr, modelIds, s) {
 /** Text block of promotions for the /ask extra_context. */
 export function promotionsText(promos) {
   if (!promos.length) return null;
-  return ['DEALER PROMOTIONS (the ONLY promotions that exist; quote only these, exactly as described, and explain honestly why each is offered):',
+  return ['DEALER PROMOTIONS (the ONLY promotions that exist; quote only these, exactly as described, and explain honestly why each is offered, using the customer-safe "Why" line):',
     ...promos.map((p) => {
       const a = p.appliesTo || {};
       const scope = [a.units ? `unit ${a.units.join(', ')}` : null, a.models ? `models ${a.models.map((id) => modelById(id)?.name || id).join(', ')}` : null, a.bodies ? `body ${a.bodies.join(', ')}` : null, a.aged ? 'older stock units only' : null, a.onLot ? 'cars on our lots only' : null].filter(Boolean).join('; ') || 'any car';
-      return `- [${p.id}] ${p.title}${p.value ? ` (value $${p.value.toLocaleString('en-AU')})` : ''}: ${p.desc} Why we offer it: ${p.reason} Applies to: ${scope}. Valid until ${p.validUntil}.`;
+      return `- [${p.id}] ${p.title}${p.value ? ` (value $${p.value.toLocaleString('en-AU')})` : ''}: ${p.desc} Why (customer-safe): ${p.why || 'a current dealer offer'} Dealer-internal reason (never quote): ${p.reason} Applies to: ${scope}. Valid until ${p.validUntil}.`;
     })].join('\n');
 }
 
@@ -246,7 +234,7 @@ export function promotionsText(promos) {
  *   effective = move priority − pushModel.weight/100 × 3 (pushed model)
  *                             − promotions/100 × 2 (a promotion applies to the unit).
  */
-export function rankOffers(rows, s, pr = priorities()) {
+export function rankOffers(rows, s, pr = priorities(s)) {
   const w = pr?.weights || {};
   const out = rows.map((r, i) => {
     const promos = promotionsFor(s, { unit: r.unitId }).map((p) => p.id);
