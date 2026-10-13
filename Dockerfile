@@ -1,4 +1,11 @@
-FROM nginx:1.27-alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY public /usr/share/nginx/html
+FROM node:20-alpine
+ENV NODE_ENV=production PORT=8080
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+COPY server ./server
+COPY public ./public
+COPY content ./content
+USER node
 EXPOSE 8080
+CMD ["node", "server/index.mjs"]

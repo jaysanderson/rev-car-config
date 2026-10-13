@@ -1,0 +1,73 @@
+{
+  "dataset": "aged_stock_actions",
+  "source": "Domo stand-in (Harbourline DMS export)",
+  "refreshed_at": "2026-10-13T06:00:00+11:00",
+  "rows": [
+    {
+      "unit_id": "HL-2231",
+      "model": "rav4",
+      "grade": "cruiser",
+      "site": "par",
+      "days_in_stock": 94,
+      "incentive_headroom": 1800,
+      "move_priority": 1,
+      "reason_code": "aged_90d",
+      "recommended_action": "Move this week: feature with manager-approved bonus"
+    },
+    {
+      "unit_id": "HL-1941",
+      "model": "kluger",
+      "grade": "grande",
+      "site": "hor",
+      "days_in_stock": 110,
+      "incentive_headroom": 2400,
+      "move_priority": 2,
+      "reason_code": "aged_90d",
+      "recommended_action": "Move this week: feature with manager-approved bonus"
+    },
+    {
+      "unit_id": "HL-2104",
+      "model": "rav4",
+      "grade": "edge",
+      "site": "pen",
+      "days_in_stock": 67,
+      "incentive_headroom": 1200,
+      "move_priority": 3,
+      "reason_code": "aged_60d",
+      "recommended_action": "Feature against matching builds; bonus available on request"
+    },
+    {
+      "unit_id": "HL-2399",
+      "model": "hilux",
+      "grade": "sr",
+      "site": "par",
+      "days_in_stock": 88,
+      "incentive_headroom": 1500,
+      "move_priority": 4,
+      "reason_code": "aged_60d",
+      "recommended_action": "Feature against matching builds; bonus available on request"
+    },
+    {
+      "unit_id": "HL-2488",
+      "model": "camry",
+      "grade": "sl",
+      "site": "liv",
+      "days_in_stock": 75,
+      "incentive_headroom": 900,
+      "move_priority": 5,
+      "reason_code": "aged_60d",
+      "recommended_action": "Feature against matching builds; bonus available on request"
+    },
+    {
+      "unit_id": "HL-2650",
+      "model": "c-hr",
+      "grade": "gxl",
+      "site": "par",
+      "days_in_stock": 60,
+      "incentive_headroom": 700,
+      "move_priority": 6,
+      "reason_code": "days_of_supply",
+      "recommended_action": "Feature against matching builds; bonus available on request"
+    }
+  ]
+}

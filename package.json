@@ -1,0 +1,17 @@
+{
+  "name": "harbourline-configurator",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Harbourline Toyota Configurator: static front-end + Express API over Progress Agentic RAG and Domo stock",
+  "engines": { "node": ">=20.6" },
+  "scripts": {
+    "start": "node server/index.mjs",
+    "ingest": "node scripts/ingest.mjs",
+    "provision": "node scripts/provision.mjs",
+    "check": "for f in server/*.mjs scripts/*.mjs; do node --check \"$f\" || exit 1; done"
+  },
+  "dependencies": {
+    "express": "4.21.2"
+  }
+}

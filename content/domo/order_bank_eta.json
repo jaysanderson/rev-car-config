@@ -1,0 +1,98 @@
+{
+  "dataset": "order_bank_eta",
+  "source": "Domo stand-in (Harbourline DMS export)",
+  "refreshed_at": "2026-10-13T06:00:00+11:00",
+  "rows": [
+    {
+      "model": "rav4",
+      "eta_weeks_min": 14,
+      "eta_weeks_max": 18,
+      "label": "14-18 weeks",
+      "note": "March slot"
+    },
+    {
+      "model": "kluger",
+      "eta_weeks_min": 10,
+      "eta_weeks_max": 14,
+      "label": "10-14 weeks"
+    },
+    {
+      "model": "prado",
+      "eta_weeks_min": 20,
+      "eta_weeks_max": 26,
+      "label": "20-26 weeks"
+    },
+    {
+      "model": "landcruiser-300",
+      "eta_weeks_min": 24,
+      "eta_weeks_max": 30,
+      "label": "24-30 weeks"
+    },
+    {
+      "model": "hilux",
+      "eta_weeks_min": 8,
+      "eta_weeks_max": 12,
+      "label": "8-12 weeks"
+    },
+    {
+      "model": "camry",
+      "eta_weeks_min": 8,
+      "eta_weeks_max": 12,
+      "label": "8-12 weeks"
+    },
+    {
+      "model": "corolla-cross",
+      "eta_weeks_min": 10,
+      "eta_weeks_max": 14,
+      "label": "10-14 weeks"
+    },
+    {
+      "model": "yaris-cross",
+      "eta_weeks_min": 8,
+      "eta_weeks_max": 12,
+      "label": "8-12 weeks"
+    },
+    {
+      "model": "bz4x",
+      "eta_weeks_min": 12,
+      "eta_weeks_max": 16,
+      "label": "12-16 weeks"
+    },
+    {
+      "model": "corolla",
+      "eta_weeks_min": 8,
+      "eta_weeks_max": 12,
+      "label": "8-12 weeks"
+    },
+    {
+      "model": "c-hr",
+      "eta_weeks_min": 10,
+      "eta_weeks_max": 14,
+      "label": "10-14 weeks"
+    },
+    {
+      "model": "fortuner",
+      "eta_weeks_min": 12,
+      "eta_weeks_max": 16,
+      "label": "12-16 weeks"
+    },
+    {
+      "model": "gr-yaris",
+      "eta_weeks_min": 16,
+      "eta_weeks_max": 24,
+      "label": "16-24 weeks"
+    },
+    {
+      "model": "gr-corolla",
+      "eta_weeks_min": 16,
+      "eta_weeks_max": 24,
+      "label": "16-24 weeks"
+    },
+    {
+      "model": "gr86",
+      "eta_weeks_min": 12,
+      "eta_weeks_max": 20,
+      "label": "12-20 weeks"
+    }
+  ]
+}

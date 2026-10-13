@@ -1,0 +1,40 @@
+{
+  "dataset": "transfer_feasibility",
+  "source": "Domo stand-in (Harbourline DMS export)",
+  "refreshed_at": "2026-10-13T06:00:00+11:00",
+  "rows": [
+    {
+      "from_site": "hor",
+      "from_name": "Hornsby",
+      "to_site": "par",
+      "to_name": "Parramatta",
+      "distance_km": 28,
+      "run_day": "Thursday",
+      "lead_days": 3,
+      "transfer_cost": 182,
+      "feasible": true
+    },
+    {
+      "from_site": "pen",
+      "from_name": "Penrith",
+      "to_site": "par",
+      "to_name": "Parramatta",
+      "distance_km": 34,
+      "run_day": "Friday",
+      "lead_days": 4,
+      "transfer_cost": 221,
+      "feasible": true
+    },
+    {
+      "from_site": "liv",
+      "from_name": "Liverpool",
+      "to_site": "par",
+      "to_name": "Parramatta",
+      "distance_km": 22,
+      "run_day": "Thursday",
+      "lead_days": 3,
+      "transfer_cost": 143,
+      "feasible": true
+    }
+  ]
+}

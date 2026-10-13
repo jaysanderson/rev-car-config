@@ -1,0 +1,21 @@
+{
+  "dataset": "inbound_pipeline",
+  "source": "Domo stand-in (Harbourline DMS export)",
+  "refreshed_at": "2026-10-13T06:00:00+11:00",
+  "rows": [
+    {
+      "unit_id": "HL-2402",
+      "model": "rav4",
+      "grade": "gxl",
+      "colour": "saturn-blue",
+      "interior": "fabric-black",
+      "packs": [
+        "tow"
+      ],
+      "destination_site": "par",
+      "eta_days": 9,
+      "stage": "on_ship",
+      "sold": false
+    }
+  ]
+}

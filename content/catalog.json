@@ -1,0 +1,1345 @@
+{
+ "generated": "2026-10-13",
+ "currency": "AUD",
+ "priceNote": "Drive-away NSW estimates, illustrative only",
+ "models": [
+  {
+   "id": "yaris-cross",
+   "name": "Yaris Cross",
+   "body": "suv-small",
+   "bodyLabel": "Small SUV",
+   "silhouette": "hatch",
+   "powertrain": "hybrid",
+   "powertrainLabel": "1.5L hybrid, 2WD or AWD-i",
+   "seats": 5,
+   "towKg": 400,
+   "fromPrice": 37390,
+   "tags": [
+    "commute",
+    "city",
+    "efficiency",
+    "first-car",
+    "budget",
+    "safety"
+   ],
+   "blurb": "Toyota's smallest SUV: easy to park, very frugal hybrid, and a higher seating position than a hatch.",
+   "safety": "Toyota Safety Sense with AEB (intersection turn assist), lane trace assist, adaptive cruise; ANCAP 5 stars (2021 rating).",
+   "grades": [
+    {
+     "id": "gx",
+     "name": "GX",
+     "price": 37390,
+     "drive": "2WD",
+     "leather": false,
+     "highlights": [
+      "8-inch touchscreen, wireless CarPlay/Android Auto",
+      "Adaptive cruise and lane trace assist",
+      "16-inch alloys",
+      "Reversing camera"
+     ]
+    },
+    {
+     "id": "gxl",
+     "name": "GXL",
+     "price": 39690,
+     "drive": "2WD or AWD-i",
+     "leather": false,
+     "highlights": [
+      "Adds 10.5-inch touchscreen with sat-nav",
+      "Front and rear parking sensors",
+      "Blind-spot monitor and rear cross-traffic alert",
+      "Smart entry and push-button start"
+     ]
+    },
+    {
+     "id": "urban",
+     "name": "Urban",
+     "price": 42690,
+     "drive": "2WD or AWD-i",
+     "leather": true,
+     "highlights": [
+      "Synthetic leather-accented seats",
+      "18-inch alloys",
+      "Head-up display",
+      "Powered tailgate",
+      "Premium cabin trim"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "atomic-rush",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "corolla",
+   "name": "Corolla",
+   "body": "hatch",
+   "bodyLabel": "Small hatch / sedan",
+   "silhouette": "hatch",
+   "powertrain": "hybrid",
+   "powertrainLabel": "1.8L hybrid, front-wheel drive",
+   "seats": 5,
+   "towKg": 0,
+   "towNote": "Hybrid Corolla is not rated for towing",
+   "fromPrice": 36690,
+   "tags": [
+    "commute",
+    "city",
+    "efficiency",
+    "first-car",
+    "budget"
+   ],
+   "blurb": "The long-running small car, now hybrid-only: cheap to run, simple to own, available as a hatch or sedan.",
+   "safety": "Toyota Safety Sense with AEB, lane trace assist, adaptive cruise, road sign assist; ANCAP 5 stars (2018 rating, now expired).",
+   "grades": [
+    {
+     "id": "ascent-sport",
+     "name": "Ascent Sport",
+     "price": 36690,
+     "drive": "FWD (hatch or sedan)",
+     "leather": false,
+     "highlights": [
+      "12.3-inch digital driver display",
+      "Wireless CarPlay/Android Auto",
+      "Adaptive cruise and lane trace assist",
+      "16-inch alloys"
+     ]
+    },
+    {
+     "id": "sx",
+     "name": "SX",
+     "price": 39990,
+     "drive": "FWD (hatch or sedan)",
+     "leather": false,
+     "highlights": [
+      "Adds 18-inch alloys (hatch)",
+      "Built-in sat-nav",
+      "Dual-zone climate control",
+      "Wireless phone charger"
+     ]
+    },
+    {
+     "id": "zr",
+     "name": "ZR",
+     "price": 43890,
+     "drive": "FWD (hatch only)",
+     "leather": true,
+     "highlights": [
+      "Synthetic leather and suede-style sports seats",
+      "Head-up display",
+      "JBL premium audio",
+      "Heated front seats",
+      "Adaptive LED headlights"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "atomic-rush",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "protection"
+   ]
+  },
+  {
+   "id": "corolla-cross",
+   "name": "Corolla Cross",
+   "body": "suv-small",
+   "bodyLabel": "Small SUV",
+   "silhouette": "suv",
+   "powertrain": "hybrid",
+   "powertrainLabel": "2.0L hybrid, 2WD or AWD",
+   "seats": 5,
+   "towKg": 750,
+   "fromPrice": 42190,
+   "tags": [
+    "family",
+    "commute",
+    "efficiency",
+    "safety",
+    "budget",
+    "awd"
+   ],
+   "blurb": "A roomy small SUV that suits a young family: decent boot, hybrid economy and the option of all-wheel drive.",
+   "safety": "Toyota Safety Sense with AEB (junction assist), lane trace assist, blind-spot monitor, adaptive cruise; ANCAP 5 stars (2022).",
+   "grades": [
+    {
+     "id": "gx",
+     "name": "GX",
+     "price": 42190,
+     "drive": "2WD",
+     "leather": false,
+     "highlights": [
+      "10.5-inch touchscreen, wireless CarPlay/Android Auto",
+      "Adaptive cruise, lane trace and blind-spot monitoring",
+      "17-inch alloys",
+      "Reversing camera and rear sensors"
+     ]
+    },
+    {
+     "id": "gxl",
+     "name": "GXL",
+     "price": 46690,
+     "drive": "2WD or AWD",
+     "leather": false,
+     "highlights": [
+      "Adds dual-zone climate control",
+      "Smart entry and push-button start",
+      "Front parking sensors",
+      "Built-in sat-nav",
+      "18-inch alloys"
+     ]
+    },
+    {
+     "id": "atmos",
+     "name": "Atmos",
+     "price": 53790,
+     "drive": "2WD or AWD",
+     "leather": true,
+     "highlights": [
+      "Leather-accented, heated and powered front seats",
+      "Panoramic view monitor",
+      "Powered tailgate",
+      "JBL audio",
+      "Panoramic sunroof"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "saturn-blue",
+    "atomic-rush"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "c-hr",
+   "name": "C-HR",
+   "body": "suv-small",
+   "bodyLabel": "Small SUV (coupe-style)",
+   "silhouette": "hatch",
+   "powertrain": "hybrid",
+   "powertrainLabel": "1.8L or 2.0L hybrid, 2WD or AWD",
+   "seats": 5,
+   "towKg": 725,
+   "fromPrice": 52590,
+   "tags": [
+    "style",
+    "commute",
+    "city",
+    "efficiency",
+    "tech"
+   ],
+   "blurb": "A design-led small SUV with a coupe roofline; well equipped and efficient, but tighter in the rear than a Corolla Cross.",
+   "safety": "Toyota Safety Sense with AEB, lane trace, blind-spot monitor, safe exit assist; ANCAP 5 stars (2024).",
+   "grades": [
+    {
+     "id": "gxl",
+     "name": "GXL",
+     "price": 52590,
+     "drive": "2WD (1.8 hybrid)",
+     "leather": false,
+     "highlights": [
+      "12.3-inch touchscreen and digital cluster",
+      "Wireless phone charging",
+      "Adaptive cruise and lane trace",
+      "18-inch alloys"
+     ]
+    },
+    {
+     "id": "koba",
+     "name": "Koba",
+     "price": 59790,
+     "drive": "2WD (2.0 hybrid)",
+     "leather": true,
+     "highlights": [
+      "Adds 2.0L hybrid",
+      "Leather-accented heated seats",
+      "Head-up display",
+      "JBL audio",
+      "Powered tailgate"
+     ]
+    },
+    {
+     "id": "gr-sport",
+     "name": "GR Sport",
+     "price": 65290,
+     "drive": "AWD (2.0 hybrid)",
+     "leather": true,
+     "highlights": [
+      "AWD hybrid with sports tune",
+      "GR-styled body kit and 20-inch alloys",
+      "Sports seats",
+      "Panoramic view monitor"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "graphite",
+    "eclipse-black",
+    "atomic-rush",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection"
+   ]
+  },
+  {
+   "id": "camry",
+   "name": "Camry",
+   "body": "sedan",
+   "bodyLabel": "Medium sedan",
+   "silhouette": "sedan",
+   "powertrain": "hybrid",
+   "powertrainLabel": "2.5L hybrid, front-wheel drive",
+   "seats": 5,
+   "towKg": 400,
+   "fromPrice": 45490,
+   "tags": [
+    "commute",
+    "family",
+    "efficiency",
+    "comfort",
+    "rideshare",
+    "fleet"
+   ],
+   "blurb": "A spacious hybrid sedan that is quiet, very economical on long commutes and popular with fleets and rideshare drivers.",
+   "safety": "Toyota Safety Sense with AEB, lane trace, adaptive cruise, blind-spot monitor, front centre airbag; ANCAP 5 stars (2025).",
+   "grades": [
+    {
+     "id": "ascent",
+     "name": "Ascent",
+     "price": 45490,
+     "drive": "FWD",
+     "leather": false,
+     "highlights": [
+      "12.3-inch touchscreen with wireless CarPlay/Android Auto",
+      "12.3-inch digital driver display",
+      "Blind-spot monitor and rear cross-traffic alert",
+      "Wireless phone charger"
+     ]
+    },
+    {
+     "id": "ascent-sport",
+     "name": "Ascent Sport",
+     "price": 48590,
+     "drive": "FWD",
+     "leather": false,
+     "highlights": [
+      "Adds sportier styling and 17-inch alloys",
+      "Dual-zone climate control",
+      "Built-in sat-nav",
+      "Ambient lighting"
+     ]
+    },
+    {
+     "id": "sl",
+     "name": "SL",
+     "price": 60090,
+     "drive": "FWD",
+     "leather": true,
+     "highlights": [
+      "Leather-accented, heated and ventilated front seats",
+      "Head-up display",
+      "JBL audio",
+      "Panoramic view monitor",
+      "Powered sunroof"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection"
+   ]
+  },
+  {
+   "id": "rav4",
+   "name": "RAV4",
+   "body": "suv-mid",
+   "bodyLabel": "Mid-size SUV",
+   "silhouette": "suv",
+   "powertrain": "hybrid",
+   "powertrainLabel": "2.5L hybrid, 2WD or AWD",
+   "seats": 5,
+   "towKg": 1500,
+   "towNote": "AWD only; 2WD about 800 kg",
+   "fromPrice": 51190,
+   "tags": [
+    "family",
+    "commute",
+    "safety",
+    "efficiency",
+    "awd",
+    "camping"
+   ],
+   "blurb": "The sixth-generation mid-size SUV: room for five, hybrid economy, and AWD for gravel roads and light towing.",
+   "safety": "Toyota Safety Sense (latest generation) with AEB, lane trace, adaptive cruise, blind-spot monitor and driver monitoring; launched without an ANCAP rating; Toyota has said it expects a five-star result in late 2026.",
+   "grades": [
+    {
+     "id": "gx",
+     "name": "GX",
+     "price": 51190,
+     "drive": "2WD or AWD",
+     "leather": false,
+     "highlights": [
+      "Large touchscreen with wireless CarPlay/Android Auto",
+      "Digital driver display",
+      "Adaptive cruise, lane trace, blind-spot monitor",
+      "Alloy wheels and LED headlights"
+     ]
+    },
+    {
+     "id": "gxl",
+     "name": "GXL",
+     "price": 54390,
+     "drive": "2WD or AWD",
+     "leather": false,
+     "highlights": [
+      "Adds dual-zone climate control",
+      "Wireless phone charger",
+      "Front parking sensors",
+      "Powered tailgate"
+     ]
+    },
+    {
+     "id": "edge",
+     "name": "Edge",
+     "price": 60990,
+     "drive": "AWD only",
+     "leather": false,
+     "highlights": [
+      "Rugged styling and all-terrain-biased tyres",
+      "Trail and Snow modes with downhill assist",
+      "Roof rails and distinctive rugged trim",
+      "Panoramic view monitor"
+     ]
+    },
+    {
+     "id": "cruiser",
+     "name": "Cruiser",
+     "price": 62790,
+     "drive": "2WD or AWD",
+     "leather": true,
+     "highlights": [
+      "Leather-accented, heated front seats",
+      "Panoramic sunroof",
+      "Head-up display",
+      "9-speaker JBL audio"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "atomic-rush",
+    "saturn-blue",
+    "jungle-khaki"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "kluger",
+   "name": "Kluger",
+   "body": "suv-large",
+   "bodyLabel": "Large 7-seat SUV",
+   "silhouette": "suv",
+   "powertrain": "hybrid",
+   "powertrainLabel": "2.5L hybrid, AWD",
+   "seats": 7,
+   "towKg": 2000,
+   "fromPrice": 68690,
+   "tags": [
+    "family",
+    "seven-seats",
+    "towing",
+    "efficiency",
+    "awd",
+    "comfort",
+    "safety"
+   ],
+   "blurb": "A seven-seat family SUV with standard AWD hybrid: big-car comfort with mid-size fuel bills, and 2 t of towing.",
+   "safety": "Toyota Safety Sense with AEB, lane trace, adaptive cruise, blind-spot monitor, rear cross-traffic alert; ANCAP 5 stars (2021).",
+   "grades": [
+    {
+     "id": "gx",
+     "name": "GX",
+     "price": 68690,
+     "drive": "AWD",
+     "leather": false,
+     "highlights": [
+      "Seven seats with three-zone climate",
+      "Touchscreen with wireless CarPlay/Android Auto",
+      "Adaptive cruise and lane trace",
+      "18-inch alloys"
+     ]
+    },
+    {
+     "id": "gxl",
+     "name": "GXL",
+     "price": 78690,
+     "drive": "AWD",
+     "leather": true,
+     "highlights": [
+      "Leather-accented, heated front seats",
+      "Powered tailgate",
+      "Built-in sat-nav",
+      "Smart entry and push-button start"
+     ]
+    },
+    {
+     "id": "grande",
+     "name": "Grande",
+     "price": 92590,
+     "drive": "AWD",
+     "leather": true,
+     "highlights": [
+      "Heated and ventilated front seats",
+      "Panoramic sunroof",
+      "Head-up display",
+      "JBL premium audio",
+      "20-inch alloys"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "prado",
+   "name": "LandCruiser Prado",
+   "body": "suv-large",
+   "bodyLabel": "Large 4x4 SUV",
+   "silhouette": "suv",
+   "powertrain": "diesel",
+   "powertrainLabel": "2.8L turbo-diesel with 48V assist, full-time 4WD",
+   "seats": 7,
+   "towKg": 3500,
+   "fromPrice": 79290,
+   "tags": [
+    "family",
+    "seven-seats",
+    "towing",
+    "off-road",
+    "caravan",
+    "touring",
+    "awd"
+   ],
+   "blurb": "The 250 Series Prado is a proper body-on-frame 4x4 with seven seats, 3.5 t towing and a mild-hybrid diesel, built for touring.",
+   "safety": "Toyota Safety Sense with AEB, lane trace, adaptive cruise, blind-spot monitor, panoramic view monitor (most grades); ANCAP 5 stars (2024).",
+   "grades": [
+    {
+     "id": "gx",
+     "name": "GX",
+     "price": 79290,
+     "drive": "Full-time 4WD",
+     "leather": false,
+     "highlights": [
+      "5 seats standard (7 optional)",
+      "12.3-inch touchscreen",
+      "Adaptive cruise and lane trace",
+      "Full-time 4WD with low range and centre diff lock"
+     ]
+    },
+    {
+     "id": "gxl",
+     "name": "GXL",
+     "price": 87090,
+     "drive": "Full-time 4WD",
+     "leather": false,
+     "highlights": [
+      "Seven seats",
+      "Synthetic leather-accented trim",
+      "Panoramic view monitor",
+      "Front parking sensors and power tailgate glass"
+     ]
+    },
+    {
+     "id": "vx",
+     "name": "VX",
+     "price": 94890,
+     "drive": "Full-time 4WD",
+     "leather": true,
+     "highlights": [
+      "Leather-accented heated/ventilated front seats",
+      "Power tailgate",
+      "JBL audio",
+      "Wireless phone charger"
+     ]
+    },
+    {
+     "id": "altitude",
+     "name": "Altitude",
+     "price": 100490,
+     "drive": "Full-time 4WD",
+     "leather": true,
+     "highlights": [
+      "Builds on VX equipment",
+      "Off-road-oriented styling and wheel package",
+      "Five or seven seats",
+      "Distinct exterior trim"
+     ]
+    },
+    {
+     "id": "kakadu",
+     "name": "Kakadu",
+     "price": 108090,
+     "drive": "Full-time 4WD",
+     "leather": true,
+     "highlights": [
+      "Adaptive variable suspension",
+      "Stabiliser disconnect for wheel articulation",
+      "Head-up display",
+      "Top-spec cabin finishes"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "graphite",
+    "eclipse-black",
+    "dusty-bronze",
+    "saturn-blue",
+    "jungle-khaki"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black",
+    "leather-tan"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "landcruiser-300",
+   "name": "LandCruiser 300",
+   "body": "suv-large",
+   "bodyLabel": "Large 4x4 SUV",
+   "silhouette": "suv",
+   "powertrain": "diesel",
+   "powertrainLabel": "3.3L twin-turbo V6 diesel, full-time 4WD",
+   "seats": 7,
+   "towKg": 3500,
+   "fromPrice": 106990,
+   "tags": [
+    "towing",
+    "caravan",
+    "off-road",
+    "touring",
+    "seven-seats",
+    "premium",
+    "awd"
+   ],
+   "blurb": "Toyota's flagship 4x4: a twin-turbo V6 diesel, 3.5 t towing and serious off-road hardware for big vans and remote touring.",
+   "safety": "Toyota Safety Sense with AEB, lane trace, adaptive cruise, blind-spot monitor, rear cross-traffic alert; not rated by ANCAP.",
+   "grades": [
+    {
+     "id": "gx",
+     "name": "GX",
+     "price": 106990,
+     "drive": "Full-time 4WD",
+     "leather": false,
+     "highlights": [
+      "Five seats, vinyl floor for working use",
+      "Twin-turbo V6 diesel, 10-speed auto",
+      "Adaptive cruise and AEB",
+      "Centre diff lock and low range"
+     ]
+    },
+    {
+     "id": "gxl",
+     "name": "GXL",
+     "price": 119990,
+     "drive": "Full-time 4WD",
+     "leather": false,
+     "highlights": [
+      "Seven seats",
+      "Larger touchscreen with sat-nav",
+      "Front and rear sensors",
+      "Multi-terrain select and crawl control"
+     ]
+    },
+    {
+     "id": "vx",
+     "name": "VX",
+     "price": 132490,
+     "drive": "Full-time 4WD",
+     "leather": true,
+     "highlights": [
+      "Leather-accented heated/ventilated seats",
+      "Power tailgate",
+      "Panoramic view monitor",
+      "Premium audio"
+     ]
+    },
+    {
+     "id": "sahara",
+     "name": "Sahara",
+     "price": 150190,
+     "drive": "Full-time 4WD",
+     "leather": true,
+     "highlights": [
+      "Rear-seat entertainment screens",
+      "Heated second row",
+      "Head-up display",
+      "Cool box"
+     ]
+    },
+    {
+     "id": "sahara-zx",
+     "name": "Sahara ZX",
+     "price": 158090,
+     "drive": "Full-time 4WD",
+     "leather": true,
+     "highlights": [
+      "Distinct ZX styling and 20-inch alloys",
+      "Adaptive variable suspension",
+      "Premium trim finishes",
+      "Road-biased tyres"
+     ]
+    },
+    {
+     "id": "gr-sport",
+     "name": "GR Sport",
+     "price": 157490,
+     "drive": "Full-time 4WD",
+     "leather": true,
+     "highlights": [
+      "E-KDSS stabiliser disconnect",
+      "Front and rear diff locks",
+      "GR styling and sports seats",
+      "Off-road tuned suspension"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "dusty-bronze",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black",
+    "leather-tan"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "fortuner",
+   "name": "Fortuner",
+   "body": "suv-large",
+   "bodyLabel": "Large 4x4 SUV",
+   "silhouette": "suv",
+   "powertrain": "diesel",
+   "powertrainLabel": "2.8L turbo-diesel, part-time 4WD",
+   "seats": 7,
+   "towKg": 3100,
+   "fromPrice": 59490,
+   "tags": [
+    "towing",
+    "off-road",
+    "seven-seats",
+    "value",
+    "caravan",
+    "touring"
+   ],
+   "blurb": "A HiLux-based seven-seat 4x4 wagon: tough and capable at a lower price than Prado, with 3.1 t towing.",
+   "safety": "Toyota Safety Sense with AEB, lane departure alert, adaptive cruise; ANCAP 5 stars (2019 rating, now expired).",
+   "grades": [
+    {
+     "id": "gx",
+     "name": "GX",
+     "price": 59490,
+     "drive": "Part-time 4WD",
+     "leather": false,
+     "highlights": [
+      "Seven seats",
+      "Touchscreen with CarPlay/Android Auto",
+      "Rear diff lock",
+      "Adaptive cruise"
+     ]
+    },
+    {
+     "id": "gxl",
+     "name": "GXL",
+     "price": 64990,
+     "drive": "Part-time 4WD",
+     "leather": false,
+     "highlights": [
+      "Adds keyless entry",
+      "Built-in sat-nav",
+      "Front sensors",
+      "18-inch alloys"
+     ]
+    },
+    {
+     "id": "crusade",
+     "name": "Crusade",
+     "price": 73090,
+     "drive": "Part-time 4WD",
+     "leather": true,
+     "highlights": [
+      "Leather-accented, powered front seats",
+      "Power tailgate",
+      "JBL audio",
+      "Panoramic view monitor"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "hilux",
+   "name": "HiLux",
+   "body": "ute",
+   "bodyLabel": "Ute (single, extra or double cab)",
+   "silhouette": "ute",
+   "powertrain": "diesel",
+   "powertrainLabel": "2.8L turbo-diesel, 48V assist on autos, 4x2 or 4x4",
+   "seats": 5,
+   "towKg": 3500,
+   "towNote": "4x4 automatic; 4x2 WorkMate and manual variants less",
+   "fromPrice": 38990,
+   "tags": [
+    "work",
+    "trade",
+    "towing",
+    "off-road",
+    "caravan",
+    "boat"
+   ],
+   "blurb": "Toyota's one-tonne ute, updated for 2026: a 2.8 diesel across the range, 48V assist on automatics and up to 3.5 t towing.",
+   "safety": "Toyota Safety Sense with AEB, lane trace, adaptive cruise, blind-spot monitor (higher grades); ANCAP 5-star rating reported for the updated model.",
+   "grades": [
+    {
+     "id": "workmate",
+     "name": "WorkMate",
+     "price": 38990,
+     "drive": "4x2 or 4x4",
+     "leather": false,
+     "highlights": [
+      "2.8L diesel now standard",
+      "Touchscreen with smartphone mirroring",
+      "Hard-wearing vinyl/fabric cabin",
+      "Cab-chassis or pick-up"
+     ]
+    },
+    {
+     "id": "sr",
+     "name": "SR",
+     "price": 58790,
+     "drive": "4x4",
+     "leather": false,
+     "highlights": [
+      "48V assist on automatics",
+      "Larger touchscreen and digital cluster",
+      "Rear diff lock",
+      "Double cab pick-up"
+     ]
+    },
+    {
+     "id": "sr5",
+     "name": "SR5",
+     "price": 70290,
+     "drive": "4x4",
+     "leather": false,
+     "highlights": [
+      "Alloy wheels and LED headlights",
+      "Dual-zone climate",
+      "Built-in sat-nav",
+      "Smart entry"
+     ]
+    },
+    {
+     "id": "rogue",
+     "name": "Rogue",
+     "price": 78690,
+     "drive": "4x4",
+     "leather": true,
+     "highlights": [
+      "Leather-accented, heated front seats",
+      "Tub liner and sports bar",
+      "Panoramic view monitor",
+      "Premium audio"
+     ]
+    },
+    {
+     "id": "rugged-x",
+     "name": "Rugged X",
+     "price": 78690,
+     "drive": "4x4",
+     "leather": true,
+     "highlights": [
+      "Off-road focused flagship, priced alongside Rogue",
+      "Extra underbody protection",
+      "Off-road styling and all-terrain tyres",
+      "48V assist automatic"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "atomic-rush",
+    "jungle-khaki"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "bz4x",
+   "name": "bZ4X",
+   "body": "suv-mid",
+   "bodyLabel": "Mid-size electric SUV",
+   "silhouette": "suv",
+   "powertrain": "ev",
+   "powertrainLabel": "Battery electric, FWD or dual-motor AWD",
+   "seats": 5,
+   "towKg": 1500,
+   "towNote": "AWD only; FWD 750 kg",
+   "fromPrice": 61690,
+   "tags": [
+    "ev",
+    "commute",
+    "tech",
+    "family",
+    "zero-emissions",
+    "efficiency"
+   ],
+   "blurb": "Toyota's mid-size electric SUV, upgraded for 2026 with a bigger 74.7 kWh battery, faster charging and up to about 590 km WLTP range.",
+   "safety": "Toyota Safety Sense with AEB, lane trace, adaptive cruise, blind-spot monitor, safe exit assist; ANCAP 5 stars (2022).",
+   "grades": [
+    {
+     "id": "fwd",
+     "name": "FWD",
+     "price": 61690,
+     "drive": "Front-wheel drive",
+     "leather": false,
+     "highlights": [
+      "74.7 kWh battery, around 590 km WLTP",
+      "22 kW AC charging capability",
+      "Large touchscreen with wireless CarPlay/Android Auto",
+      "Heated front seats"
+     ]
+    },
+    {
+     "id": "awd",
+     "name": "AWD",
+     "price": 74290,
+     "drive": "Dual-motor AWD",
+     "leather": true,
+     "highlights": [
+      "Dual motors, around 250 kW",
+      "1,500 kg braked towing",
+      "Synthetic leather-accented trim",
+      "X-Mode and grip control for loose surfaces"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "silver-sky",
+    "graphite",
+    "eclipse-black",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "tow",
+    "protection",
+    "roof"
+   ]
+  },
+  {
+   "id": "gr-yaris",
+   "name": "GR Yaris",
+   "body": "hatch",
+   "bodyLabel": "Performance hatch",
+   "silhouette": "hatch",
+   "powertrain": "petrol",
+   "powertrainLabel": "1.6L turbo 3-cylinder, GR-Four AWD",
+   "seats": 4,
+   "towKg": 0,
+   "fromPrice": 61090,
+   "tags": [
+    "performance",
+    "enthusiast",
+    "track",
+    "manual"
+   ],
+   "blurb": "A homologation-style hot hatch with a turbo three-cylinder and clever AWD; small, loud and built for keen drivers.",
+   "safety": "Pre-collision safety with AEB, lane departure alert, adaptive cruise; ANCAP 5 stars (2020 Yaris rating, which expires at the end of 2026).",
+   "grades": [
+    {
+     "id": "gt",
+     "name": "GT",
+     "price": 61090,
+     "drive": "GR-Four AWD, 6MT or 8AT",
+     "leather": false,
+     "highlights": [
+      "1.6L turbo, around 224 kW",
+      "Manual or 8-speed GR-DAT auto",
+      "GR-Four selectable AWD",
+      "Sports seats"
+     ]
+    },
+    {
+     "id": "gts",
+     "name": "GTS",
+     "price": 66290,
+     "drive": "GR-Four AWD, 6MT or 8AT",
+     "leather": true,
+     "highlights": [
+      "Adds Torsen front and rear limited-slip diffs",
+      "Forged BBS-style alloys",
+      "Suede/leather-accented sports seats",
+      "Track-focused suspension"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "graphite",
+    "eclipse-black",
+    "atomic-rush"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "protection"
+   ]
+  },
+  {
+   "id": "gr-corolla",
+   "name": "GR Corolla",
+   "body": "hatch",
+   "bodyLabel": "Performance hatch",
+   "silhouette": "hatch",
+   "powertrain": "petrol",
+   "powertrainLabel": "1.6L turbo 3-cylinder, GR-Four AWD",
+   "seats": 5,
+   "towKg": 0,
+   "fromPrice": 74190,
+   "tags": [
+    "performance",
+    "enthusiast",
+    "track",
+    "manual",
+    "practical"
+   ],
+   "blurb": "The GR Yaris drivetrain in a five-door Corolla body, so you get proper rear doors with the hot-hatch performance.",
+   "safety": "Toyota Safety Sense with AEB, lane trace, adaptive cruise; no GR Corolla-specific ANCAP rating.",
+   "grades": [
+    {
+     "id": "gts",
+     "name": "GTS",
+     "price": 74190,
+     "drive": "GR-Four AWD, 6MT or 8AT",
+     "leather": true,
+     "highlights": [
+      "1.6L turbo, around 221 kW",
+      "Manual or 8-speed auto",
+      "Front and rear limited-slip diffs",
+      "Suede/leather-accented sports seats",
+      "Five doors, five seats"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "graphite",
+    "eclipse-black",
+    "atomic-rush"
+   ],
+   "interiors": [
+    "leather-black"
+   ],
+   "accessories": [
+    "protection"
+   ]
+  },
+  {
+   "id": "gr86",
+   "name": "GR86",
+   "body": "coupe",
+   "bodyLabel": "Sports coupe",
+   "silhouette": "coupe",
+   "powertrain": "petrol",
+   "powertrainLabel": "2.4L flat-four petrol, rear-wheel drive",
+   "seats": 4,
+   "towKg": 0,
+   "fromPrice": 48790,
+   "tags": [
+    "performance",
+    "enthusiast",
+    "manual",
+    "weekend",
+    "budget-sports"
+   ],
+   "blurb": "A light, rear-drive 2+2 coupe with a naturally aspirated 2.4 boxer; the most affordable way into a Toyota GR car.",
+   "safety": "AEB and adaptive cruise on automatics (EyeSight-based), reversing camera; not rated by ANCAP.",
+   "grades": [
+    {
+     "id": "gt",
+     "name": "GT",
+     "price": 48790,
+     "drive": "RWD, 6MT or 6AT",
+     "leather": false,
+     "highlights": [
+      "2.4L boxer, 174 kW",
+      "Limited-slip differential",
+      "8-inch touchscreen with CarPlay/Android Auto",
+      "17-inch alloys"
+     ]
+    },
+    {
+     "id": "gts",
+     "name": "GTS",
+     "price": 51390,
+     "drive": "RWD, 6MT or 6AT",
+     "leather": true,
+     "highlights": [
+      "Adds 18-inch alloys and sportier tyres",
+      "Suede/leather-accented heated seats",
+      "Rear spoiler",
+      "Aluminium pedals"
+     ]
+    }
+   ],
+   "colours": [
+    "glacier-white",
+    "frosted-white",
+    "graphite",
+    "eclipse-black",
+    "atomic-rush",
+    "saturn-blue"
+   ],
+   "interiors": [
+    "fabric-black",
+    "leather-black"
+   ],
+   "accessories": [
+    "protection"
+   ]
+  }
+ ],
+ "colours": [
+  {
+   "id": "glacier-white",
+   "name": "Glacier White",
+   "hex": "#E8EBEE",
+   "price": 0
+  },
+  {
+   "id": "frosted-white",
+   "name": "Frosted White",
+   "hex": "#F4F3EE",
+   "price": 675
+  },
+  {
+   "id": "silver-sky",
+   "name": "Silver Sky",
+   "hex": "#B9BEC3",
+   "price": 675
+  },
+  {
+   "id": "graphite",
+   "name": "Graphite",
+   "hex": "#4A4E53",
+   "price": 675
+  },
+  {
+   "id": "eclipse-black",
+   "name": "Eclipse Black",
+   "hex": "#141518",
+   "price": 675
+  },
+  {
+   "id": "saturn-blue",
+   "name": "Saturn Blue",
+   "hex": "#1F3B6E",
+   "price": 675
+  },
+  {
+   "id": "atomic-rush",
+   "name": "Atomic Rush",
+   "hex": "#B3141E",
+   "price": 675
+  },
+  {
+   "id": "jungle-khaki",
+   "name": "Jungle Khaki",
+   "hex": "#6B6A4E",
+   "price": 675
+  },
+  {
+   "id": "dusty-bronze",
+   "name": "Dusty Bronze",
+   "hex": "#8A7660",
+   "price": 675
+  }
+ ],
+ "interiors": [
+  {
+   "id": "fabric-black",
+   "name": "Black fabric",
+   "price": 0
+  },
+  {
+   "id": "leather-black",
+   "name": "Black leather-accented",
+   "price": 1900
+  },
+  {
+   "id": "leather-tan",
+   "name": "Saddle tan leather-accented",
+   "price": 1900
+  }
+ ],
+ "accessories": [
+  {
+   "id": "tow",
+   "name": "Towing Pack",
+   "price": 1650,
+   "desc": "Genuine tow bar and tongue, wiring harness and trailer plug, fitted and rated to the vehicle's braked capacity"
+  },
+  {
+   "id": "protection",
+   "name": "Protection Pack",
+   "price": 890,
+   "desc": "All-weather floor mats, cargo liner, bonnet protector and paint/interior protection treatment"
+  },
+  {
+   "id": "roof",
+   "name": "Roof & Cargo Pack",
+   "price": 1290,
+   "desc": "Genuine roof cross bars plus a lockable roof pod or cargo barrier (model dependent)"
+  }
+ ]
+}
