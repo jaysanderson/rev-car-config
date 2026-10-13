@@ -158,6 +158,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:none;box-shadow
 
 /* stage pane */
 .stage{display:flex;flex-direction:column;gap:16px}
+.pane.stage>*,#stageView>*{flex:none}
 .hero{background:radial-gradient(70% 90% at 85% 0%,var(--stage-glow),transparent 60%),radial-gradient(45% 60% at 0% 100%,rgba(0,211,100,.18),transparent 60%),linear-gradient(180deg,var(--ink-900),var(--ink-950));color:#fff;border-radius:var(--radius-lg);padding:22px 26px 18px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
 .hero .titles{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .hero .kick{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-300)}
@@ -228,8 +229,8 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:none;box-shadow
 .fycard:hover{border-color:var(--brand-600);box-shadow:var(--shadow)}
 .fycard svg{width:100%;height:auto;display:block;margin:-6px 0 -8px}
 .fycard b{font-size:.86rem}
-.fycard span{font-size:.74rem;color:var(--muted);line-height:1.35}
-.fycard .cite{font-size:.66rem;font-family:var(--mono);color:var(--brand-600);font-style:normal;margin-top:2px}
+.fycard span{font-size:.74rem;color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.fycard .cite{font-size:.66rem;font-family:var(--mono);color:var(--brand-600);font-style:normal;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* annotations */
 .ann{display:none;font-family:var(--mono);font-size:.64rem;padding:2px 6px;border-radius:5px;align-items:center;white-space:nowrap;vertical-align:middle;font-weight:500}
@@ -662,7 +663,7 @@ body.drawer-open .drawer{transform:none}
     return units().filter(u=>u.bonus>0&&!u.transit&&!shown.has(u.id)).map(u=>{const um=by(CAT.models,u.model)||{};return{unitId:u.id,modelId:u.model,gradeId:u.grade,colourId:u.colour,price:unitPrice(u),bonus:u.bonus,site:u.site,age:u.age,priority:u.priority||9,sameBody:um.body===m.body,reason:u.age>=90?'on the lot over 90 days':u.age>=60?'on the lot over 60 days':'more of these than we need'};})
       .sort((a,b)=>(b.sameBody-a.sameBody)||(a.priority-b.priority));}
   async function renderOffers(){let offers=null;if(API){try{const r=await fetch(`/api/offers?model=${cfg.model}&body=${M().body}`);if(r.ok)offers=await r.json();}catch(e){}}
-    if(!Array.isArray(offers)||!offers.length)offers=localOffers();const top=offers.slice(0,3);const elm=$('otiles');elm.innerHTML='';
+    if(!Array.isArray(offers)||!offers.length)offers=localOffers();const shown=new Set(matches(cfg).exact.map(x=>x.u.id));offers=offers.filter(o=>!shown.has(o.unitId));const top=offers.slice(0,3);const elm=$('otiles');elm.innerHTML='';
     top.forEach((o,i)=>{const m=by(CAT.models,o.modelId)||{};const g=m.grades?by(m.grades,o.gradeId):null;const c=COL(o.colourId)||{hex:'#888',name:o.colourId};const site=SITES[o.site]||{name:o.site};
       const t=el('button','otile');t.setAttribute('data-unit',o.unitId);
       t.innerHTML=`<span class="ok">${o.site==='par'?'Ready now · Parramatta':'At '+site.name+' · here '+(site.when||'soon')}</span>${carSVG(m.silhouette||'suv',c.hex,'#0b1a45','o'+i)}<span class="on">${esc((m.name||o.modelId)+' '+(g?g.name:o.gradeId))}</span><span class="od">${esc(c.name)} · ${esc(o.reason||'')}</span><span class="op"><s>${fmt(o.price)}</s><b>${fmt(o.price-o.bonus)}</b><em>save ${fmt(o.bonus)}</em></span><span class="annrow"><span class="ann domo">Domo · aged_stock_actions · priority ${o.priority} · rank ${i+1}</span></span>`;elm.appendChild(t);});
