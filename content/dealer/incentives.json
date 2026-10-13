@@ -1,0 +1,104 @@
+{
+  "source": "Harbourline test-drive incentives (stand-in). One is offered per booking, chosen by matching finder answers and the cars viewed. Fictional.",
+  "notes": "rules are tried in order within each incentive; incentives are tried by descending priority. A rule matches on `answer` (canonical finder answer id + values, with a customer-facing phrase per value), `viewedTag` (catalogue model tag of any viewed car), `viewedPowertrain`, or `default`. {phrase} and {model} are filled in by the server.",
+  "incentives": [
+    {
+      "id": "inc-caravan-setup", "priority": 95, "tags": ["towing", "caravan"],
+      "title": "Caravan towing set-up session", "value": 250,
+      "desc": "After delivery, our towing specialist sets up your tow ball height, brake controller and weight distribution with your own van.",
+      "rules": [
+        { "answer": "towing", "values": { "heavy": "tow a caravan or a big boat" }, "reason": "Because you told us you {phrase}." }
+      ]
+    },
+    {
+      "id": "inc-towbar-voucher", "priority": 90, "tags": ["towing"],
+      "title": "$400 tow-bar fitting voucher", "value": 400,
+      "desc": "Put $400 towards a genuine tow bar and wiring fitted before you collect the car.",
+      "rules": [
+        { "answer": "towing", "values": { "medium": "tow a camper or small boat", "light": "tow a box trailer or bikes" }, "reason": "Because you told us you {phrase}." },
+        { "viewedTag": "towing", "reason": "Because you were looking at the {model}, which is built for towing." }
+      ]
+    },
+    {
+      "id": "inc-home-charger", "priority": 88, "tags": ["ev"],
+      "title": "Free home-charger assessment", "value": 300,
+      "desc": "An accredited electrician checks your switchboard and parking spot and quotes a wallbox, at no cost.",
+      "rules": [
+        { "answer": "power", "values": { "ev": "want a fully electric car" }, "reason": "Because you told us you {phrase}." },
+        { "viewedPowertrain": "ev", "reason": "Because you were looking at the {model}, and home charging makes the biggest difference to running costs." }
+      ]
+    },
+    {
+      "id": "inc-child-seats", "priority": 85, "tags": ["family"],
+      "title": "Child-seat fitting by a certified fitter", "value": 150,
+      "desc": "A certified restraint fitter installs up to three child seats in your new car on delivery day.",
+      "rules": [
+        { "answer": "people", "values": { "seven": "need six or seven seats", "five": "carry up to five, kids included" }, "reason": "Because you told us you {phrase}." },
+        { "answer": "use", "values": { "family": "need it for family duties" }, "reason": "Because you told us you {phrase}." },
+        { "viewedTag": "seven-seats", "reason": "Because you were looking at the seven-seat {model}." }
+      ]
+    },
+    {
+      "id": "inc-fuel-card", "priority": 80, "tags": ["commute"],
+      "title": "$250 fuel card", "value": 250,
+      "desc": "A $250 fuel card handed over with the keys.",
+      "rules": [
+        { "answer": "distance", "values": { "long": "drive more than 400 km a week", "medium": "drive 150 to 400 km a week" }, "reason": "Because you told us you {phrase}." },
+        { "answer": "worktype", "values": { "fleet": "do a lot of kilometres for sales or fleet work" }, "reason": "Because you told us you {phrase}." }
+      ]
+    },
+    {
+      "id": "inc-4wd-training", "priority": 78, "tags": ["off-road"],
+      "title": "Introductory 4WD driver training day", "value": 395,
+      "desc": "A half-day accredited 4WD course in the Blue Mountains: tyre pressures, low range and recovery basics.",
+      "rules": [
+        { "answer": "terrain", "values": { "offroad": "head off-road to beaches and tracks" }, "reason": "Because you told us you {phrase}." },
+        { "answer": "use", "values": { "adventure": "want it for adventures" }, "reason": "Because you told us you {phrase}." },
+        { "viewedTag": "off-road", "reason": "Because you were looking at the {model}, a genuine low-range off-roader." }
+      ]
+    },
+    {
+      "id": "inc-tradie-kit", "priority": 76, "tags": ["work"],
+      "title": "Tub liner and cargo-net kit", "value": 320,
+      "desc": "A heavy-duty tub liner and cargo net fitted before delivery.",
+      "rules": [
+        { "answer": "worktype", "values": { "trade": "use it for trade work", "farm": "use it on the farm" }, "reason": "Because you told us you {phrase}." },
+        { "answer": "use", "values": { "work": "need it for work" }, "reason": "Because you told us you {phrase}." },
+        { "viewedTag": "work", "reason": "Because you were looking at the {model} for work." }
+      ]
+    },
+    {
+      "id": "inc-gr-experience", "priority": 74, "tags": ["performance"],
+      "title": "GR driving experience voucher", "value": 450,
+      "desc": "A coached session at Sydney Motorsport Park to get the most out of your GR car, safely.",
+      "rules": [
+        { "viewedTag": "performance", "reason": "Because you were looking at the {model}." }
+      ]
+    },
+    {
+      "id": "inc-roof-racks", "priority": 60, "tags": ["camping"],
+      "title": "Genuine roof racks fitted at cost", "value": 200,
+      "desc": "Genuine roof cross bars fitted at our cost price, ready for bikes, boards or a roof pod.",
+      "rules": [
+        { "answer": "terrain", "values": { "gravel": "camp and drive on gravel roads" }, "reason": "Because you told us you {phrase}." },
+        { "viewedTag": "camping", "reason": "Because you were looking at the {model}, which is popular for weekends away." }
+      ]
+    },
+    {
+      "id": "inc-hybrid-health", "priority": 50, "tags": ["hybrid"],
+      "title": "First hybrid health check free", "value": 120,
+      "desc": "Your first annual hybrid battery health check, which keeps the battery warranty running to 10 years, is free.",
+      "rules": [
+        { "answer": "power", "values": { "hybrid": "prefer a hybrid" }, "reason": "Because you told us you {phrase}." }
+      ]
+    },
+    {
+      "id": "inc-detailing", "priority": 1, "tags": ["default"],
+      "title": "Complimentary detail before delivery", "value": 180,
+      "desc": "A full interior and exterior detail, plus paint protection top-up, the day before you collect.",
+      "rules": [
+        { "default": true, "reason": "Because you booked a test drive with us." }
+      ]
+    }
+  ]
+}

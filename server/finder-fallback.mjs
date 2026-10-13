@@ -13,9 +13,12 @@
 // for 7 seats / heavy towing / work utes).
 //
 // Scoring: every catalogue model gets points per answer (seats, braked towing,
-// body type, powertrain, tags, price vs budget). Top 3 models win; grade = the
-// best-equipped grade inside the budget (or the entry grade if none fits).
+// body type, powertrain, tags, price vs budget) → fit. Then the dealer factor
+// (server/dealer.mjs: stock on lot, aged stock, pushed model, promotions; capped at
+// 12) is added and the top 3 by fit + dealerFactor win; grade = the best-equipped
+// grade inside the budget (or the entry grade if none fits).
 import { catalog, availability, modelById } from './data.mjs';
+import { dealerFactorFor, priorities } from './dealer.mjs';
 
 export const VOCAB = ['use', 'people', 'distance', 'towing', 'worktype', 'terrain', 'power', 'budget', 'when', 'priorities'];
 
@@ -38,7 +41,7 @@ const CANON = {
   power: [[/hybrid/, 'hybrid'], [/ev|electric|plug/, 'ev'], [/diesel/, 'diesel'], [/petrol|turbo/, 'petrol'], [/./, 'any']],
   priorities: [[/safe/, 'safety'], [/effic|fuel|cost|running/, 'efficiency'], [/tech|comfort|lux/, 'tech'], [/style|look|design/, 'style']],
 };
-function canon(a) {
+export function canon(a) {
   const t = `${a.value} ${a.label || ''}`.toLowerCase();
   if (a.id === 'budget') {
     if (BUDGET[a.value]) return a.value;
@@ -205,19 +208,25 @@ export function nextQuestion(answers) {
   return { step: answers.length + 1, of: 5, question: { id, ...q } };
 }
 
-export function recommend(answers, stockData) {
-  const scored = catalog().models.map((m) => ({ m, ...scoreModel(m, answers) })).sort((a, b) => b.s - a.s).slice(0, 3);
-  const top = scored[0]?.s || 1;
-  const recommendations = scored.map(({ m, s, why, watch }, i) => {
+export function recommend(answers, stockData, pr = priorities()) {
+  const ranked = catalog().models.map((m) => ({ m, ...scoreModel(m, answers) })).sort((a, b) => b.s - a.s);
+  const top = ranked[0]?.s || 1;
+  const scored = ranked.map((x, i) => {
+    const fit = Math.max(40, Math.min(97, Math.round(92 * (x.s / top)) - Math.min(i, 2) * 3));
+    const df = stockData ? dealerFactorFor(x.m.id, stockData, pr) : { dealerFactor: 0, nudge: null };
+    return { ...x, fit, dealerFactor: df.dealerFactor, nudge: df.nudge };
+  }).sort((a, b) => (b.fit + b.dealerFactor) - (a.fit + a.dealerFactor) || b.fit - a.fit).slice(0, 3);
+  const recommendations = scored.map(({ m, why, watch, fit, dealerFactor, nudge }) => {
     const g = pickGrade(m, answers);
     const availabilityInfo = stockData ? availability(stockData, m.id) : { onLot: 0, nearby: 0, inTransit: 0, soonest: 'Ask the team' };
     if (!availabilityInfo.onLot && !availabilityInfo.nearby && !availabilityInfo.inTransit) watch.push(`None in stock: ${availabilityInfo.soonest.toLowerCase()}`);
     return {
       modelId: m.id, gradeId: g.id,
-      fit: Math.max(40, Math.min(97, Math.round(92 * (s / top)) - i * 3)),
+      fit,
       why: [...new Set(why)].slice(0, 3).concat(why.length ? [] : [m.blurb]).slice(0, 3),
       watch: [...new Set(watch)].slice(0, 2),
       availability: availabilityInfo,
+      dealerFactor, nudge,
     };
   });
   const lead = modelById(recommendations[0]?.modelId);

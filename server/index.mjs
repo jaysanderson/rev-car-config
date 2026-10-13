@@ -16,6 +16,8 @@ import { catalog, catalogPath, stock, stockPublic, stockSummary, offers, domoMod
 import { askAssistant, finderNext } from './assistant.mjs';
 import { forYou } from './foryou.mjs';
 import imagesRouter from './images.mjs';
+import { priorities, validatePriorities, savePriorities, promotionsFor, rankOffers } from './dealer.mjs';
+import * as testdrive from './testdrive.mjs';
 
 const PORT = Number(process.env.PORT || 8080);
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
@@ -60,7 +62,8 @@ function rateLimit(req, res, next) {
   if (buckets.size > 5000) for (const [k, v] of buckets) if (now - v.at > 600000) buckets.delete(k);
   next();
 }
-app.use(['/api/ask', '/api/finder/next', '/api/foryou', '/api/find'], rateLimit);
+app.use(['/api/ask', '/api/finder/next', '/api/foryou', '/api/find', '/api/testdrive/book', '/api/testdrive/answers'], rateLimit);
+app.put('/api/dealer/priorities', rateLimit);
 
 const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((e) => {
   console.error(`[${req.method} ${req.path}] ${e.message}`);
@@ -110,7 +113,47 @@ app.get('/api/offers', wrap(async (req, res) => {
   const body = String(req.query.body || '');
   const bodies = new Set(catalog().models.map((m) => m.body));
   const s = await stock();
-  res.json(offers(s, { model, body: bodies.has(body) ? body : '' }));
+  res.json(rankOffers(offers(s, { model, body: bodies.has(body) ? body : '' }), s));
+}));
+
+// ── dealer priorities (business-editable weights; no auth in the prototype) ──
+app.get('/api/dealer/priorities', (req, res) => res.json(priorities()));
+app.put('/api/dealer/priorities', wrap(async (req, res) => {
+  const v = validatePriorities(req.body);
+  if (v.error) return res.status(400).json({ error: v.error });
+  res.json(await savePriorities(v.value));
+}));
+
+// ── promotions ───────────────────────────────────────────────────────────────
+app.get('/api/promotions', wrap(async (req, res) => {
+  const s = await stock();
+  const model = String(req.query.model || ''); const unit = String(req.query.unit || '').toUpperCase(); const body = String(req.query.body || '');
+  if (model && !modelById(model)) return res.status(400).json({ error: 'unknown model' });
+  if (unit && !s.stock_by_site.some((u) => u.id === unit)) return res.status(400).json({ error: 'unknown unit' });
+  if (body && !catalog().models.some((m) => m.body === body)) return res.status(400).json({ error: 'unknown body' });
+  res.json(promotionsFor(s, { model, unit, body }));
+}));
+
+// ── test drives ──────────────────────────────────────────────────────────────
+app.get('/api/testdrive/slots', wrap(async (req, res) => {
+  const s = await stock();
+  const site = String(req.query.site || 'par');
+  if (!testdrive.siteIds().includes(site)) return res.status(400).json({ error: `site must be one of ${testdrive.siteIds().join(', ')}` });
+  let unit = null;
+  if (req.query.unit) {
+    unit = s.stock_by_site.find((u) => u.id === String(req.query.unit).toUpperCase());
+    if (!unit) return res.status(400).json({ error: 'unknown unit' });
+  }
+  const { _arrival, ...out } = testdrive.slotsFor({ siteId: site, unit, s });
+  res.json(out);
+}));
+app.post('/api/testdrive/book', wrap(async (req, res) => {
+  const r = await testdrive.book(req.body, await stock());
+  res.status(r.status).json(r.body);
+}));
+app.post('/api/testdrive/answers', wrap(async (req, res) => {
+  const r = await testdrive.answers(req.body, await stock());
+  res.status(r.status).json(r.body);
 }));
 
 app.post('/api/ask', wrap(async (req, res) => {

@@ -18,11 +18,20 @@ server/index.mjs  (Node 20 + Express; holds the ARAG token, never ships it)
    ├── server/assistant.mjs       /api/ask and /api/finder/next (ARAG + validation)
    ├── server/finder-fallback.mjs deterministic 5-question finder (used whenever ARAG fails validation)
    ├── server/foryou.mjs          "Because you…" rows from composed /find queries (rules in the file header)
+   ├── server/dealer.mjs          dealer priorities, promotions, dealer factor, offer re-ranking, atomic state writes
+   ├── server/testdrive.mjs       test-drive slots, booking (ARAG questions), answers (ARAG reply)
+   ├── server/testdrive-fallback.mjs  question bank, incentive picker, prep list, template reply
    └── server/data.mjs            catalogue, Domo datasets (stand-in or live), pricing, availability, offers
 content/
    ├── catalog.json               models, grades, colours, interiors, packs, drive-away prices
    ├── kb/*.md                    Toyota knowledge corpus (frontmatter: title, model, topic)
-   └── domo/*.json                Domo stand-in datasets
+   ├── domo/*.json                Domo stand-in datasets
+   └── dealer/                    dealer stand-in data (fictional)
+        ├── priorities.json       business-editable weights (written by PUT /api/dealer/priorities)
+        ├── promotions.json       8 promotions with appliesTo rules and an honest dealer-side reason
+        ├── calendar.json         per-site hours, 45-min slots, recurring stand-in diary of taken slots
+        ├── incentives.json       11 test-drive incentives with matching rules
+        └── bookings.json         test-drive bookings (stand-in DMS write-back; appended by the API)
 ```
 
 ### ARAG assets (zone `aws-ap-southeast-2-1`)
@@ -45,7 +54,7 @@ content/
 
 ## API
 
-All responses are JSON, `Cache-Control: no-store`, same-origin only (cross-origin POSTs get 403).
+All responses are JSON, `Cache-Control: no-store`, same-origin only (cross-origin POSTs get 403). The ARAG-backed endpoints (`/api/ask`, `/api/finder/next`, `/api/foryou`, `/api/find`, `/api/testdrive/book`, `/api/testdrive/answers`) and `PUT /api/dealer/priorities` share a per-IP token bucket (`RATE_BURST`, `RATE_PER_MIN`).
 
 | Endpoint | Returns |
 |---|---|
@@ -57,6 +66,22 @@ All responses are JSON, `Cache-Control: no-store`, same-origin only (cross-origi
 | `POST /api/finder/next` | `{answers[]}` → the next question (`{step, of:5, question, trace}`) or, at 5 answers, `{done, summary, recommendations[], trace}` |
 | `GET /api/foryou?model=&grade=&answers=id:value,…&colour=&packs=` | An array of `{id, title, reason, query, items[]}` |
 | `GET /api/find?q=` | An array of `{title, modelId, topic, text, score, resourceId}` |
+| `GET /api/dealer/priorities` | `{updatedAt, updatedBy, weights:{stockOnLot, agedStock, promotions, pushModel:{modelId, weight}}, note}` (weights 0-100) |
+| `PUT /api/dealer/priorities` | Same shape in; integers 0-100, `pushModel.modelId` a catalogue id or null. Written atomically; returns the saved object (server sets `updatedAt`). 400 `{error}` on invalid input. **No auth (prototype).** |
+| `GET /api/promotions?model=&unit=&body=` | Array of `{id, title, kind, value, desc, reason, appliesTo:{models, units, aged, bodies, onLot?}, validUntil}` matching every given filter; all live promotions when none. Unknown model/unit/body → 400. |
+| `GET /api/testdrive/slots?site=par&unit=` | `{site, siteName, unitId?, transferNote?, days:[{date, label, closed?, slots:[{id, time, available}]}]}` for 10 days from today (Australia/Sydney). `transferNote` when the unit is at another site or in transit; slots before it can arrive are unavailable. |
+| `POST /api/testdrive/book` | `{site, slotId, unitId?, build, viewed[], finder:{answers}, lang}` → `{bookingId, site, siteName, when, whenLabel, unitId, model, grade, modelId, gradeId, questions[3], incentive, trace}`. 409 if the slot was taken. |
+| `POST /api/testdrive/answers` | `{bookingId, answers:[{id, value}]}` → `{ok, reply, prep[≤3], trace}`. 404 unknown booking; 400 if no answer matches the booking's questions. |
+
+`/api/offers` rows also carry `promotions:[promotionId]` (empty when none) and are re-ranked by the dealer weights (below). Finder recommendations (`done:true`) carry `dealerFactor` (number, 0-12) and `nudge` (`{reason, promotionId?}` or null).
+
+### Dealer priorities, promotions, test drives
+
+- **Dealer factor** (finder, both paths): `stockOnLot/100×6` if the model has a unit on any lot, `agedStock/100×6` if it has an aged unit with incentive headroom, `pushModel.weight/100×8` for the pushed model, `promotions/100×4` if a promotion applies; capped at 12. Recommendations are ordered by `fit + dealerFactor`. The ARAG path asks the agent for 4 ranked picks with a `nudge` sentence (the prompt carries a DEALER PRIORITIES block and the promotions), computes `dealerFactor` in code, re-sorts and keeps 3. The agent's sentence is used only when it passes a filter (no stock age, margins, bonuses, targets, or dollar amounts that are not a listed promotion's value); otherwise the deterministic sentence is used. `fit` itself is untouched.
+- **Offers**: same-body first as before, then `move priority − pushModel.weight/100×3 (pushed model) − promotions/100×2 (unit has a promotion)`.
+- **Assistant**: `/api/ask` adds a DEALER PROMOTIONS block for the models in play, a rule that the agent may quote only those and must say honestly why each is offered, and a trace `{kind:"domo", label:"Promotions: N applicable"}`.
+- **Test drives**: questions come from the ARAG agent (`answer_json_schema`, salesperson prompt over the viewed cars, current build, finder answers and the KB) and are validated: shape, 2-4 options for `choice`, `yes`/`no` for `yesno`, no topic the finder already answered, one per topic. `server/testdrive-fallback.mjs` tops up to exactly 3 from a bank keyed by tags, body, powertrain and finder answers. The incentive is deterministic (`incentives.json`). The answers reply is ARAG (two sentences, limited to the prep list), with a template fallback; the prep list is always deterministic. A slot is held in memory while the booking is prepared, so two concurrent bookings cannot take it.
+- **State**: `priorities.json` and `bookings.json` are written to `DEALER_STATE_DIR` when set, else `content/dealer/`. If that directory is read-only (the Docker image's `content/` belongs to root), the server switches to `<tmpdir>/harbourline-dealer` with a warning, so on Fly the edits and bookings last only until the machine restarts. The smoke test points `DEALER_STATE_DIR` at a temp dir.
 
 Platform notes, verified live:
 

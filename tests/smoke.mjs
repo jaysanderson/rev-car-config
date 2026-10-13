@@ -8,7 +8,8 @@
 // Node 20+, zero dependencies. .env is parsed (dotenv-style) and passed to the child
 // process; values are never printed. Exit code 1 if any check fails.
 import { spawn } from 'node:child_process';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { createServer } from 'node:net';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -68,6 +69,40 @@ function modelOk(modelId, gradeId, where) {
   if (gradeId != null && gradeId !== '') must(MODELS.get(modelId).grades.some((g) => g.id === gradeId), `${where}: unknown gradeId "${gradeId}" for ${modelId}`);
 }
 const unitOk = (id, where) => must(UNIT_IDS.has(id), `${where}: unknown unitId "${id}"`);
+const PROMO_KINDS = ['accessory-bundle', 'servicing', 'trade-in', 'finance', 'delivery'];
+const promoOk = (p, where) => {
+  for (const k of ['id', 'title', 'kind', 'desc', 'reason', 'validUntil']) must(isStr(p[k]), `${where}.${k} missing`);
+  must(PROMO_KINDS.includes(p.kind), `${where}.kind "${p.kind}"`); must(p.value === null || isNum(p.value), `${where}.value`);
+  must(p.appliesTo && typeof p.appliesTo === 'object' && typeof p.appliesTo.aged === 'boolean', `${where}.appliesTo`);
+  for (const k of ['models', 'units', 'bodies']) must(p.appliesTo[k] === null || Array.isArray(p.appliesTo[k]), `${where}.appliesTo.${k}`);
+  (p.appliesTo.models || []).forEach((m) => must(MODELS.has(m), `${where} model ${m}`));
+  must(/^\d{4}-\d{2}-\d{2}$/.test(p.validUntil), `${where}.validUntil`);
+};
+const recsSortedByDealer = (recs) => recs.every((r, i) => i === 0 || (recs[i - 1].fit + recs[i - 1].dealerFactor) >= (r.fit + r.dealerFactor));
+const recDealerOk = (r, i) => {
+  must(isNum(r.dealerFactor) && r.dealerFactor >= 0 && r.dealerFactor <= 12, `rec ${i} dealerFactor ${r.dealerFactor}`);
+  must(r.nudge === null || (r.nudge && isStr(r.nudge.reason) && (r.nudge.promotionId === undefined || isStr(r.nudge.promotionId))), `rec ${i} nudge bad`);
+  must(r.dealerFactor > 0 || r.nudge === null, `rec ${i} nudge without dealerFactor`);
+};
+const TOW_ANSWERS = [{ id: 'use', value: 'adventure', label: 'Adventure' }, { id: 'towing', value: 'heavy', label: 'Caravan or big boat' }, { id: 'terrain', value: 'offroad', label: 'Proper off-road' }, { id: 'people', value: 'five', label: 'Up to 5' }, { id: 'budget', value: 'b110', label: '$80-110k' }];
+function slotsShapeOk(j, site) {
+  must(j && j.site === site && isStr(j.siteName), 'site/siteName'); must(Array.isArray(j.days) && j.days.length === 10, `days ${j.days?.length}`);
+  j.days.forEach((d, i) => {
+    must(/^\d{4}-\d{2}-\d{2}$/.test(d.date) && isStr(d.label) && Array.isArray(d.slots), `day ${i} shape`);
+    d.slots.forEach((x) => must(isStr(x.id) && x.id.startsWith(`${site}-${d.date}-`) && /^\d{1,2}:\d{2} (am|pm)$/.test(x.time) && typeof x.available === 'boolean', `slot ${x.id} shape`));
+  });
+  must(j.days.some((d) => d.slots.some((x) => x.available)) && j.days.some((d) => d.slots.some((x) => !x.available)), 'no gaps or no availability');
+}
+function questionsOk(qs) {
+  must(Array.isArray(qs) && qs.length === 3, `questions: ${qs?.length} (want exactly 3)`);
+  qs.forEach((q, i) => {
+    must(isStr(q.id) && isStr(q.text) && isStr(q.why) && ['choice', 'yesno'].includes(q.type), `question ${i} shape`);
+    must(Array.isArray(q.options) && q.options.every((o) => isStr(o.id) && isStr(o.label)), `question ${i} options`);
+    if (q.type === 'yesno') must(q.options.length === 2 && q.options[0].id === 'yes' && q.options[1].id === 'no', `question ${i} yes/no options`);
+    else must(q.options.length >= 2 && q.options.length <= 4, `question ${i} has ${q.options.length} options`);
+  });
+  must(new Set(qs.map((q) => q.id)).size === 3, 'duplicate question ids');
+}
 const traceOk = (tr, where) => { must(Array.isArray(tr), `${where}: trace not an array`); tr.forEach((t, i) => must(['kb', 'domo'].includes(t.kind) && isStr(t.label), `${where}: trace[${i}] bad {kind,label}`)); };
 
 async function call(method, path, body, timeoutMs = 90000) {
@@ -222,6 +257,133 @@ const paths = {
     });
   }
 
+  // ── dealer priorities ──
+  let originalPriorities;
+  await check('GET /api/dealer/priorities', async () => {
+    const r = await call('GET', '/api/dealer/priorities'); must(r.status === 200, `status ${r.status}`);
+    const p = r.json; originalPriorities = p;
+    must(isStr(p.updatedAt) && isStr(p.updatedBy) && typeof p.note === 'string', 'updatedAt/updatedBy/note');
+    for (const k of ['stockOnLot', 'agedStock', 'promotions']) must(Number.isInteger(p.weights?.[k]), `weights.${k}`);
+    must(p.weights.pushModel === null || (Number.isInteger(p.weights.pushModel.weight) && (p.weights.pushModel.modelId === null || MODELS.has(p.weights.pushModel.modelId))), 'pushModel');
+    record('GET /api/dealer/priorities', null, p);
+    return JSON.stringify(p.weights);
+  });
+  await check('PUT /api/dealer/priorities invalid → 400', async () => {
+    for (const body of [{ weights: { stockOnLot: 150, agedStock: 0, promotions: 0, pushModel: null } }, { weights: { stockOnLot: 1, agedStock: 1, promotions: 1, pushModel: { modelId: 'delorean', weight: 5 } } }, { weights: { stockOnLot: 1.5, agedStock: 1, promotions: 1 } }, []]) {
+      const r = await call('PUT', '/api/dealer/priorities', body); must(r.status === 400, `status ${r.status} for ${JSON.stringify(body)}`);
+    }
+    return '4 × 400';
+  });
+  await check('PUT priorities (all 0) → finder: no nudges', async () => {
+    const put = { updatedBy: 'smoke test', weights: { stockOnLot: 0, agedStock: 0, promotions: 0, pushModel: { modelId: null, weight: 0 } }, note: 'smoke: all zero' };
+    const r = await call('PUT', '/api/dealer/priorities', put); must(r.status === 200, `status ${r.status}`);
+    must(JSON.stringify(r.json.weights) === JSON.stringify(put.weights) && r.json.note === put.note, 'PUT did not echo');
+    const g = await call('GET', '/api/dealer/priorities'); must(JSON.stringify(g.json) === JSON.stringify(r.json), 'GET != PUT result (round-trip)');
+    const f = await call('POST', '/api/finder/next', { answers: TOW_ANSWERS }, 120000); must(f.status === 200 && f.json.done, `finder status ${f.status}`);
+    f.json.recommendations.forEach(recDealerOk);
+    must(f.json.recommendations.every((x) => x.dealerFactor === 0 && x.nudge === null), 'nudges present with zero weights');
+    return f.json.recommendations.map((x) => `${x.modelId} ${x.fit}+${x.dealerFactor}`).join(', ');
+  });
+  await check('PUT priorities (push hilux 100) → finder order', async () => {
+    const put = { weights: { stockOnLot: 0, agedStock: 0, promotions: 0, pushModel: { modelId: 'hilux', weight: 100 } }, note: 'smoke: push HiLux' };
+    const r = await call('PUT', '/api/dealer/priorities', put); must(r.status === 200, `status ${r.status}`);
+    const f = await call('POST', '/api/finder/next', { answers: TOW_ANSWERS }, 120000); must(f.status === 200 && f.json.done, `finder status ${f.status}`);
+    const recs = f.json.recommendations; recs.forEach(recDealerOk);
+    must(recsSortedByDealer(recs), 'recommendations not ordered by fit + dealerFactor');
+    recs.forEach((x) => must(x.modelId === 'hilux' ? x.dealerFactor === 8 && x.nudge : x.dealerFactor === 0, `${x.modelId} dealerFactor ${x.dealerFactor}`));
+    record('POST /api/finder/next (done; priorities push HiLux 100)', { answers: TOW_ANSWERS }, f.json);
+    return recs.map((x) => `${x.modelId} ${x.fit}+${x.dealerFactor}`).join(', ');
+  });
+  await check('PUT priorities restore → finder dealer factor ≤ 12', async () => {
+    const r = await call('PUT', '/api/dealer/priorities', originalPriorities); must(r.status === 200, `status ${r.status}`);
+    must(JSON.stringify(r.json.weights) === JSON.stringify(originalPriorities.weights), 'weights not restored');
+    const f = await call('POST', '/api/finder/next', { answers: TOW_ANSWERS }, 120000); must(f.status === 200 && f.json.done, `finder status ${f.status}`);
+    f.json.recommendations.forEach(recDealerOk); must(recsSortedByDealer(f.json.recommendations), 'not ordered by fit + dealerFactor');
+    return f.json.recommendations.map((x) => `${x.modelId} ${x.fit}+${x.dealerFactor}${x.nudge?.promotionId ? ` (${x.nudge.promotionId})` : ''}`).join(', ');
+  });
+
+  // ── promotions ──
+  await check('GET /api/promotions (all + filters)', async () => {
+    const all = await call('GET', '/api/promotions'); must(all.status === 200 && Array.isArray(all.json) && all.json.length >= 6, `all: ${all.status} ${all.json?.length}`);
+    all.json.forEach((p, i) => promoOk(p, `promo[${i}]`));
+    const k = await call('GET', '/api/promotions?model=kluger'); must(k.json.some((p) => p.id === 'promo-kluger-accessories'), 'kluger bundle missing');
+    const u = await call('GET', '/api/promotions?unit=HL-2231'); must(u.json.some((p) => p.kind === 'servicing'), 'HL-2231 servicing missing');
+    must(!u.json.some((p) => p.id === 'promo-kluger-accessories'), 'kluger promo on a RAV4 unit');
+    const b = await call('GET', '/api/promotions?body=ute'); must(b.json.some((p) => p.id === 'promo-towing-pack'), 'ute towing pack missing');
+    const bad = await call('GET', '/api/promotions?model=nope'); must(bad.status === 400, `bad model status ${bad.status}`);
+    record('GET /api/promotions?model=kluger', null, k.json.slice(0, 2));
+    return `${all.json.length} total; kluger ${k.json.length}, HL-2231 ${u.json.length}, ute ${b.json.length}`;
+  });
+  await check('GET /api/offers carries promotions[]', async () => {
+    const r = await call('GET', '/api/offers?model=kluger&body=suv-large'); must(r.status === 200, `status ${r.status}`);
+    r.json.forEach((o, i) => must(Array.isArray(o.promotions) && o.promotions.every(isStr), `[${i}].promotions`));
+    must(r.json.some((o) => o.promotions.length), 'no offer has a promotion');
+    return r.json.map((o) => `${o.unitId}:${o.promotions.length}`).join(' ');
+  });
+  await check('POST /api/ask (kluger) → Promotions trace', async () => {
+    const r = await call('POST', '/api/ask', { question: 'Is there any deal on the Kluger right now?', lang: 'en', build: { modelId: 'kluger', gradeId: 'grande', colourId: 'glacier-white', interiorId: 'leather-black', packs: [] }, finder: { answers: [] }, history: [] }, 120000);
+    must(r.status === 200 && isStr(r.json.answer), `status ${r.status}`); traceOk(r.json.trace, 'ask');
+    must(r.json.trace.some((t) => t.kind === 'domo' && /^Promotions: \d+ applicable$/.test(t.label)), 'no Promotions trace');
+    record('POST /api/ask (kluger promotions)', null, r.json);
+    return r.json.trace.find((t) => /^Promotions/.test(t.label)).label;
+  });
+
+  // ── test drives ──
+  let booked;
+  await check('GET /api/testdrive/slots (par, local unit)', async () => {
+    const r = await call('GET', '/api/testdrive/slots?site=par&unit=HL-2231'); must(r.status === 200, `status ${r.status}`);
+    slotsShapeOk(r.json, 'par'); must(r.json.unitId === 'HL-2231', 'unitId'); must(!('transferNote' in r.json), 'unexpected transferNote for a Parramatta unit');
+    record('GET /api/testdrive/slots?site=par&unit=HL-2231 (first 2 days)', null, { ...r.json, days: r.json.days.slice(0, 2) });
+    return `${r.json.days.reduce((n, d) => n + d.slots.filter((x) => x.available).length, 0)} open slots`;
+  });
+  await check('GET /api/testdrive/slots (unit at another site)', async () => {
+    const r = await call('GET', '/api/testdrive/slots?site=par&unit=HL-1941'); must(r.status === 200, `status ${r.status}`);
+    slotsShapeOk(r.json, 'par'); must(isStr(r.json.transferNote) && /Hornsby/.test(r.json.transferNote), 'transferNote missing');
+    const bad = await call('GET', '/api/testdrive/slots?site=xyz'); must(bad.status === 400, `bad site ${bad.status}`);
+    const badU = await call('GET', '/api/testdrive/slots?site=par&unit=ZZ-1'); must(badU.status === 400, `bad unit ${badU.status}`);
+    return r.json.transferNote;
+  });
+  const bookCases = [
+    { name: 'prado+hilux towing', unit: 'HL-2477', body: { site: 'par', unitId: 'HL-2477', build: { modelId: 'prado', gradeId: 'gxl', colourId: 'graphite', interiorId: 'fabric-black', packs: ['tow'] }, viewed: [{ modelId: 'prado', gradeId: 'gxl' }, { modelId: 'hilux', gradeId: 'sr5', unitId: 'HL-2440' }], finder: { answers: TOW_ANSWERS.slice(0, 2) }, lang: 'en' }, incentive: /tow/i },
+    { name: 'bz4x no finder', unit: 'HL-2602', body: { site: 'par', unitId: 'HL-2602', build: { modelId: 'bz4x', gradeId: 'awd', colourId: 'glacier-white', interiorId: 'fabric-black', packs: [] }, viewed: [{ modelId: 'bz4x', gradeId: 'awd' }], finder: { answers: [] }, lang: 'en' }, incentive: /electric|bZ4X|charg/i },
+  ];
+  for (const c of bookCases) {
+    await check(`POST /api/testdrive/book (${c.name})`, async () => {
+      const sl = await call('GET', `/api/testdrive/slots?site=${c.body.site}&unit=${c.unit}`);
+      const slot = sl.json.days.flatMap((d) => d.slots).find((x) => x.available); must(slot, 'no available slot');
+      const r = await call('POST', '/api/testdrive/book', { ...c.body, slotId: slot.id }, 120000); must(r.status === 200, `status ${r.status} ${r.text.slice(0, 160)}`);
+      const b = r.json;
+      must(/^TD-[A-Z0-9]{5}$/.test(b.bookingId), `bookingId ${b.bookingId}`); must(b.site === c.body.site && isStr(b.siteName), 'site');
+      must(isStr(b.when) && !Number.isNaN(Date.parse(b.when)) && /[+-]\d{2}:\d{2}$/.test(b.when), `when ${b.when}`); must(isStr(b.whenLabel), 'whenLabel');
+      must(b.unitId === c.unit, 'unitId'); must(isStr(b.model) && isStr(b.grade), 'model/grade');
+      questionsOk(b.questions);
+      const inc = b.incentive; must(inc && isStr(inc.id) && isStr(inc.title) && isStr(inc.desc) && isStr(inc.reason) && (inc.value === null || isNum(inc.value)), 'incentive shape');
+      must(/^Because /.test(inc.reason) && c.incentive.test(`${inc.title} ${inc.reason}`), `incentive not matched: ${inc.title} / ${inc.reason}`);
+      traceOk(b.trace, 'book');
+      const after = await call('GET', `/api/testdrive/slots?site=${c.body.site}&unit=${c.unit}`);
+      const same = after.json.days.flatMap((d) => d.slots).find((x) => x.id === slot.id); must(same && same.available === false, 'booked slot still shows available');
+      const again = await call('POST', '/api/testdrive/book', { ...c.body, slotId: slot.id }); must(again.status === 409, `rebook status ${again.status}`);
+      if (!booked) { booked = b; record(`POST /api/testdrive/book (${c.name})`, { ...c.body, slotId: slot.id }, b); }
+      return `${b.bookingId} ${b.whenLabel}; ${b.questions.map((q) => `[${q.type}] ${q.text}`).join(' | ')}; ${inc.title}`;
+    });
+  }
+  await check('POST /api/testdrive/book invalid → 4xx', async () => {
+    for (const body of [{ site: 'par', slotId: 'par-1999-01-01-0830', build: { modelId: 'rav4' } }, { site: 'mars', slotId: 'x' }, { site: 'par', slotId: 'hor-2026-01-01-0830' }]) {
+      const r = await call('POST', '/api/testdrive/book', body); must(r.status >= 400 && r.status < 500, `status ${r.status} for ${JSON.stringify(body)}`);
+    }
+    return '3 × 4xx';
+  });
+  await check('POST /api/testdrive/answers', async () => {
+    must(booked, 'no booking from previous check');
+    const answers = booked.questions.map((q) => ({ id: q.id, value: q.options[0].id, label: q.options[0].label }));
+    const r = await call('POST', '/api/testdrive/answers', { bookingId: booked.bookingId, answers }, 120000); must(r.status === 200, `status ${r.status} ${r.text.slice(0, 160)}`);
+    must(r.json.ok === true && isStr(r.json.reply), 'ok/reply'); must(Array.isArray(r.json.prep) && r.json.prep.length >= 1 && r.json.prep.length <= 3 && r.json.prep.every(isStr), 'prep');
+    const nf = await call('POST', '/api/testdrive/answers', { bookingId: 'TD-ZZZZZ', answers }); must(nf.status === 404, `unknown booking ${nf.status}`);
+    const bad = await call('POST', '/api/testdrive/answers', { bookingId: booked.bookingId, answers: [{ id: 'nope', value: 'x' }] }); must(bad.status === 400, `bad answers ${bad.status}`);
+    record('POST /api/testdrive/answers', { bookingId: booked.bookingId, answers }, r.json);
+    return `${r.json.prep.length} prep; "${r.json.reply.slice(0, 80)}…"`;
+  });
+
   await check('GET /api/foryou', async () => {
     const qs = new URLSearchParams({ model: 'rav4', grade: 'cruiser', colour: 'graphite', answers: 'use:family,people:more,power:hybrid' });
     const r = await call('GET', '/api/foryou?' + qs, null, 120000); must(r.status === 200, `status ${r.status}`);
@@ -259,7 +421,9 @@ let child; const logs = [];
 async function main() {
   if (!BASE) {
     const port = await freePort(); BASE = `http://127.0.0.1:${port}`;
-    child = spawn(process.execPath, [join(ROOT, 'server/index.mjs')], { cwd: ROOT, env: { ...loadEnv(), ...process.env, PORT: String(port), HOST: '127.0.0.1' }, stdio: ['ignore', 'pipe', 'pipe'] });
+    // Writable dealer state (priorities, bookings) goes to a temp dir so the repo's content/dealer stays clean.
+    const stateDir = mkdtempSync(join(tmpdir(), 'harbourline-smoke-'));
+    child = spawn(process.execPath, [join(ROOT, 'server/index.mjs')], { cwd: ROOT, env: { ...loadEnv(), ...process.env, PORT: String(port), HOST: '127.0.0.1', DEALER_STATE_DIR: stateDir, RATE_BURST: process.env.RATE_BURST || '200' }, stdio: ['ignore', 'pipe', 'pipe'] });
     child.stdout.on('data', (d) => logs.push(String(d))); child.on('exit', (c, sig) => logs.push(`\n[smoke] server process exited code=${c} signal=${sig} at ${new Date().toISOString()}\n`)); child.stderr.on('data', (d) => logs.push(String(d)));
     let up = false;
     for (let i = 0; i < 60 && !up; i++) {

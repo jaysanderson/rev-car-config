@@ -11,8 +11,9 @@
 import * as arag from './arag.mjs';
 import { catalog, modelById, gradeOf, packById, colourById, interiorById, modelsMentioned, stockSummary, catalogSummary, availability } from './data.mjs';
 import * as fallback from './finder-fallback.mjs';
+import { priorities, promotionsFor, promotionsText, dealerFactorFor, prioritiesText } from './dealer.mjs';
 
-const LANG = { en: 'English', es: 'Spanish', zh: 'Chinese', ar: 'Arabic', hi: 'Hindi', vi: 'Vietnamese', ko: 'Korean', ja: 'Japanese', it: 'Italian', el: 'Greek', fr: 'French', de: 'German', pt: 'Portuguese', tl: 'Tagalog', id: 'Indonesian' };
+export const LANG = { en: 'English', es: 'Spanish', zh: 'Chinese', ar: 'Arabic', hi: 'Hindi', vi: 'Vietnamese', ko: 'Korean', ja: 'Japanese', it: 'Italian', el: 'Greek', fr: 'French', de: 'German', pt: 'Portuguese', tl: 'Tagalog', id: 'Indonesian' };
 
 const ASK_SYSTEM = `You are the product consultant at Harbourline Toyota, a Toyota dealership in Parramatta, Sydney (sister sites Hornsby, Penrith, Liverpool).
 Be consultative, warm and concise (2-5 sentences). Ground every fact in the provided context: the Toyota knowledge base passages and the DOMO STOCK FEED / CURRENT BUILD blocks.
@@ -21,6 +22,7 @@ Rules:
 - Only mention stock units (ids like HL-2231), sites, days in stock, bonuses and ETAs that appear in the DOMO STOCK FEED. Never invent a unit, price, date or spec.
 - Prices are NSW drive-away estimates; say so when quoting.
 - If the context does not answer the question, say you'll confirm with the sales team.
+- Promotions: mention only promotions listed in DEALER PROMOTIONS, with their exact title and value, and only for the cars they apply to. Never invent, combine or extend a promotion. When you mention one, say honestly why it is offered in customer-friendly words (for example "it's a car that has been in stock a while" or "we have good supply"), without quoting margins, floorplan costs, headroom or internal targets.
 - Suggest at most 3 concrete next steps as actions: type "model" (value = model id), "grade" (value = grade id of the relevant model), "pack" (value = tow|protection|roof), or "unit" (value = stock unit id). Use only ids that appear in the context. Labels are short button text in the customer's language.`;
 
 const ASK_SCHEMA = {
@@ -48,7 +50,7 @@ const ASK_SCHEMA = {
   },
 };
 
-function buildText(build) {
+export function buildText(build) {
   if (!build || !build.modelId) return null;
   const m = modelById(build.modelId); if (!m) return null;
   const g = gradeOf(m.id, build.gradeId);
@@ -120,9 +122,12 @@ export async function askAssistant({ question, lang, build, finder, history }, s
   const q = String(question || '').slice(0, 1000).trim();
   const modelsInPlay = [...new Set([...modelsMentioned(q), ...(build?.modelId && modelById(build.modelId) ? [build.modelId] : [])])];
   const stockText = stockSummary(stockData, modelsInPlay.length ? modelsInPlay : []);
-  const extra = [buildText(build), finderText(finder), stockText].filter(Boolean);
+  const promos = [];
+  for (const id of modelsInPlay) for (const p of promotionsFor(stockData, { model: id })) if (!promos.some((x) => x.id === p.id)) promos.push(p);
+  const extra = [buildText(build), finderText(finder), stockText, promotionsText(promos)].filter(Boolean);
   const unitCount = stockData.stock_by_site.filter((u) => !modelsInPlay.length || modelsInPlay.includes(u.model)).length;
   const trace = [{ kind: 'domo', label: `Domo stock: ${unitCount} unit(s)${modelsInPlay.length ? ` for ${modelsInPlay.map((id) => modelById(id)?.name || id).join(', ')}` : ' across all sites'} passed to the agent` }];
+  if (promos.length) trace.push({ kind: 'domo', label: `Promotions: ${promos.length} applicable` });
   const langHint = lang && LANG[lang] ? ` (UI language: ${LANG[lang]}; still answer in the question's language)` : '';
 
   if (arag.configured() && q) {
@@ -147,6 +152,7 @@ export async function askAssistant({ question, lang, build, finder, history }, s
     trace.unshift({ kind: 'kb', label: 'Knowledge base not configured; answered from catalogue and stock' });
   }
   const fb = fallbackAnswer({ question: q, build, stockData, modelsInPlay });
+  if (promos.length) fb.answer += ` Right now the ${modelById(modelsInPlay[0])?.name || 'car'} can come with ${promos[0].title.charAt(0).toLowerCase()}${promos[0].title.slice(1)} (conditions apply; valid until ${promos[0].validUntil}).`;
   return { answer: fb.answer, citations: [], trace, actions: fb.actions };
 }
 
@@ -196,8 +202,9 @@ const RECS_SCHEMA = {
           properties: {
             modelId: { type: 'string' }, gradeId: { type: 'string' }, fit: { type: 'integer' },
             why: { type: 'array', items: { type: 'string' } }, watch: { type: 'array', items: { type: 'string' } },
+            nudge: { type: 'string', description: 'One customer-safe sentence on why the dealer can make this one easy now (stock on the lot, a listed promotion); empty string if none' },
           },
-          required: ['modelId', 'gradeId', 'fit', 'why', 'watch'],
+          required: ['modelId', 'gradeId', 'fit', 'why', 'watch', 'nudge'],
         },
       },
     },
@@ -205,7 +212,7 @@ const RECS_SCHEMA = {
   },
 };
 
-function cleanAnswers(answers) {
+export function cleanAnswers(answers) {
   return (Array.isArray(answers) ? answers : []).filter((a) => a && fallback.VOCAB.includes(a.id) && a.value != null)
     .slice(0, 5).map((a) => ({ id: a.id, value: String(a.value).toLowerCase().replace(/[^a-z0-9-]+/g, '-').slice(0, 40), label: String(a.label || a.value).replace(/[\r\n]+/g, ' ').slice(0, 80) }));
 }
@@ -232,10 +239,28 @@ function validRecs(json, stockData) {
       why: (Array.isArray(r.why) ? r.why : []).map((x) => String(x).slice(0, 200)).filter(Boolean).slice(0, 4),
       watch: (Array.isArray(r.watch) ? r.watch : []).map((x) => String(x).slice(0, 200)).filter(Boolean).slice(0, 3),
       availability: availability(stockData, m.id),
+      _nudge: typeof r.nudge === 'string' ? r.nudge.replace(/\s+/g, ' ').trim().slice(0, 200) : '',
     });
-    if (recs.length === 3) break;
+    if (recs.length === 4) break;
   }
   return recs;
+}
+
+// Words that must never reach a customer-facing nudge (dealer-internal reasoning).
+const INTERNAL_RE = /\b(aged|ageing|aging|headroom|margin|floorplan|floor plan|clear(ing)? (out|stock)|push(ing)?|target|quota|allocation|priority|priorities|days in stock|bonus|incentive|weight)\b/i;
+
+/** Add dealerFactor + nudge, order by fit + dealerFactor, keep 3. Agent nudge text used when safe. */
+function applyDealer(recs, stockData, pr) {
+  return recs.map((r, i) => {
+    const df = dealerFactorFor(r.modelId, stockData, pr);
+    let nudge = df.nudge;
+    // Dollar amounts are allowed only when they are the value of a listed promotion.
+    const amounts = (r._nudge.match(/\$\s?[\d,]+/g) || []).map((x) => Number(x.replace(/[^\d]/g, '')));
+    const known = new Set(promotionsFor(stockData, {}).map((p) => p.value).filter(Boolean));
+    if (nudge && r._nudge.length >= 20 && !INTERNAL_RE.test(r._nudge) && amounts.every((n) => known.has(n))) nudge = { ...nudge, reason: r._nudge };
+    const { _nudge, ...rest } = r;
+    return { rec: { ...rest, dealerFactor: df.dealerFactor, nudge }, i };
+  }).sort((a, b) => (b.rec.fit + b.rec.dealerFactor) - (a.rec.fit + a.rec.dealerFactor) || a.i - b.i).slice(0, 3).map((x) => x.rec);
 }
 
 export async function finderNext(body, stockData) {
@@ -244,6 +269,7 @@ export async function finderNext(body, stockData) {
   const trace = [{ kind: 'domo', label: `Domo stock: ${stockData.stock_by_site.length} units across 4 sites checked for availability` }];
   const answered = answers.length ? answers.map((a, i) => `${i + 1}. ${a.id} = ${a.value}`).join('\n') : '(none yet)'; // canonical ids only: client labels never reach the system prompt
   const extra = [`CATALOGUE (id | name | body | powertrain | seats | braked tow | from price | grades | tags):\n${catalogSummary()}`, stockSummary(stockData)];
+  const pr = priorities();
 
   if (arag.configured()) {
     try {
@@ -260,13 +286,16 @@ export async function finderNext(body, stockData) {
       } else {
         const r = await arag.ask({
           query: `Recommend the best 3 Toyota models and grades for: ${answers.map((a) => `${a.id} ${a.label}`).join(', ')}`,
-          system: `You recommend Toyotas for Harbourline Toyota. Using the CATALOGUE, knowledge base and DOMO STOCK FEED, return exactly 3 recommendations ranked by fit (0-100), using only model ids and grade ids from the CATALOGUE. "why" = 2-3 short reasons tied to the answers; "watch" = 0-2 honest caveats (towing limits, budget, wait times). "summary" = one sentence. Answer in English.\n\nAnswers:\n${answered}`,
-          extraContext: extra, jsonSchema: RECS_SCHEMA, timeoutMs: 25000, topK: 15,
+          system: `You recommend Toyotas for Harbourline Toyota. Using the CATALOGUE, knowledge base and DOMO STOCK FEED, return the 4 best recommendations ranked by fit (0-100), using only model ids and grade ids from the CATALOGUE. "fit" must reflect the customer's answers only; the DEALER PRIORITIES are applied separately by the dealership. "why" = 2-3 short reasons tied to the answers; "watch" = 0-2 honest caveats (towing limits, budget, wait times). "nudge" = one warm, customer-safe sentence on why we can make that car easy right now (e.g. "We have two on the lot and can include complimentary servicing"), using only the customer-safe angles and promotions listed in DEALER PRIORITIES and DEALER PROMOTIONS; never mention stock age, margins, bonuses, targets or priorities; empty string when nothing applies. "summary" = one sentence. Answer in English.\n\nAnswers:\n${answered}`,
+          extraContext: [...extra, prioritiesText(pr, catalog().models.map((m) => m.id), stockData), promotionsText(promotionsFor(stockData, {}))].filter(Boolean), jsonSchema: RECS_SCHEMA, timeoutMs: 25000, topK: 15,
         });
-        const recs = validRecs(r.json, stockData);
+        const agentLead = validRecs(r.json, stockData)[0]?.modelId;
+        const recs = applyDealer(validRecs(r.json, stockData), stockData, pr);
         trace.unshift({ kind: 'kb', label: `Knowledge base: ${r.sources.length} document(s) used to rank models` });
         if (recs.length) {
-          return { done: true, summary: String(r.json.summary || '').trim() || fallback.recommend(answers, stockData).summary, recommendations: recs, trace };
+          trace.push({ kind: 'domo', label: `Dealer priorities applied: ${recs.filter((x) => x.dealerFactor > 0).length} of ${recs.length} picks nudged (max +12 fit)` });
+          const summary = String(r.json.summary || '').trim();
+          return { done: true, summary: summary && recs[0].modelId === agentLead ? summary : `Based on your answers, the ${modelById(recs[0].modelId)?.name} is the strongest fit, with two alternatives worth a look.`, recommendations: recs, trace };
         }
         trace.push({ kind: 'kb', label: 'Agent recommendations failed validation; used the scoring fallback' });
       }
@@ -275,5 +304,10 @@ export async function finderNext(body, stockData) {
       trace.unshift({ kind: 'kb', label: 'Knowledge base unavailable; used the guided fallback' });
     }
   }
-  return done ? { ...fallback.recommend(answers, stockData), trace } : { ...fallback.nextQuestion(answers), trace };
+  if (done) {
+    const out = fallback.recommend(answers, stockData, pr);
+    trace.push({ kind: 'domo', label: `Dealer priorities applied: ${out.recommendations.filter((x) => x.dealerFactor > 0).length} of ${out.recommendations.length} picks nudged (max +12 fit)` });
+    return { ...out, trace };
+  }
+  return { ...fallback.nextQuestion(answers), trace };
 }

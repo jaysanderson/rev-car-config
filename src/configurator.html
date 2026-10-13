@@ -368,6 +368,7 @@ body.reveal .json{display:block}
 .days button{flex:0 0 auto;padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);font-size:.8rem;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted)}
 .days button b{color:var(--text);font-size:.86rem}
 .days button.on{border-color:var(--brand-600);background:var(--brand-50);color:var(--brand-700)}
+.days button:disabled{opacity:.4}
 .days button.on b{color:var(--brand-700)}
 .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
 .slots button{padding:8px 6px;border-radius:var(--radius);border:1px solid var(--border);font-size:.82rem;font-weight:500;background:var(--raised)}
@@ -1193,7 +1194,7 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   function promosFor(mid,u){const m=by(CAT.models,mid)||{};return PROMOS.filter(p=>{const a=p.appliesTo||{};
     if(a.models&&!a.models.includes(mid))return false;if(a.bodies&&!a.bodies.includes(m.body))return false;if(a.units&&!(u&&a.units.includes(u.id)))return false;
     if(a.aged&&!(u&&u.bonus>0))return false;if(a.onLot&&!(u&&u.site==='par'&&!u.transit))return false;return true;});}
-  function promoChips(list,dark){return list.length?`<span class="promos">${list.map(p=>`<span class="promo" title="${esc(p.reason||'')}">${esc(p.title)}</span>`).join('')}</span>`:'';}
+  function promoChips(list){return list.length?`<span class="promos">${list.map(p=>`<span class="promo" title="${esc(p.desc||'')}">${esc(p.title)}</span><span class="ann domo">why: ${esc(p.reason||'')}</span>`).join('')}</span>`:'';}
   // dealer factor used by the local finder and offers (mirrors the server formula)
   function dealerFactor(mid){const w=PRIOS.weights||{};const u=units().filter(x=>x.model===mid);let f=0;const why=[];
     if(u.some(x=>!x.transit&&x.site==='par')){f+=(w.stockOnLot||0)/100*6;why.push('on the lot now');}
@@ -1265,9 +1266,9 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   function mwork(host,steps){host.innerHTML='';const box=el('div','mwork');host.appendChild(box);const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;steps.forEach((s,i)=>setTimeout(()=>box.appendChild(el('div','step',esc(s))),reduce?0:220*i));return reduce?0:220*steps.length+200;}
   async function renderBooking(){const body=$('mbody');const m=M(),g=G();const steps=`<div class="mstep">${[1,2,3].map(i=>`<i class="${i<booking.step?'done':i===booking.step?'cur':''}"></i>`).join('')}</div>`;
     if(booking.step===1){$('mkick').textContent='Book a test drive · step 1 of 3';$('mtitle').textContent='Pick a time';$('msub').textContent=`${m.name} ${g.name}${booking.unitId?' · stock '+booking.unitId:''}`;
-      if(!booking.slots){body.innerHTML=steps+'<div class="mwork"><div class="step">Checking the calendar at '+SITES[booking.site].name+'</div></div>';booking.slots=await getSlots(booking.site,booking.unitId);booking.day=booking.slots.days[0];}
+      if(!booking.slots){body.innerHTML=steps+'<div class="mwork"><div class="step">Checking the calendar at '+SITES[booking.site].name+'</div></div>';booking.slots=await getSlots(booking.site,booking.unitId);booking.day=booking.slots.days.find(d=>!d.closed&&(d.slots||[]).some(x=>x.available))||booking.slots.days[0];}
       const s=booking.slots;body.innerHTML=`${steps}<div class="sites">${Object.keys(SITES).map(k=>`<button class="${k===booking.site?'on':''}" data-site="${k}">${SITES[k].name}</button>`).join('')}</div>${s.transferNote?`<div class="nudge">${esc(s.transferNote)}</div>`:''}
-        <div class="days">${s.days.map(d=>`<button class="${booking.day&&d.date===booking.day.date?'on':''}" data-day="${d.date}"><b>${esc(d.label.split(' ')[0])}</b>${esc(d.label.split(' ').slice(1).join(' '))}</button>`).join('')}</div>
+        <div class="days">${s.days.map(d=>{const open=!d.closed&&(d.slots||[]).some(x=>x.available);return`<button class="${booking.day&&d.date===booking.day.date?'on':''}" data-day="${d.date}" ${open?'':'disabled'} title="${d.closed?'Closed':open?'':'Fully booked'}"><b>${esc(d.label.split(' ')[0])}</b>${esc(d.label.split(' ').slice(1).join(' '))}</button>`;}).join('')}</div>
         <div class="slots">${(booking.day?booking.day.slots:[]).map(sl=>`<button data-slot="${sl.id}" ${sl.available?'':'disabled'} class="${booking.slot&&booking.slot.id===sl.id?'on':''}">${esc(sl.time)}</button>`).join('')}</div>
         <div class="mfoot"><span class="ann dms">DMS · calendar_slots · site ${booking.site}</span><button class="btn" id="mnext" ${booking.slot?'':'disabled'}>Continue</button></div>`;
       body.querySelectorAll('[data-site]').forEach(b=>b.onclick=()=>{booking.site=b.dataset.site;booking.slots=null;booking.slot=null;renderBooking();});

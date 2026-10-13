@@ -1,0 +1,31 @@
+{
+  "source": "Harbourline test-drive diary (stand-in for the DMS appointment book)",
+  "timezone": "Australia/Sydney",
+  "slotMinutes": 45,
+  "daysAhead": 10,
+  "minLeadMinutes": 60,
+  "notes": "Dates are generated at request time from today in Australia/Sydney. `booked` is a recurring stand-in pattern of already-taken start times per weekday; on top of it each slot is also taken when a deterministic hash of its id falls in `extraBusyPercent`, so every day shows a different set of gaps. Real bookings from POST /api/testdrive/book are stored in bookings.json and also mark slots taken.",
+  "extraBusyPercent": 18,
+  "sites": [
+    {
+      "id": "par", "name": "Parramatta", "address": "212 Church St, Parramatta NSW 2150", "phone": "(02) 9000 1100",
+      "hours": { "mon": ["08:30", "17:30"], "tue": ["08:30", "17:30"], "wed": ["08:30", "17:30"], "thu": ["08:30", "17:30"], "fri": ["08:30", "17:30"], "sat": ["08:30", "17:30"], "sun": null },
+      "booked": { "mon": ["09:15", "13:00"], "tue": ["10:00", "14:30", "16:00"], "wed": ["08:30", "11:30"], "thu": ["10:45", "13:45", "16:45"], "fri": ["09:15", "12:15", "15:15"], "sat": ["08:30", "09:15", "10:00", "11:30", "13:00", "14:30"] }
+    },
+    {
+      "id": "hor", "name": "Hornsby", "address": "48 Pacific Hwy, Hornsby NSW 2077", "phone": "(02) 9000 1200",
+      "hours": { "mon": ["08:30", "17:30"], "tue": ["08:30", "17:30"], "wed": ["08:30", "17:30"], "thu": ["08:30", "17:30"], "fri": ["08:30", "17:30"], "sat": ["08:30", "17:30"], "sun": null },
+      "booked": { "mon": ["10:00"], "tue": ["11:30", "15:15"], "wed": ["09:15", "14:30"], "thu": ["12:15"], "fri": ["10:00", "13:45"], "sat": ["09:15", "10:45", "12:15", "13:45"] }
+    },
+    {
+      "id": "pen", "name": "Penrith", "address": "301 Mulgoa Rd, Penrith NSW 2750", "phone": "(02) 9000 1300",
+      "hours": { "mon": ["08:30", "17:30"], "tue": ["08:30", "17:30"], "wed": ["08:30", "17:30"], "thu": ["08:30", "17:30"], "fri": ["08:30", "17:30"], "sat": ["08:30", "17:30"], "sun": null },
+      "booked": { "mon": ["08:30", "14:30"], "tue": ["13:00"], "wed": ["10:45", "16:00"], "thu": ["09:15", "15:15"], "fri": ["11:30"], "sat": ["08:30", "10:00", "11:30", "13:00"] }
+    },
+    {
+      "id": "liv", "name": "Liverpool", "address": "15 Hume Hwy, Liverpool NSW 2170", "phone": "(02) 9000 1400",
+      "hours": { "mon": ["08:30", "17:30"], "tue": ["08:30", "17:30"], "wed": ["08:30", "17:30"], "thu": ["08:30", "17:30"], "fri": ["08:30", "17:30"], "sat": ["08:30", "17:30"], "sun": null },
+      "booked": { "mon": ["11:30", "16:00"], "tue": ["09:15"], "wed": ["12:15", "13:45"], "thu": ["10:00", "14:30"], "fri": ["08:30", "16:45"], "sat": ["09:15", "10:45", "12:15", "14:30", "16:00"] }
+    }
+  ]
+}
