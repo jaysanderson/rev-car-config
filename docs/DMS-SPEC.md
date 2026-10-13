@@ -60,3 +60,11 @@ Every ARAG-powered control shows a small "Progress Agentic RAG" tag and every Do
 - API: `server/dms/*.mjs` mounted in server/index.mjs at `/dms/api`, static `/dms` → `public/dms`.
 - UI: `public/dms/`.
 - Tests: `tests/dms-smoke.mjs`.
+
+## 6. Architecture parity with the reference ERP (added 14 Oct 2026)
+The DMS follows MaintenanceOS exactly: **API-first** (every screen and every agent goes through `/dms/api`; OpenAPI at `/dms/api/openapi.json` and `/dms/api/docs`), **complete MCP tooling** and a **web front-end**.
+- One MCP server (`server/dms/mcp-core.mjs`) exposed two ways: Streamable HTTP at `POST /dms/mcp` (stateless, fresh server per request) and stdio via `scripts/dms-mcp-stdio.mjs` for Claude Desktop / Claude Code.
+- The tool catalogue is generated from the DMS's own OpenAPI document, never hand-curated: one tool per operation, excluding DELETE, binary/upload endpoints, login and CSV export; names `<tag>_<verb>_<resource>`; inputSchema `{path, query, body}`; calls dispatched in-process so auth, RBAC and validation apply exactly as for REST.
+- Resources (`harbourline-dms://openapi`, `://dashboard`, `://deal/{id}`, `://lead/{id}`, `://customer/{id}`, `://stock/{stockNo}`, `://domo/signals`) and prompts (`triage-lead`, `prep-test-drive`, `daily-sales-briefing`, `stuck-deals-review`, `compose-promotions-review`).
+- Auth: the same bearer token as REST; personal access tokens at `/dms/api/access-tokens` for long-lived integrations. `GET /dms/api/mcp/info` feeds the settings page. The knowledge box's own MCP endpoint is shown alongside.
+- Docs: `docs/DMS-MCP.md` mirrors the reference `docs/MCP.md`.
