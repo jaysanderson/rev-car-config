@@ -621,13 +621,16 @@ body.drawer-open .drawer{transform:none}
     </svg>`;}
 
   // Photos: the build inlines thumbnails (artifact) or a base path (server); each falls back to the silhouette on error.
-  const IMAGES=(window.__DATA__&&window.__DATA__.images)||{};const IMAGE_BASE=(window.__DATA__&&window.__DATA__.imageBase)||null;const CREDITS=(window.__DATA__&&window.__DATA__.credits)||[];
-  function imgSrc(mid,thumb){if(IMAGES[mid])return IMAGES[mid];if(IMAGE_BASE)return IMAGE_BASE+'/'+mid+(thumb?'/thumb.jpg':'.jpg');return null;}
+  const IMAGES=(window.__DATA__&&window.__DATA__.images)||{};const IMAGE_BASE=(window.__DATA__&&window.__DATA__.imageBase)||null;const CREDITS=(window.__DATA__&&window.__DATA__.credits)||[];const IMAGE_INDEX=(window.__DATA__&&window.__DATA__.imageIndex)||{};
+  // Colour-specific render when one exists for this model and colour, else the model hero shot.
+  function imgSrc(mid,thumb,colour){const ix=IMAGE_INDEX[mid]||{};const hasCol=colour&&ix.colours&&ix.colours[colour];
+    if(hasCol){if(IMAGES[mid+'/'+colour])return IMAGES[mid+'/'+colour];if(IMAGE_BASE)return IMAGE_BASE+'/'+mid+'/'+(thumb?'thumb/':'')+colour+'.jpg';}
+    if(IMAGES[mid])return IMAGES[mid];if(IMAGE_BASE&&(ix.hero||!Object.keys(IMAGE_INDEX).length))return IMAGE_BASE+'/'+mid+(thumb?'/thumb.jpg':'.jpg');return null;}
   window.__carFallback=function(img){const w=img.parentElement;if(!w)return;w.innerHTML=carSVG(w.dataset.sil,w.dataset.hex,w.dataset.bg,'fb'+Math.random().toString(36).slice(2,6));};
-  function carPic(mid,sil,hex,bg,uid,opts){opts=opts||{};const src=imgSrc(mid,!!opts.thumb);const cls='carpic'+(opts.hero?' hero-pic':' cover');
+  function carPic(mid,sil,hex,bg,uid,opts){opts=opts||{};const src=imgSrc(mid,!!opts.thumb,opts.colour);const cls='carpic'+(opts.hero?' hero-pic':' cover');
     if(!src)return `<div class="${cls}" data-sil="${sil}" data-hex="${hex}" data-bg="${bg}">${carSVG(sil,hex,bg,uid)}</div>`;
     return `<div class="${cls}" data-sil="${sil}" data-hex="${hex}" data-bg="${bg}"><img src="${src}" alt="${esc(opts.alt||'')}" loading="${opts.hero?'eager':'lazy'}" onerror="window.__carFallback(this)"></div>`;}
-  function creditFor(mid){const c=CREDITS.find(x=>x.model===mid);if(!c)return '';return `<div class="credit">Photo: ${esc(c.author||'unknown')} · <a href="${esc(c.source_url||'#')}" target="_blank" rel="noopener">${esc(c.license||'')}</a>${c.generation_note?' · '+esc(c.generation_note):''}</div>`;}
+  function creditFor(mid,colour){const c=CREDITS.find(x=>x.model===mid&&x.colour===colour)||CREDITS.find(x=>x.model===mid&&!x.colour)||CREDITS.find(x=>x.model===mid);if(!c)return '';return `<div class="credit">${c.note?esc(c.note):'Photo: '+esc(c.author||'')+' · '+esc(c.license||'')}${c.source_url?' · <a href="'+esc(c.source_url)+'" target="_blank" rel="noopener">source</a>':''}${c.generation_note?' · '+esc(c.generation_note):''}</div>`;}
 
   // ======================= STOCK HELPERS =======================
   function stockFor(pred){const u=units();return{here:u.filter(x=>!x.transit&&x.site==='par'&&pred(x)).length,near:u.filter(x=>!x.transit&&x.site!=='par'&&pred(x)).length,tr:u.filter(x=>x.transit&&pred(x)).length};}
@@ -660,7 +663,7 @@ body.drawer-open .drawer{transform:none}
 
   // ======================= STAGE =======================
   function renderHero(){const m=M(),g=G();$('kick').textContent='Toyota · '+m.bodyLabel+' · '+m.powertrain.replace('ev','electric');$('title').textContent=m.name+' '+g.name;$('spec').textContent=describe(cfg);
-    $('price').textContent=fmt(price());$('price2').textContent=fmt(price());$('carwrap').innerHTML=carPic(m.id,m.silhouette,COL(cfg.colour)?.hex||'#888','#00123C','hero',{hero:true,alt:m.name+' '+g.name})+creditFor(m.id);
+    $('price').textContent=fmt(price());$('price2').textContent=fmt(price());$('carwrap').innerHTML=carPic(m.id,m.silhouette,COL(cfg.colour)?.hex||'#888','#00123C','hero',{hero:true,colour:cfg.colour,alt:m.name+' '+g.name+' in '+(COL(cfg.colour)?.name||'')})+creditFor(m.id,cfg.colour);
     const {exact}=matches(cfg);const here=exact.filter(s=>s.u.site==='par'&&!s.u.transit).length,near=exact.filter(s=>s.u.site!=='par').length,tr=exact.filter(s=>s.u.transit).length;const w=eta(m.id);
     $('facts').innerHTML=`<div class="fact"><div class="k">Exactly this car</div><div class="v ${here?'good':''}">${here?here+' on the lot now':near?near+' nearby':tr?'arriving in '+exact.find(s=>s.u.transit).u.transit+' days':'none in the group'}</div></div>
       <div class="fact"><div class="k">Nearby and inbound</div><div class="v">${near+tr?[near?near+' at other sites':'',tr?tr+' in transit':''].filter(Boolean).join(' · '):'—'}</div></div>
@@ -689,7 +692,7 @@ body.drawer-open .drawer{transform:none}
     if(!Array.isArray(offers)||!offers.length)offers=localOffers();const shown=new Set(matches(cfg).exact.map(x=>x.u.id));offers=offers.filter(o=>!shown.has(o.unitId));const top=offers.slice(0,3);const elm=$('otiles');elm.innerHTML='';
     top.forEach((o,i)=>{const m=by(CAT.models,o.modelId)||{};const g=m.grades?by(m.grades,o.gradeId):null;const c=COL(o.colourId)||{hex:'#888',name:o.colourId};const site=SITES[o.site]||{name:o.site};
       const t=el('button','otile');t.setAttribute('data-unit',o.unitId);
-      t.innerHTML=`<span class="ok">${o.site==='par'?'Ready now · Parramatta':'At '+site.name+' · here '+(site.when||'soon')}</span>${carPic(o.modelId,m.silhouette||'suv',c.hex,'#0b1a45','o'+i,{thumb:true,alt:m.name||''})}<span class="on">${esc((m.name||o.modelId)+' '+(g?g.name:o.gradeId))}</span><span class="od">${esc(c.name)} · ${esc(o.reason||'')}</span><span class="op"><s>${fmt(o.price)}</s><b>${fmt(o.price-o.bonus)}</b><em>save ${fmt(o.bonus)}</em></span><span class="annrow"><span class="ann domo">Domo · aged_stock_actions · priority ${o.priority} · rank ${i+1}</span></span>`;elm.appendChild(t);});
+      t.innerHTML=`<span class="ok">${o.site==='par'?'Ready now · Parramatta':'At '+site.name+' · here '+(site.when||'soon')}</span>${carPic(o.modelId,m.silhouette||'suv',c.hex,'#0b1a45','o'+i,{thumb:true,colour:o.colourId,alt:m.name||''})}<span class="on">${esc((m.name||o.modelId)+' '+(g?g.name:o.gradeId))}</span><span class="od">${esc(c.name)} · ${esc(o.reason||'')}</span><span class="op"><s>${fmt(o.price)}</s><b>${fmt(o.price-o.bonus)}</b><em>save ${fmt(o.bonus)}</em></span><span class="annrow"><span class="ann domo">Domo · aged_stock_actions · priority ${o.priority} · rank ${i+1}</span></span>`;elm.appendChild(t);});
     const rib=$('ribbon');const r0=offers.find(o=>o.modelId===cfg.model)||offers[0];if(r0){const m=by(CAT.models,r0.modelId)||{};const g=m.grades?by(m.grades,r0.gradeId):null;rib.hidden=false;rib.innerHTML=`<span><b>${fmt(r0.bonus)} off</b> a ${esc((m.name||'')+' '+(g?g.name:''))} ready now <span class="ann domo">Domo · placement: build_ribbon</span></span><button data-unit="${r0.unitId}">See it</button>`;}else rib.hidden=true;}
 
   // ======================= FOR YOU (Spotify-style rows, semantic find) =======================
@@ -715,7 +718,7 @@ body.drawer-open .drawer{transform:none}
     if(!Array.isArray(rows)||!rows.length)rows=tagRows();const host=$('foryou');host.innerHTML='';
     rows.forEach((r,ri)=>{const sec=el('div','fy');sec.innerHTML=`<div class="fyh"><div><h3>${esc(r.title)}</h3><div class="sub">${esc(r.reason||'')}</div></div><span class="ann kb">${API?'ARAG · /find · "'+esc(r.query||'')+'"':'local match (offline) · would query /find: "'+esc(r.query||'')+'"'}</span></div><div class="fyrow"></div>`;const row=sec.querySelector('.fyrow');
       (r.items||[]).forEach((it,i)=>{const mm=by(CAT.models,it.modelId);if(!mm)return;const u=it.unitId?by(units(),it.unitId):null;const hex=COL(u?u.colour:(mm.colours.includes('graphite')?'graphite':mm.colours[0]))?.hex||'#888';
-        const c=el('button','fycard');c.innerHTML=`${carPic(mm.id,mm.silhouette,hex,'var(--raised)','f'+ri+i,{thumb:true,alt:mm.name})}<b>${esc(it.title)}</b><span>${esc(it.blurb||'')}</span>${it.citation?`<em class="cite">${esc(it.citation.title)}</em>`:''}`;
+        const c=el('button','fycard');c.innerHTML=`${carPic(mm.id,mm.silhouette,hex,'var(--raised)','f'+ri+i,{thumb:true,colour:u?u.colour:null,alt:mm.name})}<b>${esc(it.title)}</b><span>${esc(it.blurb||'')}</span>${it.citation?`<em class="cite">${esc(it.citation.title)}</em>`:''}`;
         c.onclick=()=>{if(u)applyUnit(u.id);else{cfg.model=it.modelId;if(it.gradeId)cfg.grade=it.gradeId;normalise();update();toast('Now configuring the '+mm.name);}};row.appendChild(c);});
       host.appendChild(sec);});
     $('f-foryou').hidden=!rows.length;}

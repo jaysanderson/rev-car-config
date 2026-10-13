@@ -19,10 +19,14 @@ if (fs.existsSync(domoDir)) {
 const imgDir = path.join(root, 'content', 'images');
 const credits = readJson(path.join(imgDir, 'credits.json')) || [];
 const thumbs = {};
+const dataUri = f => 'data:image/jpeg;base64,' + fs.readFileSync(f).toString('base64');
 const thumbDir = path.join(imgDir, 'thumb');
-if (fs.existsSync(thumbDir)) for (const f of fs.readdirSync(thumbDir).filter(f => f.endsWith('.jpg'))) thumbs[f.replace('.jpg', '')] = 'data:image/jpeg;base64,' + fs.readFileSync(path.join(thumbDir, f)).toString('base64');
-const dataServer = { catalog, stock, credits, imageBase: Object.keys(thumbs).length ? '/api/images' : null };
-const dataArtifact = { catalog, stock, credits, images: thumbs };
+if (fs.existsSync(thumbDir)) for (const f of fs.readdirSync(thumbDir).filter(f => f.endsWith('.jpg'))) thumbs[f.replace('.jpg', '')] = dataUri(path.join(thumbDir, f));
+// colour renders: content/images/<model>/thumb/<colour>.jpg → key "<model>/<colour>"
+if (fs.existsSync(imgDir)) for (const m of fs.readdirSync(imgDir)) { const d = path.join(imgDir, m, 'thumb'); if (fs.existsSync(d) && fs.statSync(d).isDirectory()) for (const f of fs.readdirSync(d).filter(f => f.endsWith('.jpg'))) thumbs[m + '/' + f.replace('.jpg', '')] = dataUri(path.join(d, f)); }
+const imageIndex = readJson(path.join(imgDir, 'index.json')) || {};
+const dataServer = { catalog, stock, credits, imageIndex, imageBase: Object.keys(thumbs).length ? '/api/images' : null };
+const dataArtifact = { catalog, stock, credits, imageIndex, images: thumbs };
 const inlineOf = d => `<script>window.__DATA__=${JSON.stringify(d).replace(/<\//g, '<\\/')};</script>\n`;
 const inline = inlineOf(dataServer);
 const head = `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<style>:root{color-scheme:light dark}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>\n`;
