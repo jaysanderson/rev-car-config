@@ -1,0 +1,2225 @@
+{
+  "catalogue": "Harbourline DMS → Domo datasets",
+  "version": 1,
+  "asOf": "2026-10-14T08:00:00+11:00",
+  "conventions": {
+    "timezone": "Australia/Sydney; datetimes are ISO 8601 with +10:00 (AEST) or +11:00 (AEDT)",
+    "money": "AUD integers, GST-inclusive retail figures",
+    "json": "array/object columns are JSON-encoded strings in CSV",
+    "ids": "string ids; join keys documented per column"
+  },
+  "datasets": [
+    {
+      "name": "sites",
+      "kind": "table",
+      "description": "The four Harbourline Toyota dealerships. salesTarget mirrors the targets table (units per month).",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 4,
+      "file": "content/dms/data/sites.json",
+      "csv": "/dms/api/domo/export/sites.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Site id: par Parramatta (home), hor Hornsby, pen Penrith, liv Liverpool",
+          "domoType": "STRING"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "Display name",
+          "domoType": "STRING"
+        },
+        {
+          "name": "legalName",
+          "type": "string",
+          "description": "Trading name",
+          "domoType": "STRING"
+        },
+        {
+          "name": "address",
+          "type": "string",
+          "description": "Street address",
+          "domoType": "STRING"
+        },
+        {
+          "name": "phone",
+          "type": "string",
+          "description": "Showroom phone",
+          "domoType": "STRING"
+        },
+        {
+          "name": "home",
+          "type": "boolean",
+          "description": "True for the group home site (Parramatta)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "distanceKm",
+          "type": "integer",
+          "description": "Road distance from Parramatta (transfers)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "transferRun",
+          "type": "string",
+          "description": "Weekday of the inter-site transfer truck",
+          "domoType": "STRING"
+        },
+        {
+          "name": "managerId",
+          "type": "string",
+          "description": "staff.id of the sales manager",
+          "domoType": "STRING"
+        },
+        {
+          "name": "salesTarget",
+          "type": "json",
+          "description": "{ \"YYYY-MM\": units } for Oct 2024 to Dec 2026",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "staff",
+      "kind": "table",
+      "description": "Group staff and demo logins. 14 salespeople with different conversion, discounting and F&I attach; sales managers appraise trades and approve desks; business managers run finance.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 24,
+      "file": "content/dms/data/staff.json",
+      "csv": "/dms/api/domo/export/staff.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "st-gm, st-sm-<site>, st-sp-01..14, st-dxm, st-bm-<site>",
+          "domoType": "STRING"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "Full name",
+          "domoType": "STRING"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "description": "gm | sales_manager | salesperson | dxm | finance",
+          "domoType": "STRING"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "Job title",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "Home site (sites.id)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "Login email (@harbourline.demo)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "avatarInitials",
+          "type": "string",
+          "description": "Initials for the UI",
+          "domoType": "STRING"
+        },
+        {
+          "name": "phone",
+          "type": "string",
+          "description": "Direct line",
+          "domoType": "STRING"
+        },
+        {
+          "name": "startedAt",
+          "type": "date",
+          "description": "Start date (Josh Pereira, sales1@, started 1 Jun 2026; Ben Whitfield Jul 2025; Aaron Fifita Feb 2025)",
+          "domoType": "DATE"
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "description": "Currently employed",
+          "domoType": "STRING"
+        },
+        {
+          "name": "demoLogin",
+          "type": "boolean",
+          "description": "One of the five documented demo logins",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "customers",
+      "kind": "table",
+      "description": "People and businesses with at least one named enquiry. Synthetic: emails use example.* domains, mobiles the ACMA fiction block 0491 57x xxx, landlines (02) 5550 xxxx.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 3895,
+      "file": "content/dms/data/customers.json",
+      "csv": "/dms/api/domo/export/customers.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "C-#####, in order of first enquiry",
+          "domoType": "STRING"
+        },
+        {
+          "name": "firstName",
+          "type": "string",
+          "description": "Given name (contact person for businesses)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "lastName",
+          "type": "string",
+          "description": "Family name",
+          "domoType": "STRING"
+        },
+        {
+          "name": "company",
+          "type": "string",
+          "description": "Business name for fleet/ABN customers, else null",
+          "domoType": "STRING"
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "description": "Synthetic email",
+          "domoType": "STRING"
+        },
+        {
+          "name": "phone",
+          "type": "string",
+          "description": "Synthetic phone",
+          "domoType": "STRING"
+        },
+        {
+          "name": "suburb",
+          "type": "string",
+          "description": "Suburb in the site catchment",
+          "domoType": "STRING"
+        },
+        {
+          "name": "postcode",
+          "type": "string",
+          "description": "NSW postcode",
+          "domoType": "STRING"
+        },
+        {
+          "name": "state",
+          "type": "string",
+          "description": "Always NSW",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "Nearest/home site",
+          "domoType": "STRING"
+        },
+        {
+          "name": "source",
+          "type": "string",
+          "description": "web-configurator | walk-in | phone | referral | campaign | service | web-form (from the first enquiry)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "createdAt",
+          "type": "datetime",
+          "description": "First enquiry",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "tags",
+          "type": "json",
+          "description": "fleet, abn-holder, owner, repeat-buyer, configurator, finance-customer, trade-in, service-customer, ev-interest, family, tradie, campaign-responder",
+          "domoType": "STRING"
+        },
+        {
+          "name": "notes",
+          "type": "string",
+          "description": "Free-text CRM note",
+          "domoType": "STRING"
+        },
+        {
+          "name": "unitsPurchased",
+          "type": "integer",
+          "description": "Delivered deals",
+          "domoType": "LONG"
+        },
+        {
+          "name": "marketingConsent",
+          "type": "boolean",
+          "description": "Opted in to marketing",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "vehicles",
+      "kind": "table",
+      "description": "Stock ledger: the 22 configurator units (content/domo/stock_by_site.json, unchanged), from-stock units sold over 24 months, demonstrators, units allocated to customer orders and the November stock order (allocation).",
+      "primaryKey": [
+        "stockNo"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 492,
+      "file": "content/dms/data/vehicles.json",
+      "csv": "/dms/api/domo/export/vehicles.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "vin",
+          "type": "string",
+          "description": "17-character VIN (configurator units keep theirs)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "stockNo",
+          "type": "string",
+          "description": "HL-####. Configurator units keep their ids (HL-1941..HL-2720); history/demo HL-1000..HL-1899; ordered/allocated HL-2801+",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "description": "Catalogue model id (catalog.json)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "grade",
+          "type": "string",
+          "description": "Catalogue grade id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "colour",
+          "type": "string",
+          "description": "Catalogue colour id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "interior",
+          "type": "string",
+          "description": "Catalogue interior id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "packs",
+          "type": "json",
+          "description": "Factory/port packs fitted (tow, protection, roof)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "on_lot | in_transit | sold | demo | allocated | ordered",
+          "domoType": "STRING"
+        },
+        {
+          "name": "daysInStock",
+          "type": "integer",
+          "description": "Age today (on_lot/demo) or at sale (sold)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "landedCost",
+          "type": "integer",
+          "description": "Dealer cost ex on-roads (AUD)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "listPrice",
+          "type": "integer",
+          "description": "Vehicle price ex on-roads (AUD); deals.vehiclePrice for that unit",
+          "domoType": "LONG"
+        },
+        {
+          "name": "arrivedAt",
+          "type": "datetime",
+          "description": "Arrival on the lot (null in transit/ordered/allocated)",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "soldAt",
+          "type": "datetime",
+          "description": "Delivery (RDA) date for sold units",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "dealId",
+          "type": "string",
+          "description": "deals.id that sold or reserved the unit",
+          "domoType": "STRING"
+        },
+        {
+          "name": "bonusHeadroom",
+          "type": "integer",
+          "description": "Manager-approvable ready-now/aged bonus (AUD)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "movePriority",
+          "type": "integer",
+          "description": "Domo move priority (1 = move first)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "reasonCode",
+          "type": "string",
+          "description": "aged_60d | aged_90d | days_of_supply",
+          "domoType": "STRING"
+        },
+        {
+          "name": "etaDays",
+          "type": "integer",
+          "description": "Days until arrival for in_transit/allocated/ordered",
+          "domoType": "LONG"
+        },
+        {
+          "name": "source",
+          "type": "string",
+          "description": "configurator | dms | demonstrator | allocation",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "leads",
+      "kind": "table",
+      "description": "Every enquiry (one per touch). Merged duplicate touches keep mergedIntoLeadId and status lost (lostReasonCode duplicate); exclude them from conversion maths. Configurator leads are test-drive bookings from the configurator.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 5748,
+      "file": "content/dms/data/leads.json",
+      "csv": "/dms/api/domo/export/leads.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "L-######",
+          "domoType": "STRING"
+        },
+        {
+          "name": "customerId",
+          "type": "string",
+          "description": "customers.id; null only for anonymous configurator bookings that never turned up",
+          "domoType": "STRING"
+        },
+        {
+          "name": "customerRef",
+          "type": "string",
+          "description": "Configurator session id when customerId is null",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "ownerId",
+          "type": "string",
+          "description": "staff.id of the salesperson",
+          "domoType": "STRING"
+        },
+        {
+          "name": "source",
+          "type": "string",
+          "description": "Marketing source: showroom, service-department, referral, repeat-customer, drive-by, google, toyota.com.au, harbourline.com.au, carsales, google-ads, facebook, <channel>-campaign, web-configurator",
+          "domoType": "STRING"
+        },
+        {
+          "name": "channel",
+          "type": "string",
+          "description": "configurator | web-form | phone | walk-in | campaign",
+          "domoType": "STRING"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "new | contacted | qualified | test_drive_booked | quoted | won | lost",
+          "domoType": "STRING"
+        },
+        {
+          "name": "createdAt",
+          "type": "datetime",
+          "description": "Enquiry time",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "updatedAt",
+          "type": "datetime",
+          "description": "Last status change",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "interest",
+          "type": "json",
+          "description": "{ modelId, gradeId, colourId, stockNo }",
+          "domoType": "STRING"
+        },
+        {
+          "name": "configuratorSessionId",
+          "type": "string",
+          "description": "Configurator sid (joins configurator_events.sid)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "finderAnswers",
+          "type": "json",
+          "description": "[{ id, value }] finder answers (use, people, towing, power, budget, when …)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "viewed",
+          "type": "json",
+          "description": "[{ modelId, gradeId, unitId }] cars looked at in the configurator",
+          "domoType": "STRING"
+        },
+        {
+          "name": "bookingId",
+          "type": "string",
+          "description": "test_drives.id of the configurator booking (TD-xxxxx)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "campaignId",
+          "type": "string",
+          "description": "campaigns.id for campaign leads",
+          "domoType": "STRING"
+        },
+        {
+          "name": "mergedIntoLeadId",
+          "type": "string",
+          "description": "Primary lead this duplicate touch was merged into",
+          "domoType": "STRING"
+        },
+        {
+          "name": "lostReason",
+          "type": "string",
+          "description": "Human label",
+          "domoType": "STRING"
+        },
+        {
+          "name": "lostReasonCode",
+          "type": "string",
+          "description": "Lead: no_response, invalid, researching, budget, wait_time, bought_elsewhere, duplicate, used_car, not_suitable, deferred. Deal codes when lost as a deal.",
+          "domoType": "STRING"
+        },
+        {
+          "name": "score",
+          "type": "integer",
+          "description": "Lead score 0-100 (channel intent + progress − staleness)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "statusHistory",
+          "type": "json",
+          "description": "[{ status, at }] every status reached",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "test_drives",
+      "kind": "table",
+      "description": "Test drives booked from leads (configurator bookings carry the handover sheet and incentive). No-shows are rebooked about half the time.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 2102,
+      "file": "content/dms/data/test_drives.json",
+      "csv": "/dms/api/domo/export/test_drives.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "TD-xxxxx (same alphabet as the configurator)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "leadId",
+          "type": "string",
+          "description": "leads.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "customerId",
+          "type": "string",
+          "description": "customers.id (null for anonymous configurator bookings)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "staffId",
+          "type": "string",
+          "description": "Salesperson",
+          "domoType": "STRING"
+        },
+        {
+          "name": "stockNo",
+          "type": "string",
+          "description": "Demonstrator or stock unit driven",
+          "domoType": "STRING"
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "description": "Model",
+          "domoType": "STRING"
+        },
+        {
+          "name": "gradeId",
+          "type": "string",
+          "description": "Grade",
+          "domoType": "STRING"
+        },
+        {
+          "name": "when",
+          "type": "datetime",
+          "description": "Appointment",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "bookedAt",
+          "type": "datetime",
+          "description": "When it was booked",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "booked | completed | no_show | cancelled",
+          "domoType": "STRING"
+        },
+        {
+          "name": "channel",
+          "type": "string",
+          "description": "Lead channel",
+          "domoType": "STRING"
+        },
+        {
+          "name": "questions",
+          "type": "json",
+          "description": "[{ id, question, answer }] the three pre-visit questions",
+          "domoType": "STRING"
+        },
+        {
+          "name": "incentive",
+          "type": "json",
+          "description": "{ id, title, value, reason } (configurator bookings)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "handover",
+          "type": "json",
+          "description": "Salesperson handover sheet: car, viewed, finderAnswers, promotionsToOffer, incentive, talkingPoints",
+          "domoType": "STRING"
+        },
+        {
+          "name": "outcome",
+          "type": "string",
+          "description": "quoted | considering | not_for_them | second_drive_requested | no_show | cancelled_by_customer | rescheduled",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "deals",
+      "kind": "table",
+      "description": "Desked deals from quote to delivery. frontGross = vehiclePrice − discount − bonus − landedCost + accessoriesGross − promotionCost − tradeOverAllowance; backGross = finance commission + insurance/warranty products; grossProfit = front + back. Only stage = delivered is realised gross.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 2068,
+      "file": "content/dms/data/deals.json",
+      "csv": "/dms/api/domo/export/deals.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "D-##### (D-10482 and D-10517 are the document-processing demo contracts)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "leadId",
+          "type": "string",
+          "description": "leads.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "customerId",
+          "type": "string",
+          "description": "customers.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "salespersonId",
+          "type": "string",
+          "description": "staff.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "businessManagerId",
+          "type": "string",
+          "description": "staff.id of the F&I manager when financed",
+          "domoType": "STRING"
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "description": "Model",
+          "domoType": "STRING"
+        },
+        {
+          "name": "gradeId",
+          "type": "string",
+          "description": "Grade",
+          "domoType": "STRING"
+        },
+        {
+          "name": "colourId",
+          "type": "string",
+          "description": "Colour",
+          "domoType": "STRING"
+        },
+        {
+          "name": "stockNo",
+          "type": "string",
+          "description": "vehicles.stockNo for stock/allocated units or the unit being quoted",
+          "domoType": "STRING"
+        },
+        {
+          "name": "order",
+          "type": "json",
+          "description": "{ modelId, gradeId, colourId, etaWeeks, stockNo? } for allocated/factory orders and order quotes",
+          "domoType": "STRING"
+        },
+        {
+          "name": "fulfilment",
+          "type": "string",
+          "description": "stock | allocated | factory (set at contract)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "stage",
+          "type": "string",
+          "description": "quote | negotiation | finance | approval | contract | delivery | delivered | lost",
+          "domoType": "STRING"
+        },
+        {
+          "name": "createdAt",
+          "type": "datetime",
+          "description": "Quote raised",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "updatedAt",
+          "type": "datetime",
+          "description": "Last event",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "closedAt",
+          "type": "datetime",
+          "description": "Delivered or lost",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "contractAt",
+          "type": "datetime",
+          "description": "Contract signed",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "vehiclePrice",
+          "type": "integer",
+          "description": "Vehicle price ex on-roads",
+          "domoType": "LONG"
+        },
+        {
+          "name": "onRoadCosts",
+          "type": "integer",
+          "description": "Stamp duty, rego, CTP, plates",
+          "domoType": "LONG"
+        },
+        {
+          "name": "landedCost",
+          "type": "integer",
+          "description": "Dealer cost",
+          "domoType": "LONG"
+        },
+        {
+          "name": "accessories",
+          "type": "json",
+          "description": "[{ id, name, price }] dealer-fit accessories",
+          "domoType": "STRING"
+        },
+        {
+          "name": "accessoriesTotal",
+          "type": "integer",
+          "description": "Sum of accessory prices",
+          "domoType": "LONG"
+        },
+        {
+          "name": "accessoriesGross",
+          "type": "integer",
+          "description": "Accessory margin",
+          "domoType": "LONG"
+        },
+        {
+          "name": "promotions",
+          "type": "json",
+          "description": "[{ id, title, value }] promotions.id applied",
+          "domoType": "STRING"
+        },
+        {
+          "name": "promotionCost",
+          "type": "integer",
+          "description": "Dealer cost of the promotions",
+          "domoType": "LONG"
+        },
+        {
+          "name": "tradeInId",
+          "type": "string",
+          "description": "trade_ins.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "tradeOverAllowance",
+          "type": "integer",
+          "description": "Trade offered above valuation (excl. promotion bonus), charged to front gross",
+          "domoType": "LONG"
+        },
+        {
+          "name": "bonus",
+          "type": "integer",
+          "description": "Ready-now/aged bonus drawn from vehicles.bonusHeadroom",
+          "domoType": "LONG"
+        },
+        {
+          "name": "discount",
+          "type": "integer",
+          "description": "Discount off the vehicle",
+          "domoType": "LONG"
+        },
+        {
+          "name": "driveAway",
+          "type": "integer",
+          "description": "vehiclePrice + onRoadCosts + accessoriesTotal − bonus − discount (before trade-in)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "deposit",
+          "type": "integer",
+          "description": "Deposit taken at contract",
+          "domoType": "LONG"
+        },
+        {
+          "name": "financeAppId",
+          "type": "string",
+          "description": "Latest finance_apps.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "frontGross",
+          "type": "integer",
+          "description": "Front-end gross",
+          "domoType": "LONG"
+        },
+        {
+          "name": "backGross",
+          "type": "integer",
+          "description": "Back-end (F&I) gross",
+          "domoType": "LONG"
+        },
+        {
+          "name": "grossProfit",
+          "type": "integer",
+          "description": "front + back",
+          "domoType": "LONG"
+        },
+        {
+          "name": "grossStatus",
+          "type": "string",
+          "description": "realised (delivered) | projected (open) | lost",
+          "domoType": "STRING"
+        },
+        {
+          "name": "deliveryDate",
+          "type": "datetime",
+          "description": "Actual (delivered) or scheduled delivery",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "lostReason",
+          "type": "string",
+          "description": "Human label",
+          "domoType": "STRING"
+        },
+        {
+          "name": "lostReasonCode",
+          "type": "string",
+          "description": "price | other_toyota | competitor | wait_time | finance_declined | trade_gap | deferred | no_response",
+          "domoType": "STRING"
+        },
+        {
+          "name": "lostStage",
+          "type": "string",
+          "description": "Stage the deal was lost from",
+          "domoType": "STRING"
+        },
+        {
+          "name": "stageHistory",
+          "type": "json",
+          "description": "[{ stage, at }] every stage entered",
+          "domoType": "STRING"
+        },
+        {
+          "name": "events",
+          "type": "json",
+          "description": "[{ at, type, note, staffId }] timeline with human notes (flattened in deal_events)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "demo",
+          "type": "string",
+          "description": "document-processing for the two demo contracts",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "trade_ins",
+      "kind": "table",
+      "description": "Trade-in appraisals (about half of deals). Valuation follows age, kilometres, condition and make; over-allowance above valuation is charged to front gross.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 952,
+      "file": "content/dms/data/trade_ins.json",
+      "csv": "/dms/api/domo/export/trade_ins.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "TI-##### (TI-30418 and TI-30441 match the sample appraisal PDFs)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "dealId",
+          "type": "string",
+          "description": "deals.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "customerId",
+          "type": "string",
+          "description": "customers.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "make",
+          "type": "string",
+          "description": "Make",
+          "domoType": "STRING"
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "description": "Model/variant",
+          "domoType": "STRING"
+        },
+        {
+          "name": "year",
+          "type": "integer",
+          "description": "Build year",
+          "domoType": "LONG"
+        },
+        {
+          "name": "km",
+          "type": "integer",
+          "description": "Odometer",
+          "domoType": "LONG"
+        },
+        {
+          "name": "condition",
+          "type": "string",
+          "description": "excellent | good | fair | poor",
+          "domoType": "STRING"
+        },
+        {
+          "name": "valuation",
+          "type": "integer",
+          "description": "Appraised trade value",
+          "domoType": "LONG"
+        },
+        {
+          "name": "reconditioning",
+          "type": "integer",
+          "description": "Estimated reconditioning cost",
+          "domoType": "LONG"
+        },
+        {
+          "name": "offered",
+          "type": "integer",
+          "description": "Amount offered (incl. any trade-in promotion bonus)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "overAllowance",
+          "type": "integer",
+          "description": "offered − valuation − promotion bonus (≥ 0)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "appraisedAt",
+          "type": "datetime",
+          "description": "Appraisal",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "appraisedBy",
+          "type": "string",
+          "description": "staff.id (sales manager)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "rego",
+          "type": "string",
+          "description": "NSW plate",
+          "domoType": "STRING"
+        },
+        {
+          "name": "vin",
+          "type": "string",
+          "description": "VIN when captured",
+          "domoType": "STRING"
+        },
+        {
+          "name": "documents",
+          "type": "json",
+          "description": "Files collected",
+          "domoType": "STRING"
+        },
+        {
+          "name": "payout",
+          "type": "integer",
+          "description": "Finance owing on the trade",
+          "domoType": "LONG"
+        }
+      ]
+    },
+    {
+      "name": "finance_apps",
+      "kind": "table",
+      "description": "Finance applications. Declines are resubmitted to a second lender most of the time (sequence 2). Approval rates: Toyota Finance ≈ 90%, Macquarie ≈ 85%, ANZ ≈ 80%, Westpac ≈ 75%.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 1378,
+      "file": "content/dms/data/finance_apps.json",
+      "csv": "/dms/api/domo/export/finance_apps.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "FA-#####",
+          "domoType": "STRING"
+        },
+        {
+          "name": "dealId",
+          "type": "string",
+          "description": "deals.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "customerId",
+          "type": "string",
+          "description": "customers.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "businessManagerId",
+          "type": "string",
+          "description": "staff.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "lender",
+          "type": "string",
+          "description": "Toyota Finance | Macquarie | ANZ | Westpac",
+          "domoType": "STRING"
+        },
+        {
+          "name": "amount",
+          "type": "integer",
+          "description": "Amount financed = driveAway − deposit − trade equity − cash",
+          "domoType": "LONG"
+        },
+        {
+          "name": "termMonths",
+          "type": "integer",
+          "description": "36-84",
+          "domoType": "LONG"
+        },
+        {
+          "name": "rate",
+          "type": "number",
+          "description": "Annual rate %",
+          "domoType": "DOUBLE"
+        },
+        {
+          "name": "balloon",
+          "type": "integer",
+          "description": "Balloon/residual",
+          "domoType": "LONG"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "submitted | approved | conditional | declined | settled",
+          "domoType": "STRING"
+        },
+        {
+          "name": "submittedAt",
+          "type": "datetime",
+          "description": "Submitted",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "decisionAt",
+          "type": "datetime",
+          "description": "First decision",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "conditionsClearedAt",
+          "type": "datetime",
+          "description": "Conditional approval cleared",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "settledAt",
+          "type": "datetime",
+          "description": "Settled after delivery",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "conditions",
+          "type": "string",
+          "description": "Outstanding conditions",
+          "domoType": "STRING"
+        },
+        {
+          "name": "sequence",
+          "type": "integer",
+          "description": "1 = first lender, 2 = resubmission",
+          "domoType": "LONG"
+        }
+      ]
+    },
+    {
+      "name": "promotions",
+      "kind": "table",
+      "description": "Promotion register: 17 historical/scheduled offers plus the 8 current ones mirrored from content/dealer/promotions.json, with provenance (Domo signal, KB policy).",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 25,
+      "file": "content/dms/data/promotions.json",
+      "csv": "/dms/api/domo/export/promotions.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "promo-…",
+          "domoType": "STRING"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "Offer",
+          "domoType": "STRING"
+        },
+        {
+          "name": "kind",
+          "type": "string",
+          "description": "servicing | accessory-bundle | trade-in | delivery | finance | drive-away | experience",
+          "domoType": "STRING"
+        },
+        {
+          "name": "value",
+          "type": "integer",
+          "description": "Customer value (AUD) or null",
+          "domoType": "LONG"
+        },
+        {
+          "name": "source",
+          "type": "json",
+          "description": "{ domo, kb } why it exists",
+          "domoType": "STRING"
+        },
+        {
+          "name": "startsAt",
+          "type": "datetime",
+          "description": "Start",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "endsAt",
+          "type": "datetime",
+          "description": "End",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "appliesTo",
+          "type": "json",
+          "description": "{ models, units, aged, bodies, onLot? }",
+          "domoType": "STRING"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "active | expired | scheduled",
+          "domoType": "STRING"
+        },
+        {
+          "name": "dealsApplied",
+          "type": "integer",
+          "description": "Deals carrying the promotion",
+          "domoType": "LONG"
+        },
+        {
+          "name": "short",
+          "type": "string",
+          "description": "Short phrase (current offers)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "desc",
+          "type": "string",
+          "description": "Customer description (current offers)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "reason",
+          "type": "string",
+          "description": "Internal reason (current offers)",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "campaigns",
+      "kind": "table",
+      "description": "18 marketing campaigns over 24 months. leads = count of leads.campaignId; deals = those leads that were won/delivered.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 18,
+      "file": "content/dms/data/campaigns.json",
+      "csv": "/dms/api/domo/export/campaigns.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "CMP-###",
+          "domoType": "STRING"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "Campaign",
+          "domoType": "STRING"
+        },
+        {
+          "name": "channel",
+          "type": "string",
+          "description": "email | sms | web | social",
+          "domoType": "STRING"
+        },
+        {
+          "name": "audience",
+          "type": "string",
+          "description": "Audience definition",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteIds",
+          "type": "json",
+          "description": "Sites targeted",
+          "domoType": "STRING"
+        },
+        {
+          "name": "startsAt",
+          "type": "datetime",
+          "description": "Start",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "endsAt",
+          "type": "datetime",
+          "description": "End",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "completed | live | scheduled",
+          "domoType": "STRING"
+        },
+        {
+          "name": "promotionIds",
+          "type": "json",
+          "description": "promotions.id featured",
+          "domoType": "STRING"
+        },
+        {
+          "name": "sent",
+          "type": "integer",
+          "description": "Messages sent (email/sms) or impressions (web/social)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "sentMetric",
+          "type": "string",
+          "description": "messages | impressions",
+          "domoType": "STRING"
+        },
+        {
+          "name": "opened",
+          "type": "integer",
+          "description": "Opens (email/sms) or engagements",
+          "domoType": "LONG"
+        },
+        {
+          "name": "clicked",
+          "type": "integer",
+          "description": "Clicks",
+          "domoType": "LONG"
+        },
+        {
+          "name": "leads",
+          "type": "integer",
+          "description": "Leads attributed",
+          "domoType": "LONG"
+        },
+        {
+          "name": "deals",
+          "type": "integer",
+          "description": "Won leads",
+          "domoType": "LONG"
+        },
+        {
+          "name": "budget",
+          "type": "integer",
+          "description": "Spend (AUD)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "costPerLead",
+          "type": "integer",
+          "description": "budget ÷ leads",
+          "domoType": "LONG"
+        }
+      ]
+    },
+    {
+      "name": "documents",
+      "kind": "table",
+      "description": "60 deal documents. DOC-1001..DOC-1006 are the synthetic sample PDFs in content/dms/samples (status uploaded, `expected` holds the ground truth for the ARAG extraction demo); the rest are already processed.",
+      "primaryKey": [
+        "id"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 60,
+      "file": "content/dms/data/documents.json",
+      "csv": "/dms/api/domo/export/documents.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "DOC-####",
+          "domoType": "STRING"
+        },
+        {
+          "name": "kind",
+          "type": "string",
+          "description": "contract | trade_in_form | supplier_invoice | licence | insurance",
+          "domoType": "STRING"
+        },
+        {
+          "name": "dealId",
+          "type": "string",
+          "description": "deals.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "customerId",
+          "type": "string",
+          "description": "customers.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id (samples)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "stockNo",
+          "type": "string",
+          "description": "vehicles.stockNo (invoices)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "fileName",
+          "type": "string",
+          "description": "File name",
+          "domoType": "STRING"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "Title (samples)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "uploadedAt",
+          "type": "datetime",
+          "description": "Upload",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "uploaded | processing | extracted | verified",
+          "domoType": "STRING"
+        },
+        {
+          "name": "samplePdf",
+          "type": "string",
+          "description": "Repo path of the sample PDF",
+          "domoType": "STRING"
+        },
+        {
+          "name": "expected",
+          "type": "json",
+          "description": "Ground-truth fields for the sample PDFs",
+          "domoType": "STRING"
+        },
+        {
+          "name": "extracted",
+          "type": "json",
+          "description": "Fields extracted by ARAG",
+          "domoType": "STRING"
+        },
+        {
+          "name": "confidence",
+          "type": "json",
+          "description": "{ field: 0-1 }",
+          "domoType": "STRING"
+        },
+        {
+          "name": "verifyFields",
+          "type": "json",
+          "description": "Fields below 0.9 confidence to check",
+          "domoType": "STRING"
+        },
+        {
+          "name": "aragResourceId",
+          "type": "string",
+          "description": "KB resource id once uploaded",
+          "domoType": "STRING"
+        },
+        {
+          "name": "verifiedAt",
+          "type": "datetime",
+          "description": "Verified",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "verifiedBy",
+          "type": "string",
+          "description": "staff.id",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "targets",
+      "kind": "table",
+      "description": "Monthly unit and gross targets per site (Oct 2024 to Dec 2026; Oct 2024 pro-rated from the 15th). Set from last year plus growth and seasonality, so attainment varies month to month.",
+      "primaryKey": [
+        "siteId",
+        "month"
+      ],
+      "refresh": "Nightly 02:00 Australia/Sydney (DMS export); API writes are live",
+      "rowCount": 108,
+      "file": "content/dms/data/targets.json",
+      "csv": "/dms/api/domo/export/targets.csv",
+      "derivedFrom": null,
+      "columns": [
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "month",
+          "type": "month",
+          "description": "YYYY-MM",
+          "domoType": "STRING"
+        },
+        {
+          "name": "units",
+          "type": "integer",
+          "description": "Delivered-units target",
+          "domoType": "LONG"
+        },
+        {
+          "name": "grossTarget",
+          "type": "integer",
+          "description": "Total gross target (AUD)",
+          "domoType": "LONG"
+        }
+      ]
+    },
+    {
+      "name": "sales_daily",
+      "kind": "derived",
+      "description": "One row per day × site × model with any activity: leads (excl. merged duplicates), completed test drives, deals created, contracts, deliveries (and from stock), lost deals, revenue and gross of deliveries.",
+      "primaryKey": [
+        "date",
+        "siteId",
+        "modelId"
+      ],
+      "refresh": "Nightly 02:15 Australia/Sydney, recomputed from the tables (on request via /dms/api/domo/export)",
+      "rowCount": 9011,
+      "file": null,
+      "csv": "/dms/api/domo/export/sales_daily.csv",
+      "derivedFrom": [
+        "leads",
+        "test_drives",
+        "deals"
+      ],
+      "function": "server/dms/derive.mjs DERIVED.sales_daily",
+      "columns": [
+        {
+          "name": "date",
+          "type": "date",
+          "description": "Local date",
+          "domoType": "DATE"
+        },
+        {
+          "name": "month",
+          "type": "month",
+          "description": "YYYY-MM",
+          "domoType": "STRING"
+        },
+        {
+          "name": "week",
+          "type": "date",
+          "description": "Monday of the week",
+          "domoType": "DATE"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "description": "Model",
+          "domoType": "STRING"
+        },
+        {
+          "name": "leads",
+          "type": "integer",
+          "description": "New leads",
+          "domoType": "LONG"
+        },
+        {
+          "name": "testDrivesCompleted",
+          "type": "integer",
+          "description": "Completed test drives",
+          "domoType": "LONG"
+        },
+        {
+          "name": "dealsCreated",
+          "type": "integer",
+          "description": "Quotes raised",
+          "domoType": "LONG"
+        },
+        {
+          "name": "contractsSigned",
+          "type": "integer",
+          "description": "Contracts",
+          "domoType": "LONG"
+        },
+        {
+          "name": "unitsDelivered",
+          "type": "integer",
+          "description": "Deliveries (RDA)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "unitsDeliveredFromStock",
+          "type": "integer",
+          "description": "Deliveries fulfilled from stock",
+          "domoType": "LONG"
+        },
+        {
+          "name": "dealsLost",
+          "type": "integer",
+          "description": "Deals lost",
+          "domoType": "LONG"
+        },
+        {
+          "name": "revenue",
+          "type": "integer",
+          "description": "Drive-away of deliveries",
+          "domoType": "LONG"
+        },
+        {
+          "name": "discount",
+          "type": "integer",
+          "description": "Discount + bonus on deliveries",
+          "domoType": "LONG"
+        },
+        {
+          "name": "frontGross",
+          "type": "integer",
+          "description": "Front gross of deliveries",
+          "domoType": "LONG"
+        },
+        {
+          "name": "backGross",
+          "type": "integer",
+          "description": "Back gross of deliveries",
+          "domoType": "LONG"
+        },
+        {
+          "name": "grossProfit",
+          "type": "integer",
+          "description": "Total gross of deliveries",
+          "domoType": "LONG"
+        },
+        {
+          "name": "financeDeals",
+          "type": "integer",
+          "description": "Deliveries with finance",
+          "domoType": "LONG"
+        },
+        {
+          "name": "tradeIns",
+          "type": "integer",
+          "description": "Deliveries with a trade",
+          "domoType": "LONG"
+        }
+      ]
+    },
+    {
+      "name": "stock_ageing_daily",
+      "kind": "derived",
+      "description": "End-of-day stock snapshot per date × site × model (on-lot units only, demonstrators excluded), rebuilt from vehicles.arrivedAt/soldAt.",
+      "primaryKey": [
+        "date",
+        "siteId",
+        "modelId"
+      ],
+      "refresh": "Nightly 02:15 Australia/Sydney, recomputed from the tables (on request via /dms/api/domo/export)",
+      "rowCount": 11177,
+      "file": null,
+      "csv": "/dms/api/domo/export/stock_ageing_daily.csv",
+      "derivedFrom": [
+        "vehicles"
+      ],
+      "function": "server/dms/derive.mjs DERIVED.stock_ageing_daily",
+      "columns": [
+        {
+          "name": "date",
+          "type": "date",
+          "description": "Snapshot date",
+          "domoType": "DATE"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "description": "Model",
+          "domoType": "STRING"
+        },
+        {
+          "name": "unitsOnLot",
+          "type": "integer",
+          "description": "Units on the lot",
+          "domoType": "LONG"
+        },
+        {
+          "name": "avgDaysInStock",
+          "type": "integer",
+          "description": "Mean age",
+          "domoType": "LONG"
+        },
+        {
+          "name": "maxDaysInStock",
+          "type": "integer",
+          "description": "Oldest unit age",
+          "domoType": "LONG"
+        },
+        {
+          "name": "units60Plus",
+          "type": "integer",
+          "description": "Units over 60 days",
+          "domoType": "LONG"
+        },
+        {
+          "name": "units90Plus",
+          "type": "integer",
+          "description": "Units over 90 days",
+          "domoType": "LONG"
+        },
+        {
+          "name": "stockValueLanded",
+          "type": "integer",
+          "description": "Landed cost of units on the lot",
+          "domoType": "LONG"
+        }
+      ]
+    },
+    {
+      "name": "funnel_weekly",
+      "kind": "derived",
+      "description": "Lead cohorts by creation week × site × channel: how many reached each funnel step (by now), plus conversion ratios. Merged duplicate touches are counted separately.",
+      "primaryKey": [
+        "week",
+        "siteId",
+        "channel"
+      ],
+      "refresh": "Nightly 02:15 Australia/Sydney, recomputed from the tables (on request via /dms/api/domo/export)",
+      "rowCount": 1721,
+      "file": null,
+      "csv": "/dms/api/domo/export/funnel_weekly.csv",
+      "derivedFrom": [
+        "leads",
+        "test_drives",
+        "deals"
+      ],
+      "function": "server/dms/derive.mjs DERIVED.funnel_weekly",
+      "columns": [
+        {
+          "name": "week",
+          "type": "date",
+          "description": "Monday of the cohort week",
+          "domoType": "DATE"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "channel",
+          "type": "string",
+          "description": "Lead channel",
+          "domoType": "STRING"
+        },
+        {
+          "name": "leads",
+          "type": "integer",
+          "description": "Leads (excl. duplicates)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "duplicates",
+          "type": "integer",
+          "description": "Merged duplicate touches",
+          "domoType": "LONG"
+        },
+        {
+          "name": "contacted",
+          "type": "integer",
+          "description": "Reached contacted",
+          "domoType": "LONG"
+        },
+        {
+          "name": "qualified",
+          "type": "integer",
+          "description": "Reached qualified",
+          "domoType": "LONG"
+        },
+        {
+          "name": "testDriveBooked",
+          "type": "integer",
+          "description": "Reached test_drive_booked",
+          "domoType": "LONG"
+        },
+        {
+          "name": "testDrivesCompleted",
+          "type": "integer",
+          "description": "Completed a test drive",
+          "domoType": "LONG"
+        },
+        {
+          "name": "quoted",
+          "type": "integer",
+          "description": "Got a quote (deal)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "won",
+          "type": "integer",
+          "description": "Won",
+          "domoType": "LONG"
+        },
+        {
+          "name": "delivered",
+          "type": "integer",
+          "description": "Delivered",
+          "domoType": "LONG"
+        },
+        {
+          "name": "lost",
+          "type": "integer",
+          "description": "Lost",
+          "domoType": "LONG"
+        },
+        {
+          "name": "open",
+          "type": "integer",
+          "description": "Still open",
+          "domoType": "LONG"
+        },
+        {
+          "name": "leadToTestDrive",
+          "type": "number",
+          "description": "testDrivesCompleted ÷ leads",
+          "domoType": "DOUBLE"
+        },
+        {
+          "name": "leadToQuote",
+          "type": "number",
+          "description": "quoted ÷ leads",
+          "domoType": "DOUBLE"
+        },
+        {
+          "name": "leadToWon",
+          "type": "number",
+          "description": "won ÷ leads",
+          "domoType": "DOUBLE"
+        }
+      ]
+    },
+    {
+      "name": "configurator_events",
+      "kind": "derived",
+      "description": "Configurator first-party events: live rows from content/dealer/events.jsonl (origin live) plus sessions reconstructed from configurator leads that predate the event log (origin dms_reconstructed). No personal data.",
+      "primaryKey": [
+        "sid",
+        "at",
+        "type"
+      ],
+      "refresh": "Nightly 02:15 Australia/Sydney, recomputed from the tables (on request via /dms/api/domo/export)",
+      "rowCount": 5364,
+      "file": null,
+      "csv": "/dms/api/domo/export/configurator_events.csv",
+      "derivedFrom": [
+        "events.jsonl",
+        "leads",
+        "test_drives"
+      ],
+      "function": "server/dms/derive.mjs DERIVED.configurator_events",
+      "columns": [
+        {
+          "name": "at",
+          "type": "datetime",
+          "description": "Event time (Sydney)",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "date",
+          "type": "date",
+          "description": "Local date",
+          "domoType": "DATE"
+        },
+        {
+          "name": "sid",
+          "type": "string",
+          "description": "Session id (joins leads.configuratorSessionId)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "description": "finder_answer | finder_result | build_change | offer_view | offer_click | ask | booking | booking_answer",
+          "domoType": "STRING"
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "description": "Model",
+          "domoType": "STRING"
+        },
+        {
+          "name": "gradeId",
+          "type": "string",
+          "description": "Grade",
+          "domoType": "STRING"
+        },
+        {
+          "name": "colourId",
+          "type": "string",
+          "description": "Colour",
+          "domoType": "STRING"
+        },
+        {
+          "name": "unitId",
+          "type": "string",
+          "description": "vehicles.stockNo",
+          "domoType": "STRING"
+        },
+        {
+          "name": "questionId",
+          "type": "string",
+          "description": "Finder/booking question",
+          "domoType": "STRING"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "description": "Answer",
+          "domoType": "STRING"
+        },
+        {
+          "name": "bookingId",
+          "type": "string",
+          "description": "test_drives.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "leadId",
+          "type": "string",
+          "description": "leads.id (reconstructed rows)",
+          "domoType": "STRING"
+        },
+        {
+          "name": "origin",
+          "type": "string",
+          "description": "live | dms_reconstructed",
+          "domoType": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "dealer_signals",
+      "kind": "derived",
+      "description": "Domo Intelligence rows per model (content/domo/dealer_signals.json, read-through) joined to ERP facts and a derived move priority.",
+      "primaryKey": [
+        "model"
+      ],
+      "refresh": "Nightly 02:15 Australia/Sydney, recomputed from the tables (on request via /dms/api/domo/export)",
+      "rowCount": 15,
+      "file": null,
+      "csv": "/dms/api/domo/export/dealer_signals.csv",
+      "derivedFrom": [
+        "dealer_signals.json",
+        "vehicles",
+        "deals"
+      ],
+      "function": "server/dms/derive.mjs DERIVED.dealer_signals",
+      "columns": [
+        {
+          "name": "month",
+          "type": "month",
+          "description": "Signal month",
+          "domoType": "STRING"
+        },
+        {
+          "name": "model",
+          "type": "string",
+          "description": "Model",
+          "domoType": "STRING"
+        },
+        {
+          "name": "unitsInStock",
+          "type": "integer",
+          "description": "Domo: on lot + in transit",
+          "domoType": "LONG"
+        },
+        {
+          "name": "sales90d",
+          "type": "integer",
+          "description": "Domo: retail (from-stock) deliveries, last 90 days",
+          "domoType": "LONG"
+        },
+        {
+          "name": "daysOfSupply",
+          "type": "integer",
+          "description": "Domo: unitsInStock ÷ (sales90d ÷ 90)",
+          "domoType": "LONG"
+        },
+        {
+          "name": "allocationNextMonth",
+          "type": "integer",
+          "description": "Domo: November allocation",
+          "domoType": "LONG"
+        },
+        {
+          "name": "targetGap",
+          "type": "integer",
+          "description": "Domo: units still needed this month",
+          "domoType": "LONG"
+        },
+        {
+          "name": "avgDaysInStock",
+          "type": "integer",
+          "description": "Domo: mean on-lot age",
+          "domoType": "LONG"
+        },
+        {
+          "name": "marginHeadroomAvg",
+          "type": "integer",
+          "description": "Domo: mean approvable incentive",
+          "domoType": "LONG"
+        },
+        {
+          "name": "erpUnitsOnLot",
+          "type": "integer",
+          "description": "ERP on_lot units",
+          "domoType": "LONG"
+        },
+        {
+          "name": "erpUnitsInTransit",
+          "type": "integer",
+          "description": "ERP in_transit units",
+          "domoType": "LONG"
+        },
+        {
+          "name": "erpUnitsInbound",
+          "type": "integer",
+          "description": "ERP ordered + allocated",
+          "domoType": "LONG"
+        },
+        {
+          "name": "erpStockDeliveries90d",
+          "type": "integer",
+          "description": "ERP from-stock deliveries, 90 days",
+          "domoType": "LONG"
+        },
+        {
+          "name": "erpAllDeliveries90d",
+          "type": "integer",
+          "description": "ERP all deliveries, 90 days",
+          "domoType": "LONG"
+        },
+        {
+          "name": "erpDaysOfSupply",
+          "type": "integer",
+          "description": "ERP days of supply",
+          "domoType": "LONG"
+        },
+        {
+          "name": "agedUnits",
+          "type": "integer",
+          "description": "On-lot units over 60 days",
+          "domoType": "LONG"
+        },
+        {
+          "name": "oldestStockNo",
+          "type": "string",
+          "description": "Unit to move first",
+          "domoType": "STRING"
+        },
+        {
+          "name": "openDeals",
+          "type": "integer",
+          "description": "Open deals for the model",
+          "domoType": "LONG"
+        },
+        {
+          "name": "priorityScore",
+          "type": "integer",
+          "description": "Derived move score",
+          "domoType": "LONG"
+        },
+        {
+          "name": "recommendedAction",
+          "type": "string",
+          "description": "Plain-language action",
+          "domoType": "STRING"
+        },
+        {
+          "name": "priorityRank",
+          "type": "integer",
+          "description": "1 = act first",
+          "domoType": "LONG"
+        }
+      ]
+    },
+    {
+      "name": "deal_events",
+      "kind": "derived",
+      "description": "Deal timelines flattened: one row per event with the human note (for activity and stage-duration analysis).",
+      "primaryKey": [
+        "dealId",
+        "at",
+        "type"
+      ],
+      "refresh": "Nightly 02:15 Australia/Sydney, recomputed from the tables (on request via /dms/api/domo/export)",
+      "rowCount": 27806,
+      "file": null,
+      "csv": "/dms/api/domo/export/deal_events.csv",
+      "derivedFrom": [
+        "deals"
+      ],
+      "function": "server/dms/derive.mjs DERIVED.deal_events",
+      "columns": [
+        {
+          "name": "dealId",
+          "type": "string",
+          "description": "deals.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "siteId",
+          "type": "string",
+          "description": "sites.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "salespersonId",
+          "type": "string",
+          "description": "staff.id",
+          "domoType": "STRING"
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "description": "Model",
+          "domoType": "STRING"
+        },
+        {
+          "name": "at",
+          "type": "datetime",
+          "description": "Event time",
+          "domoType": "DATETIME"
+        },
+        {
+          "name": "date",
+          "type": "date",
+          "description": "Local date",
+          "domoType": "DATE"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "description": "created | quote_sent | note | call | stage_change | trade_appraisal | finance_submitted | finance_decision | manager_approval | contract_signed | order_placed | eta_update | delivery_booked | delivered | lost",
+          "domoType": "STRING"
+        },
+        {
+          "name": "staffId",
+          "type": "string",
+          "description": "Who logged it",
+          "domoType": "STRING"
+        },
+        {
+          "name": "note",
+          "type": "string",
+          "description": "Human note",
+          "domoType": "STRING"
+        },
+        {
+          "name": "dealStage",
+          "type": "string",
+          "description": "Current deal stage",
+          "domoType": "STRING"
+        }
+      ]
+    }
+  ]
+}

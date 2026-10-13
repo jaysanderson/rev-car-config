@@ -1,0 +1,175 @@
+{
+  "generatedBy": "scripts/dms-seed.mjs",
+  "seed": "harbourline-dms-v1",
+  "asOf": "2026-10-14T08:00:00+11:00",
+  "historyFrom": "2024-10-15T00:00:00+11:00",
+  "counts": {
+    "sites": 4,
+    "staff": 24,
+    "customers": 3895,
+    "vehicles": 492,
+    "leads": 5748,
+    "test_drives": 2102,
+    "deals": 2068,
+    "trade_ins": 952,
+    "finance_apps": 1378,
+    "promotions": 25,
+    "campaigns": 18,
+    "documents": 60,
+    "targets": 108
+  },
+  "signalsBaseline": [
+    {
+      "model": "rav4",
+      "unitsInStock": 6,
+      "sales90d": 9,
+      "daysOfSupply": 60,
+      "allocationNextMonth": 5,
+      "targetGap": 2,
+      "avgDaysInStock": 52,
+      "marginHeadroomAvg": 1500
+    },
+    {
+      "model": "kluger",
+      "unitsInStock": 2,
+      "sales90d": 3,
+      "daysOfSupply": 60,
+      "allocationNextMonth": 14,
+      "targetGap": 6,
+      "avgDaysInStock": 61,
+      "marginHeadroomAvg": 2400
+    },
+    {
+      "model": "prado",
+      "unitsInStock": 2,
+      "sales90d": 10,
+      "daysOfSupply": 18,
+      "allocationNextMonth": 2,
+      "targetGap": 1,
+      "avgDaysInStock": 28,
+      "marginHeadroomAvg": 0
+    },
+    {
+      "model": "landcruiser-300",
+      "unitsInStock": 1,
+      "sales90d": 3,
+      "daysOfSupply": 30,
+      "allocationNextMonth": 1,
+      "targetGap": 0,
+      "avgDaysInStock": 44,
+      "marginHeadroomAvg": 0
+    },
+    {
+      "model": "hilux",
+      "unitsInStock": 2,
+      "sales90d": 4,
+      "daysOfSupply": 45,
+      "allocationNextMonth": 6,
+      "targetGap": 5,
+      "avgDaysInStock": 59,
+      "marginHeadroomAvg": 1500
+    },
+    {
+      "model": "camry",
+      "unitsInStock": 2,
+      "sales90d": 3,
+      "daysOfSupply": 60,
+      "allocationNextMonth": 3,
+      "targetGap": 1,
+      "avgDaysInStock": 58,
+      "marginHeadroomAvg": 900
+    },
+    {
+      "model": "corolla-cross",
+      "unitsInStock": 2,
+      "sales90d": 8,
+      "daysOfSupply": 23,
+      "allocationNextMonth": 4,
+      "targetGap": 0,
+      "avgDaysInStock": 10,
+      "marginHeadroomAvg": 300
+    },
+    {
+      "model": "yaris-cross",
+      "unitsInStock": 1,
+      "sales90d": 5,
+      "daysOfSupply": 18,
+      "allocationNextMonth": 3,
+      "targetGap": -1,
+      "avgDaysInStock": 15,
+      "marginHeadroomAvg": 200
+    },
+    {
+      "model": "c-hr",
+      "unitsInStock": 1,
+      "sales90d": 1,
+      "daysOfSupply": 90,
+      "allocationNextMonth": 2,
+      "targetGap": 1,
+      "avgDaysInStock": 60,
+      "marginHeadroomAvg": 700
+    },
+    {
+      "model": "bz4x",
+      "unitsInStock": 2,
+      "sales90d": 2,
+      "daysOfSupply": 90,
+      "allocationNextMonth": 2,
+      "targetGap": 2,
+      "avgDaysInStock": 35,
+      "marginHeadroomAvg": 600
+    },
+    {
+      "model": "corolla",
+      "unitsInStock": 1,
+      "sales90d": 4,
+      "daysOfSupply": 23,
+      "allocationNextMonth": 2,
+      "targetGap": 0,
+      "avgDaysInStock": 22,
+      "marginHeadroomAvg": 250
+    },
+    {
+      "model": "fortuner",
+      "unitsInStock": 0,
+      "sales90d": 1,
+      "daysOfSupply": 0,
+      "allocationNextMonth": 1,
+      "targetGap": 1,
+      "avgDaysInStock": 0,
+      "marginHeadroomAvg": 0
+    },
+    {
+      "model": "gr-yaris",
+      "unitsInStock": 0,
+      "sales90d": 1,
+      "daysOfSupply": 0,
+      "allocationNextMonth": 0,
+      "targetGap": 0,
+      "avgDaysInStock": 0,
+      "marginHeadroomAvg": 0
+    },
+    {
+      "model": "gr-corolla",
+      "unitsInStock": 0,
+      "sales90d": 0,
+      "daysOfSupply": 0,
+      "allocationNextMonth": 0,
+      "targetGap": 0,
+      "avgDaysInStock": 0,
+      "marginHeadroomAvg": 0
+    },
+    {
+      "model": "gr86",
+      "unitsInStock": 0,
+      "sales90d": 1,
+      "daysOfSupply": 0,
+      "allocationNextMonth": 1,
+      "targetGap": 0,
+      "avgDaysInStock": 0,
+      "marginHeadroomAvg": 0
+    }
+  ],
+  "liveBookingsImported": 0,
+  "liveEventsSeen": 485
+}
