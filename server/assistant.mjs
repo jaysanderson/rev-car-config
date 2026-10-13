@@ -52,14 +52,16 @@ function buildText(build) {
   if (!build || !build.modelId) return null;
   const m = modelById(build.modelId); if (!m) return null;
   const g = gradeOf(m.id, build.gradeId);
+  // Only ids that resolve in the catalogue reach the prompt (no free text from the client).
+  const packs = (Array.isArray(build.packs) ? build.packs : []).map((p) => packById(p)).filter(Boolean);
   return `CURRENT BUILD in the configurator: ${m.name}${g ? ` ${g.name} (grade id ${g.id}, $${g.price.toLocaleString('en-AU')})` : ''}`
-    + `${build.colourId ? `, colour ${colourById(build.colourId)?.name || build.colourId}` : ''}`
-    + `${build.interiorId ? `, interior ${interiorById(build.interiorId)?.name || build.interiorId}` : ''}`
-    + `${build.packs?.length ? `, packs ${build.packs.map((p) => packById(p)?.name || p).join(', ')}` : ', no accessory packs'}.`
+    + `${colourById(build.colourId) ? `, colour ${colourById(build.colourId).name}` : ''}`
+    + `${interiorById(build.interiorId) ? `, interior ${interiorById(build.interiorId).name}` : ''}`
+    + `${packs.length ? `, packs ${packs.map((p) => p.name).join(', ')}` : ', no accessory packs'}.`
     + ` Available grades for ${m.name}: ${m.grades.map((x) => `${x.id} (${x.name})`).join(', ')}.`;
 }
 
-const finderText = (finder) => (finder?.answers?.length ? `FINDER ANSWERS: ${finder.answers.map((a) => `${a.id}=${a.label || a.value}`).join('; ')}.` : null);
+const finderText = (finder) => { const a = cleanAnswers(finder?.answers); return a.length ? `FINDER ANSWERS: ${a.map((x) => `${x.id}=${x.value}`).join('; ')}.` : null; };
 
 /** Validate LLM actions against the catalogue + stock. */
 function validActions(actions, { build, stockData, modelsInPlay }) {
@@ -89,9 +91,11 @@ const citationsFrom = (sources, n = 4, modelsInPlay = []) => [...sources]
 }));
 
 function historyFor(history) {
+  let budget = 4000; // total characters of prior turns sent upstream
   return (Array.isArray(history) ? history : []).slice(-8)
-    .filter((h) => h && typeof h.text === 'string' && h.text.trim())
-    .map((h) => ({ author: h.role === 'user' ? 'USER' : 'NUCLIA', text: h.text.slice(0, 2000) }));
+    .filter((h) => h && (h.role === 'user' || h.role === 'assistant') && typeof h.text === 'string' && h.text.trim())
+    .reverse().map((h) => { const text = h.text.slice(0, Math.max(0, Math.min(1000, budget))); budget -= text.length; return { author: h.role === 'user' ? 'USER' : 'NUCLIA', text }; })
+    .filter((h) => h.text).reverse();
 }
 
 /** Deterministic answer when ARAG is unavailable or has no context. */
@@ -203,7 +207,7 @@ const RECS_SCHEMA = {
 
 function cleanAnswers(answers) {
   return (Array.isArray(answers) ? answers : []).filter((a) => a && fallback.VOCAB.includes(a.id) && a.value != null)
-    .slice(0, 5).map((a) => ({ id: a.id, value: String(a.value).slice(0, 60), label: String(a.label || a.value).slice(0, 80) }));
+    .slice(0, 5).map((a) => ({ id: a.id, value: String(a.value).toLowerCase().replace(/[^a-z0-9-]+/g, '-').slice(0, 40), label: String(a.label || a.value).replace(/[\r\n]+/g, ' ').slice(0, 80) }));
 }
 
 function validQuestion(q, answers) {
@@ -225,8 +229,8 @@ function validRecs(json, stockData) {
     recs.push({
       modelId: m.id, gradeId: g.id,
       fit: Math.max(0, Math.min(100, Math.round(Number(r.fit) || 0))),
-      why: (Array.isArray(r.why) ? r.why : []).map(String).filter(Boolean).slice(0, 4),
-      watch: (Array.isArray(r.watch) ? r.watch : []).map(String).filter(Boolean).slice(0, 3),
+      why: (Array.isArray(r.why) ? r.why : []).map((x) => String(x).slice(0, 200)).filter(Boolean).slice(0, 4),
+      watch: (Array.isArray(r.watch) ? r.watch : []).map((x) => String(x).slice(0, 200)).filter(Boolean).slice(0, 3),
       availability: availability(stockData, m.id),
     });
     if (recs.length === 3) break;
@@ -238,7 +242,7 @@ export async function finderNext(body, stockData) {
   const answers = cleanAnswers(body?.answers);
   const done = answers.length >= 5;
   const trace = [{ kind: 'domo', label: `Domo stock: ${stockData.stock_by_site.length} units across 4 sites checked for availability` }];
-  const answered = answers.length ? answers.map((a, i) => `${i + 1}. ${a.id} = ${a.label} (${a.value})`).join('\n') : '(none yet)';
+  const answered = answers.length ? answers.map((a, i) => `${i + 1}. ${a.id} = ${a.value}`).join('\n') : '(none yet)'; // canonical ids only: client labels never reach the system prompt
   const extra = [`CATALOGUE (id | name | body | powertrain | seats | braked tow | from price | grades | tags):\n${catalogSummary()}`, stockSummary(stockData)];
 
   if (arag.configured()) {

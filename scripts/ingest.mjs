@@ -97,7 +97,7 @@ function catalogMarkdown(cat) {
 }
 
 async function req(path, { method = 'GET', body } = {}) {
-  const r = await fetch(`${kbUrl}${path}`, { method, headers: H, body: body ? JSON.stringify(body) : undefined });
+  const r = await fetch(`${kbUrl}${path}`, { method, headers: H, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(30000) });
   const text = await r.text(); let json; try { json = JSON.parse(text); } catch { json = text; }
   return { ok: r.ok, status: r.status, json };
 }

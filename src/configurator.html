@@ -774,14 +774,20 @@ body.drawer-open .drawer{transform:none}
       if(a.power==='ev'){if(m.powertrain==='ev'){s+=5;why.push('Full electric, around 500 km of range');}else s-=1;}
       if(a.power==='hybrid'){if(m.powertrain==='hybrid'){s+=2;why.push('Hybrid: '+m.powertrainLabel);}else if(m.powertrain==='ev')s-=1;}
       if(a.power==='diesel'){if(m.powertrain==='diesel'){s+=2;why.push(m.powertrainLabel);}if(m.powertrain==='ev')s-=4;}
-      let grade=m.grades[0];if(a.budget){const [lo,hi]=BUDGET[a.budget];const fits=m.grades.filter(g=>g.price>=lo*0.9&&g.price<=hi);if(fits.length){s+=2;grade=fits[fits.length-1];why.push(grade.name+' fits your budget at '+fmt(grade.price));}else if(m.grades[0].price>hi){s-=4;watch.push('Starts above your budget at '+fmt(m.grades[0].price));}else{grade=m.grades[m.grades.length-1];}}
+      let grade=m.grades[0];if(a.budget){const [lo,hi]=BUDGET[a.budget];const fits=m.grades.filter(g=>g.price>=lo*0.9&&g.price<=hi);if(fits.length){s+=2;grade=fits[fits.length-1];why.push(grade.name+(grade.price<lo?' comes in under your budget at ':' fits your budget at ')+fmt(grade.price));}else if(m.grades[0].price>hi){s-=4;watch.push('Starts above your budget at '+fmt(m.grades[0].price));}else{grade=m.grades[m.grades.length-1];}}
       const av=availabilityOf(m.id);if(a.when==='now'){if(av.onLot){s+=1;why.push(av.onLot+' on the lot now');}else watch.push('Nothing on the lot today: '+av.soonest);}if(a.when==='summer'&&(av.onLot||av.nearby||av.inTransit))s+=1;
       if(a.use==='commute'&&has('performance'))s-=2;if(m.seats<5&&(a.use==='family'))s-=3;
       out.push({modelId:m.id,gradeId:grade.id,score:s,why:[...new Set(why)].slice(0,3),watch:[...new Set(watch)].slice(0,2),availability:av});});
     out.sort((x,y)=>y.score-x.score);const recs=out.slice(0,3).map((r,i)=>Object.assign(r,{fit:Math.max(40,Math.min(97,52+r.score*4-i*3))}));const top=by(CAT.models,recs[0].modelId);
     return{done:true,summary:`Based on your five answers, the ${top.name} is the best fit. Here is why, and two alternatives worth a look.`,recommendations:recs,trace:[{kind:'kb',label:'KB · finder-guide'},{kind:'kb',label:'KB · spec sheets, towing guide'},{kind:'domo',label:'Domo · stock_by_site'},{kind:'domo',label:'Domo · order_bank_eta'}]};}
-  async function finderNext(){let res=null;if(API){try{const r=await fetch('/api/finder/next',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({answers:finder.answers})});if(r.ok)res=await r.json();}catch(e){}}
-    return res&&(res.question||res.done)?res:localNext(finder.answers);}
+  // The agent takes several seconds per question, so once a question is on screen we prefetch the next one for every option.
+  const finderCache=new Map();
+  function fetchNext(answers){const key=JSON.stringify(answers.map(a=>[a.id,a.value]));if(finderCache.has(key))return finderCache.get(key);
+    const p=(async()=>{let res=null;if(API){try{const r=await fetch('/api/finder/next',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({answers})});if(r.ok)res=await r.json();}catch(e){}}
+      return res&&(res.question||res.done)?res:localNext(answers);})();
+    finderCache.set(key,p);p.catch(()=>finderCache.delete(key));return p;}
+  function finderNext(){return fetchNext(finder.answers.slice());}
+  function prefetchOptions(q){if(!API)return;q.options.slice(0,4).forEach((o,i)=>setTimeout(()=>fetchNext(finder.answers.concat({id:q.id,value:o.id,label:o.label})),150*i));}
   let finderOpen=false;
   function openFinder(){finderOpen=true;$('stageView').style.display='none';const v=$('finderView');v.hidden=false;renderFinderStep();v.scrollIntoView({behavior:'smooth',block:'start'});}
   function closeFinder(){finderOpen=false;showStage();}
@@ -790,7 +796,7 @@ body.drawer-open .drawer{transform:none}
     v.querySelector('#finderClose').onclick=closeFinder;
     const steps=n<5?['Reading finder guide and spec sheets','Checking what the last answer rules out','Checking stock for the shortlist','Writing question '+(n+1)]:['Scoring every model against your answers','Matching grades to your budget','Checking stock and factory ETAs','Ranking the top three'];
     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const box=v.querySelector('#fwork');steps.forEach((s,i)=>setTimeout(()=>box&&box.appendChild(el('div','step',s)),reduce?0:220*i));
-    const res=await finderNext();await new Promise(r=>setTimeout(r,reduce?0:Math.max(0,220*steps.length+200)));
+    const t0=Date.now();const res=await finderNext();await new Promise(r=>setTimeout(r,reduce?0:Math.max(0,220*steps.length+200-(Date.now()-t0))));
     if(res.done){finder.done=true;finder.recs=res.recommendations;finder.summary=res.summary;renderFinderResults(res);}else renderFinderQuestion(res);}
   function answersChips(){return finder.answers.map((a,i)=>`<span class="chip" data-back="${i}" title="Change this answer">${esc(a.label)}</span>`).join('');}
   function renderFinderQuestion(res){const v=$('finderView');const q=res.question;const n=res.step-1;
@@ -802,6 +808,7 @@ body.drawer-open .drawer{transform:none}
       <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
     v.querySelector('#finderClose').onclick=closeFinder;const bk=v.querySelector('#finderBack');if(bk)bk.onclick=()=>{finder.answers.pop();renderFinderStep();};
     v.querySelectorAll('.fopt').forEach(b=>b.onclick=()=>{finder.answers.push({id:q.id,value:b.dataset.opt,label:b.dataset.label});renderFinderStep();});
+    prefetchOptions(q);
     v.querySelectorAll('[data-back]').forEach(c=>c.onclick=()=>{finder.answers=finder.answers.slice(0,+c.dataset.back);renderFinderStep();});}
   function renderFinderResults(res){const v=$('finderView');
     v.innerHTML=`<div class="fhead"><div><div class="kick">Find the right car · your matches</div><h2>${esc(res.summary||'Your best matches')}</h2></div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div>
@@ -815,7 +822,7 @@ body.drawer-open .drawer{transform:none}
       <div class="fnav"><div class="answers">${answersChips()}</div><button class="btn ghost sm" id="finderReset">Start over</button></div>
       <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">${API?'ARAG · /ask · answer_json_schema':'local rule engine (offline) · same JSON contract'}</span></div>
       <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
-    v.querySelector('#finderClose').onclick=closeFinder;v.querySelector('#finderReset').onclick=()=>{finder.answers=[];finder.done=false;finder.recs=null;renderFinderStep();};
+    v.querySelector('#finderClose').onclick=closeFinder;v.querySelector('#finderReset').onclick=()=>{finder.answers=[];finder.done=false;finder.recs=null;finderCache.clear();renderFinderStep();};
     v.querySelectorAll('[data-back]').forEach(c=>c.onclick=()=>{finder.answers=finder.answers.slice(0,+c.dataset.back);finder.done=false;renderFinderStep();});
     v.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>{const [mid,gid]=b.dataset.rec.split(':');cfg.model=mid;cfg.grade=gid;const real=units().filter(u=>u.model===mid&&u.grade===gid).sort((a,b)=>(a.transit?2:a.site==='par'?0:1)-(b.transit?2:b.site==='par'?0:1))[0];if(real){cfg.colour=real.colour;cfg.interior=real.interior;cfg.packs=(real.packs||[]).slice();}const a=Object.fromEntries(finder.answers.map(x=>[x.id,x.value]));if((a.towing||a.use==='tow')&&by(CAT.models,mid).accessories.includes('tow')&&!cfg.packs.includes('tow'))cfg.packs.push('tow');normalise();closeFinder();update();
       const m=by(CAT.models,mid),g=by(m.grades,gid);toast('Now configuring the '+m.name+' '+g.name);
