@@ -1,0 +1,1036 @@
+<title>Harbourline Toyota Configurator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an app shell in the Progress Agentic RAG kit (band, header, three scrolling panes). Build rail left, the car on an ink stage with live availability and offers in the middle, the assistant right. Tokens mirror arag-ui.css. */
+:root{
+  --ink-950:#00123C; --ink-900:#00216B; --ink-800:#0C2D7A; --ink-700:#1C3F95;
+  --brand-50:#EEF1FD; --brand-100:#DCECFF; --brand-200:#C9D9EE; --brand-400:#5777EA; --brand-500:#4B4BF7; --brand-600:#2B2BB2; --brand-700:#00216B;
+  --accent-300:#90EF8E; --accent-400:#00D364; --accent-500:#00B563; --accent-fg:#00663A; --accent-soft:#CDFFCA;
+  --warn-fg:#6B4E00; --warn-bg:#FFF3C2; --danger-fg:#8C1F2E; --danger-bg:#FFE3E7; --info-fg:#0B4A6F; --info-bg:#DFF3FF;
+  --surface:#F4FAFF; --raised:#FFFFFF; --border:#C9D9EE; --text:#101828; --muted:#55627A; --subtle:#8892B0; --hairline:#EEF1FD;
+  --green:#5CE500; --green-ink:#00123C;
+  --radius:8px; --radius-lg:12px; --shadow:0 1px 2px rgba(0,18,60,.06),0 4px 16px rgba(0,18,60,.06); --focus:0 0 0 3px rgba(75,75,247,.35);
+  --band-h:44px; --head-h:58px;
+  --stage-glow:rgba(87,119,234,.55);
+  --font:"Inter",Arial,sans-serif; --mono:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --surface:#0B1220; --raised:#121A2B; --border:#26324A; --text:#E7ECF5; --muted:#9FB0CC; --subtle:#6F7D99; --hairline:#1C2A4A;
+  --brand-50:#16213A; --brand-100:#1C2A4A; --brand-200:#26324A; --brand-600:#5777EA; --brand-700:#7D95F2;
+  --accent-fg:#90EF8E; --accent-soft:#0F3D2A; --warn-fg:#FFD66B; --warn-bg:#3D2F00; --danger-fg:#FFB3BF; --danger-bg:#4A1622; --info-fg:#9FDCFF; --info-bg:#0F2F42;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.35); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --surface:#0B1220; --raised:#121A2B; --border:#26324A; --text:#E7ECF5; --muted:#9FB0CC; --subtle:#6F7D99; --hairline:#1C2A4A;
+  --brand-50:#16213A; --brand-100:#1C2A4A; --brand-200:#26324A; --brand-600:#5777EA; --brand-700:#7D95F2;
+  --accent-fg:#90EF8E; --accent-soft:#0F3D2A; --warn-fg:#FFD66B; --warn-bg:#3D2F00; --danger-fg:#FFB3BF; --danger-bg:#4A1622; --info-fg:#9FDCFF; --info-bg:#0F2F42;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.35); color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--surface);color:var(--text);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.012em;line-height:1.2;text-wrap:balance}
+p{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:disabled{cursor:default}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:none;box-shadow:var(--focus)}
+.num{font-variant-numeric:tabular-nums}
+.label{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--mono)}
+.card{background:var(--raised);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:var(--radius);border:1px solid transparent;font:500 .9rem var(--font);background:var(--brand-600);color:#fff;white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
+.btn:hover{background:var(--brand-700)}
+.btn.secondary{background:var(--raised);color:var(--brand-600);border-color:var(--brand-600)}
+.btn.secondary:hover{background:var(--brand-50)}
+.btn.ghost{background:transparent;color:var(--muted);border-color:var(--border)}
+.btn.ghost:hover{background:var(--brand-50);color:var(--text)}
+.btn.on-dark{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+.btn.on-dark:hover{background:rgba(255,255,255,.12)}
+.btn.sm{padding:4px 10px;font-size:.8rem}
+.btn.accent{background:var(--accent-500);color:#fff}
+.btn.accent:hover{background:var(--accent-fg)}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;font-size:.74rem;font-weight:600;background:var(--brand-50);color:var(--brand-600);border:1px solid transparent;white-space:nowrap}
+.chip.domo{background:var(--info-bg);color:var(--info-fg)}
+.chip.kb{background:var(--brand-50);color:var(--brand-600)}
+.chip.dms{background:var(--hairline);color:var(--muted)}
+.chip.good{background:var(--accent-soft);color:var(--accent-fg)}
+.chip.warn{background:var(--warn-bg);color:var(--warn-fg)}
+.chip.proto{background:var(--warn-bg);color:var(--warn-fg);border-color:rgba(107,78,0,.25)}
+
+/* band */
+.band{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;display:flex;align-items:center;gap:10px;height:var(--band-h);padding:0 16px;background:var(--ink-950);color:#fff;border-bottom:2px solid var(--green)}
+.band .wordmark img{height:18px;width:auto;display:block}
+.band .spacer{margin-left:auto}
+.band a,.band button.lnk{color:rgba(255,255,255,.82);font-size:.8rem;white-space:nowrap;padding:6px 8px;border-radius:6px;text-decoration:none}
+.band a:hover,.band button.lnk:hover{color:#fff;background:rgba(255,255,255,.1)}
+.band .proto{display:inline-flex;align-items:center;gap:8px;height:24px;padding:0 10px 0 8px;border-radius:999px;background:var(--warn-bg);color:var(--warn-fg);font-size:.72rem;font-weight:700;white-space:nowrap}
+.band .proto i{width:8px;height:8px;border-radius:50%;background:var(--warn-fg)}
+.band .proto span{font-weight:500;opacity:.9}
+.seg{display:inline-flex;padding:2px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(255,255,255,.08)}
+.seg button{font-size:.76rem;font-weight:600;color:rgba(255,255,255,.75);padding:3px 11px;border-radius:999px}
+.seg button.on{background:#fff;color:var(--ink-950)}
+.band .toggle{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;color:rgba(255,255,255,.82);padding:5px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.25)}
+.band .toggle i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
+.band .toggle.on{background:#fff;color:var(--ink-950);border-color:#fff}
+.band .toggle.on i{background:var(--accent-500)}
+@media (max-width:900px){.band .proto span,.band .hide-sm{display:none}}
+
+/* product header */
+.phead{position:sticky;top:calc(var(--band-h) + env(safe-area-inset-top,0px));z-index:30;height:var(--head-h);background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:18px;padding:0 20px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .phead{background:rgba(18,26,43,.92)}}
+:root[data-theme="dark"] .phead{background:rgba(18,26,43,.92)}
+.phead .dealer{display:flex;align-items:center;gap:10px;min-width:0}
+.phead .dealer .mark{width:30px;height:30px;border-radius:8px;background:var(--ink-950);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px;letter-spacing:.02em;flex:none}
+.phead .dealer b{font-weight:700;font-size:.95rem;display:block;line-height:1.15}
+.phead .dealer span{font-size:.76rem;color:var(--muted);display:block;white-space:nowrap}
+.steps{display:flex;gap:4px;margin-left:8px;overflow-x:auto;scrollbar-width:none}
+.steps button{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:.82rem;font-weight:500;color:var(--muted);white-space:nowrap}
+.steps button i{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);display:grid;place-items:center;font-size:.68rem;font-weight:700;font-style:normal;color:var(--muted)}
+.steps button.on{background:var(--brand-50);color:var(--brand-600)}
+.steps button.on i{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.steps button.done i{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--accent-fg)}
+.phead .actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+@media (max-width:1100px){.steps{display:none}}
+@media (max-width:640px){.phead .actions .hide-sm{display:none}}
+
+/* workspace */
+.pagewrap{container:ws / inline-size;transition:padding-right .35s cubic-bezier(.2,.8,.2,1)}
+@media (min-width:960px){body.drawer-open .pagewrap{padding-right:50vw}}
+.ws{display:grid;gap:16px;padding:16px;grid-template-columns:minmax(0,1fr)}
+.pane{min-width:0}
+.pane.build{order:2}.pane.stage{order:1}.pane.assist{order:3}
+@container ws (min-width:1180px){
+  .ws{grid-template-columns:330px minmax(0,1fr) 380px;height:calc(100vh - var(--band-h) - var(--head-h));height:calc(100dvh - var(--band-h) - var(--head-h));align-items:stretch}
+  .pane{overflow-y:auto;min-height:0;scrollbar-width:thin}
+  .pane.build{order:1}.pane.stage{order:2}.pane.assist{order:3}
+  .pane.build>.card,.pane.assist>.card{min-height:100%}
+  .pane.assist>.card{height:100%}
+}
+@container ws (min-width:760px) and (max-width:1179px){
+  .ws{grid-template-columns:minmax(0,1fr) 360px;align-items:start}
+  .pane.stage{grid-column:1/-1}.pane.build{order:2}.pane.assist{order:3;position:sticky;top:calc(var(--band-h) + var(--head-h) + 12px)}
+}
+
+/* build pane */
+.build .card{display:flex;flex-direction:column}
+.bhead{position:sticky;top:0;z-index:2;background:var(--raised);padding:12px 16px 8px;border-bottom:1px solid var(--hairline);display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.bhead h3{font-size:.86rem;font-weight:700}
+.bhead .sub{font-size:.74rem;color:var(--muted)}
+.bsec{border-bottom:1px solid var(--border)}
+.bsec:last-of-type{border-bottom:0}
+.blist{padding:10px 12px 14px;display:grid;gap:6px}
+.opt{display:grid;grid-template-columns:18px 1fr auto;gap:2px 10px;align-items:center;text-align:left;padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius);background:var(--raised);transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--brand-400)}
+.opt.on{border-color:var(--brand-600);background:var(--brand-50);box-shadow:inset 0 0 0 1px var(--brand-600)}
+.opt .rad{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border);display:grid;place-items:center}
+.opt.on .rad{border-color:var(--brand-600)}
+.opt.on .rad::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--brand-600)}
+.opt .box{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);display:grid;place-items:center}
+.opt.on .box{background:var(--brand-600);border-color:var(--brand-600)}
+.opt.on .box::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px)}
+.opt .n{font-weight:600;font-size:.88rem}
+.opt .p{font-family:var(--mono);font-size:.76rem;color:var(--muted);text-align:right}
+.opt .d{grid-column:2/-1;font-size:.78rem;color:var(--muted);line-height:1.35}
+.opt .stock{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:2px 8px;font-size:.7rem;color:var(--muted);font-family:var(--mono);margin-top:3px}
+.opt .stock span{display:inline-flex;align-items:center;gap:4px}
+.sd{width:6px;height:6px;border-radius:50%;flex:none}
+.sd.here{background:var(--accent-500)}.sd.near{background:#E8A317}.sd.none{background:transparent;border:1.5px solid var(--subtle)}
+.opt:disabled{opacity:.45}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 12px 14px}
+.sw{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 2px 7px;border-radius:var(--radius);border:1px solid transparent}
+.sw:hover{border-color:var(--border)}
+.sw.on{border-color:var(--brand-600);background:var(--brand-50)}
+.sw .c{width:36px;height:36px;border-radius:50%;border:1px solid rgba(0,0,0,.15);box-shadow:inset -5px -7px 12px rgba(0,0,0,.28),inset 5px 7px 10px rgba(255,255,255,.35)}
+.sw.on .c{outline:2px solid var(--brand-600);outline-offset:2px}
+.sw .l{font-size:.68rem;line-height:1.15;text-align:center;font-weight:500}
+.sw .s{font-size:.62rem;color:var(--muted);font-family:var(--mono);display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.bfoot{position:sticky;bottom:0;z-index:2;margin-top:auto;background:var(--raised);border-top:1px solid var(--border);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.bfoot .tot{display:flex;justify-content:space-between;align-items:baseline}
+.bfoot .tot b{font-size:1.25rem;font-weight:800;letter-spacing:-.02em}
+.bfoot .tot span{font-size:.74rem;color:var(--muted)}
+.bfoot .row{display:flex;gap:8px}
+.bfoot .row .btn{flex:1}
+.ribbon{margin:10px 12px 0;padding:9px 11px;border-radius:var(--radius);background:var(--accent-soft);color:var(--accent-fg);font-size:.78rem;display:flex;align-items:center;gap:8px;line-height:1.3}
+.ribbon b{font-weight:700}
+.ribbon button{margin-left:auto;font-weight:700;white-space:nowrap;text-decoration:underline}
+.finderlink{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 12px 12px;padding:10px 12px;border-radius:var(--radius);background:linear-gradient(135deg,var(--ink-900),var(--brand-600));color:#fff}
+.finderlink b{font-size:.84rem;display:block}
+.finderlink span{font-size:.74rem;opacity:.8}
+
+/* stage pane */
+.stage{display:flex;flex-direction:column;gap:16px}
+.hero{background:radial-gradient(70% 90% at 85% 0%,var(--stage-glow),transparent 60%),radial-gradient(45% 60% at 0% 100%,rgba(0,211,100,.18),transparent 60%),linear-gradient(180deg,var(--ink-900),var(--ink-950));color:#fff;border-radius:var(--radius-lg);padding:22px 26px 18px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.hero .titles{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.hero .kick{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-300)}
+.hero h1{font-size:clamp(26px,3vw,38px);font-weight:800;margin-top:4px;letter-spacing:-.02em}
+.hero .spec{color:rgba(255,255,255,.72);margin-top:4px;font-size:.9rem}
+.hero .site{display:flex;gap:8px;align-items:center;font-size:.8rem;color:rgba(255,255,255,.72);margin-top:8px;flex-wrap:wrap}
+.hero .site b{color:#fff;font-weight:600}
+.price{text-align:right}
+.price .big{font-size:clamp(24px,2.6vw,34px);font-weight:800;letter-spacing:-.02em}
+.price .sm{font-size:.76rem;color:rgba(255,255,255,.72)}
+.carwrap{margin:4px auto 0;max-width:720px;width:100%}
+.carwrap svg{width:100%;height:auto;display:block}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;border-top:1px solid rgba(255,255,255,.14);padding-top:12px}
+.fact .k{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.fact .v{font-weight:700;font-size:1rem;margin-top:2px;line-height:1.2}
+.fact .v.good{color:var(--accent-300)}
+@media (max-width:520px){.facts{grid-template-columns:1fr 1fr}.fact:last-child{grid-column:1/-1}}
+.hero .ann.kb,.hero .ann.dms,.hero .ann.domo{background:rgba(255,255,255,.14);color:#fff}
+
+.avail{padding:18px 20px}
+.avail .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.avail h2{font-size:1.1rem}
+.avail .sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;color:var(--muted);white-space:nowrap;font-family:var(--mono)}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--accent-500);box-shadow:0 0 0 3px rgba(0,181,99,.2)}
+.ways{display:grid;gap:8px}
+.way{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--raised);align-items:start}
+.way.hot{border-color:var(--accent-500);background:var(--accent-soft)}
+.way.nudge{border-style:dashed}
+.way .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.way .t{font-weight:700;font-size:.95rem}
+.way .d{font-size:.82rem;color:var(--muted);line-height:1.45}
+.way.hot .d{color:var(--text)}
+.way .act{grid-column:2;grid-row:1/span 2;display:flex;flex-direction:column;align-items:flex-end;gap:8px;justify-content:space-between;height:100%}
+.way .pr{font-weight:800;font-size:1rem;white-space:nowrap}
+.way .pr s{color:var(--muted);font-weight:500;font-size:.8rem;margin-right:6px}
+@media (max-width:560px){.way{grid-template-columns:1fr}.way .act{grid-column:1;grid-row:auto;flex-direction:row;align-items:center;margin-top:4px}}
+
+/* offers strip (Domo-driven internal ads) */
+.offers{padding:16px 20px 18px}
+.offers .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.offers h2{font-size:.95rem}
+.offers .sub{font-size:.76rem;color:var(--muted)}
+.otiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.otile{display:flex;flex-direction:column;gap:6px;padding:12px 12px 10px;border-radius:var(--radius-lg);background:linear-gradient(160deg,var(--ink-900),var(--ink-950));color:#fff;text-align:left;position:relative;overflow:hidden;border:1px solid transparent;transition:transform .15s,border-color .15s}
+.otile:hover{transform:translateY(-1px);border-color:var(--brand-400)}
+.otile svg{width:72%;height:auto;display:block;margin:0 auto -4px}
+.otile .ok{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-300)}
+.otile .on{font-weight:700;font-size:.92rem;line-height:1.2}
+.otile .od{font-size:.74rem;color:rgba(255,255,255,.7)}
+.otile .op{display:flex;align-items:baseline;gap:6px;margin-top:2px}
+.otile .op b{font-size:1.05rem;font-weight:800}
+.otile .op s{font-size:.74rem;color:rgba(255,255,255,.5)}
+.otile .op em{font-style:normal;font-size:.7rem;font-weight:700;color:var(--green-ink);background:var(--green);padding:1px 6px;border-radius:999px}
+
+
+/* for you rows */
+.foryou{padding:16px 20px 6px}
+.foryou .head{margin-bottom:6px}
+.foryou h2{font-size:.95rem}
+.foryou .sub{font-size:.76rem;color:var(--muted)}
+.fy{padding:10px 0 12px;border-top:1px solid var(--hairline)}
+.fyh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.fyh h3{font-size:.92rem}
+.fyh .sub{font-size:.74rem;color:var(--muted)}
+.fyrow{display:flex;gap:10px;overflow-x:auto;scrollbar-width:thin;padding-bottom:6px;scroll-snap-type:x mandatory}
+.fycard{flex:0 0 190px;scroll-snap-align:start;text-align:left;padding:10px 12px 10px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--raised);display:flex;flex-direction:column;gap:3px;transition:border-color .15s,box-shadow .15s}
+.fycard:hover{border-color:var(--brand-600);box-shadow:var(--shadow)}
+.fycard svg{width:100%;height:auto;display:block;margin:-6px 0 -8px}
+.fycard b{font-size:.86rem}
+.fycard span{font-size:.74rem;color:var(--muted);line-height:1.35}
+.fycard .cite{font-size:.66rem;font-family:var(--mono);color:var(--brand-600);font-style:normal;margin-top:2px}
+
+/* annotations */
+.ann{display:none;font-family:var(--mono);font-size:.64rem;padding:2px 6px;border-radius:5px;align-items:center;white-space:nowrap;vertical-align:middle;font-weight:500}
+.ann.domo{background:var(--info-bg);color:var(--info-fg)}
+.ann.kb{background:var(--brand-50);color:var(--brand-600)}
+.ann.dms{background:var(--hairline);color:var(--muted)}
+body.reveal .ann{display:inline-flex}
+body.reveal .way,body.reveal .otile,body.reveal .sw.on,body.reveal .opt.on{outline:1px dashed var(--info-fg);outline-offset:3px}
+.annrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.json{display:none;margin-top:12px;background:var(--ink-950);color:#CFE3FF;font-family:var(--mono);font-size:.7rem;line-height:1.5;padding:12px 14px;border-radius:var(--radius);white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto}
+body.reveal .json{display:block}
+
+/* finder */
+.finder{padding:22px 24px 24px;display:flex;flex-direction:column;gap:16px}
+.finder .fhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.finder .kick{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-600)}
+.finder h2{font-size:1.35rem;margin-top:4px}
+.finder .why{color:var(--muted);font-size:.86rem;margin-top:4px;max-width:70ch}
+.dots{display:flex;gap:6px;align-items:center}
+.dots i{width:28px;height:6px;border-radius:999px;background:var(--border)}
+.dots i.done{background:var(--accent-500)}.dots i.cur{background:var(--brand-600)}
+.fopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.fopt{text-align:left;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--raised);display:flex;flex-direction:column;gap:4px;transition:border-color .15s,box-shadow .15s}
+.fopt:hover{border-color:var(--brand-600);box-shadow:var(--shadow)}
+.fopt b{font-size:.95rem}
+.fopt span{font-size:.8rem;color:var(--muted);line-height:1.35}
+.fopt .note{font-size:.72rem;color:var(--info-fg);background:var(--info-bg);padding:2px 7px;border-radius:5px;align-self:flex-start;margin-top:4px;font-family:var(--mono)}
+.answers{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.answers .chip{background:var(--hairline);color:var(--text)}
+.fnav{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px}
+.fwork{font-family:var(--mono);font-size:.76rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;padding:8px 12px;border-left:2px solid var(--brand-600)}
+.fwork .step{display:flex;gap:8px;align-items:center;opacity:0;transform:translateX(-4px);animation:stepin .3s forwards}
+.fwork .step::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand-600)}
+.recs{display:grid;gap:10px}
+.rec{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:6px 18px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--raised);align-items:start}
+.rec.best{border-color:var(--accent-500);background:var(--accent-soft)}
+.rec .pic{grid-row:1/span 3;align-self:center}
+.rec .pic svg{width:100%;height:auto;display:block}
+.rec .rh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rec .rh b{font-size:1.05rem}
+.rec .fit{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.rec ul{margin:0;padding-left:16px;font-size:.82rem;color:var(--text);display:flex;flex-direction:column;gap:2px}
+.rec ul.watch{color:var(--muted)}
+.rec .ravail{font-size:.78rem;color:var(--muted);font-family:var(--mono)}
+.rec .ract{grid-column:3;grid-row:1/span 3;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+@media (max-width:700px){.rec{grid-template-columns:1fr}.rec .pic{grid-row:auto;max-width:200px}.rec .ract{grid-column:1;grid-row:auto;flex-direction:row}}
+
+/* assistant */
+.assist .card{display:flex;flex-direction:column;min-height:520px;overflow:hidden}
+.ahead{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--brand-50)}
+.ahead .av{width:34px;height:34px;border-radius:9px;background:var(--brand-600);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}
+.ahead .who{min-width:0}
+.ahead .who b{display:block;font-weight:700;font-size:.9rem}
+.ahead .who span{display:block;font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ahead .live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:999px;background:var(--green);color:var(--green-ink);font-size:.69rem;font-weight:700;white-space:nowrap}
+.thread{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:280px;max-height:60vh}
+@container ws (min-width:1180px){.thread{max-height:none}}
+.msg{max-width:92%;display:flex;flex-direction:column;gap:6px}
+.msg.a{align-self:flex-start}
+.msg.u{align-self:flex-end;align-items:flex-end}
+.bub{padding:8px 12px;border-radius:10px;font-size:.9rem;line-height:1.5}
+.msg.a .bub{background:var(--brand-50);color:var(--text)}
+.msg.u .bub{background:var(--brand-600);color:#fff}
+.msg.sys{align-self:center;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.trace{display:flex;flex-wrap:wrap;gap:5px}
+.tr{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border);background:var(--raised);border-radius:6px;padding:1px 6px;font-size:.7rem;font-weight:600;font-family:var(--mono)}
+.tr.kb{color:var(--brand-600)}.tr.domo{color:var(--info-fg)}
+.tr::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8}
+.acts{display:flex;flex-wrap:wrap;gap:6px}
+.working{font-family:var(--mono);font-size:.74rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;padding:8px 12px;border-left:2px solid var(--brand-600)}
+.working .step{display:flex;gap:8px;align-items:center;opacity:0;transform:translateX(-4px);animation:stepin .3s forwards}
+.working .step::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand-600)}
+@keyframes stepin{to{opacity:1;transform:none}}
+.chips{padding:10px 14px 0;display:flex;flex-wrap:wrap;gap:6px}
+.qchip{border:1px solid var(--brand-200);border-radius:999px;padding:5px 11px;font-size:.78rem;background:var(--brand-50);color:var(--brand-700);font-weight:500}
+.qchip:hover{border-color:var(--brand-600);background:var(--raised);color:var(--brand-600)}
+.langnote{font-size:.68rem;color:var(--muted);padding:6px 14px 0;font-family:var(--mono)}
+.ask{display:flex;gap:8px;padding:10px 14px 14px}
+.ask input{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--raised);color:var(--text);font:inherit}
+.ask input:focus{border-color:var(--brand-500);outline:none;box-shadow:var(--focus)}
+
+/* highlight */
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(75,75,247,.55)}70%{box-shadow:0 0 0 14px rgba(75,75,247,0)}100%{box-shadow:0 0 0 0 rgba(75,75,247,0)}}
+.hl{animation:pulse 1.2s ease-out 2;position:relative;z-index:2}
+
+/* drawer */
+.backdrop{position:fixed;inset:0;background:rgba(0,18,60,.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:79}
+body.drawer-open .backdrop{opacity:1;pointer-events:auto}
+@media (min-width:960px){body.drawer-open .backdrop{pointer-events:none;opacity:0}}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:100vw;background:var(--raised);border-left:1px solid var(--border);box-shadow:-20px 0 60px rgba(0,18,60,.18);transform:translateX(102%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:80;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+@media (min-width:960px){.drawer{width:50vw}}
+body.drawer-open .drawer{transform:none}
+.dhead{padding:14px 22px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.dhead .kick{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-600)}
+.dhead h2{font-size:1.3rem;margin-top:2px}
+.dhead .meta{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:4px;display:flex;gap:10px;flex-wrap:wrap}
+.dhead .close{margin-left:auto;width:34px;height:34px;border-radius:var(--radius);border:1px solid var(--border);display:grid;place-items:center;font-size:18px;line-height:1;flex:none}
+.dnav{display:flex;gap:6px;overflow-x:auto;padding:10px 22px;border-bottom:1px solid var(--border);scrollbar-width:thin}
+.dnav button{white-space:nowrap;font-size:.78rem;padding:4px 10px;border-radius:999px;border:1px solid var(--brand-200);color:var(--brand-700);background:var(--brand-50);font-weight:500}
+.dnav button:hover{border-color:var(--brand-600);color:var(--brand-600);background:var(--raised)}
+.dbody{flex:1;overflow-y:auto;padding:22px 22px 60px;scroll-behavior:smooth}
+.dsec{padding-bottom:26px;margin-bottom:26px;border-bottom:1px solid var(--border);scroll-margin-top:12px}
+.dsec:last-child{border-bottom:0}
+.dsec .n{font-family:var(--mono);font-size:.7rem;color:var(--brand-600);letter-spacing:.08em;text-transform:uppercase}
+.dsec h3{font-size:1.15rem;margin-top:4px;font-weight:800}
+.dsec .lede{color:var(--muted);margin-top:6px;max-width:68ch;font-size:.9rem}
+.sys{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.dgrid{display:grid;gap:12px;grid-template-columns:1fr;margin-top:14px}
+@media (min-width:1500px){.dgrid.two{grid-template-columns:1fr 1fr}}
+.dbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px}
+.dbox h4{font-size:.7rem;font-family:var(--mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.dbox p,.dbox li{font-size:.86rem;line-height:1.5}
+.dbox ol,.dbox ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.dbox .sees{font-size:.92rem;font-weight:500}
+.contract{font-family:var(--mono);font-size:.74rem;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.contract b{color:var(--info-fg);font-weight:500}
+.contract i{color:var(--brand-600);font-style:normal}
+.contract u{color:var(--muted);text-decoration:none}
+.diagram{margin-top:14px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--raised);padding:12px;overflow-x:auto}
+.diagram svg{display:block;width:100%;height:auto;min-width:420px}
+.drow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.changelog{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.cl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.86rem}
+.cl .v{font-family:var(--mono);font-size:.74rem;color:var(--brand-600);white-space:nowrap}
+.cl .dt{font-family:var(--mono);font-size:.68rem;color:var(--muted);grid-column:1}
+.cl ul{grid-column:2;grid-row:1/span 2;margin:0;padding-left:18px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:12px}
+.lg{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+.lg i{width:12px;height:12px;border-radius:3px;flex:none;margin-top:4px}
+.lg b{font-size:.82rem;display:block}
+.lg span{font-size:.76rem;color:var(--muted);line-height:1.35}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink-950);color:#fff;padding:10px 16px;border-radius:var(--radius);font-size:.88rem;opacity:0;pointer-events:none;transition:.25s;z-index:90;max-width:calc(100vw - 32px);box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="band">
+  <a class="wordmark" href="https://www.progress.com/agentic-rag" target="_blank" rel="noopener" aria-label="Progress Agentic RAG"><img src="data:image/svg+xml;base64,PHN2ZyBpZD0iR3VpZGVzX0luZm9ybWF0aW9uIiBkYXRhLW5hbWU9Ikd1aWRlcyAmYW1wO2FtcDsgSW5mb3JtYXRpb24iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDUyNS4yNSA2MSI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogI2ZmZjsKICAgICAgfQoKICAgICAgLmNscy0yIHsKICAgICAgICBmaWxsOiAjNWNlNTAwOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8Zz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI3OS45NywxNC43MWgzLjE0bDEzLjY3LDM0Ljg0aC0zLjIzbC0zLjg3LTEwLjA5aC0xNi4yN2wtMy44NywxMC4wOWgtMy4xOWwxMy42Mi0zNC44NFpNMjg4LjY1LDM2LjgxbC03LjEtMTguNTctNy4xLDE4LjU3aDE0LjIxWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMzA0LjE0LDU5LjUyYy0xLjQ5LS4zNC0zLS45Mi00LjUzLTEuNzR2LTIuNzRjMS41NC44OCwzLjAxLDEuNSw0LjQzLDEuODYsMS40Mi4zNiwyLjk1LjU0LDQuNTguNTQsMy4yMywwLDUuNjMtLjc5LDcuMTgtMi4zOCwxLjU1LTEuNTgsMi4zMy00LjE2LDIuMzMtNy43MnYtMi42OWMtLjg1LDEuNTQtMi4wMywyLjc5LTMuNTMsMy43Ny0xLjUuOTgtMy4yOCwxLjQ3LTUuMzQsMS40Ny0yLjE5LDAtNC4xMi0uNTYtNS43OC0xLjY5LTEuNjctMS4xMy0yLjk2LTIuNjktMy45LTQuNy0uOTMtMi4wMS0xLjQtNC4zLTEuNC02Ljg4cy40Ny00Ljg4LDEuNC02Ljg4Yy45My0yLjAxLDIuMjMtMy41NywzLjktNC42OCwxLjY3LTEuMTEsMy41OS0xLjY3LDUuNzgtMS42N3M0LjA3LjU2LDUuNjQsMS42N2MxLjU3LDEuMTEsMi43NiwyLjUzLDMuNTgsNC4yNnYtNS41NGgyLjU1djIzLjUyYzAsOC40OS00LjAyLDEyLjc0LTEyLjA1LDEyLjc0LTEuNzMsMC0zLjM0LS4xNy00LjgzLS41MVpNMzEzLjg5LDQ2LjAyYzEuMjktLjgyLDIuMzItMi4wMiwzLjA5LTMuNjMuNzctMS42LDEuMTUtMy41MywxLjE1LTUuNzhzLS4zOC00LjE4LTEuMTUtNS43OGMtLjc3LTEuNi0xLjgtMi44MS0zLjA5LTMuNjMtMS4yOS0uODItMi43LTEuMjMtNC4yNC0xLjIzLTEuNjcsMC0zLjE0LjQzLTQuNDMsMS4zLTEuMjkuODctMi4zLDIuMS0zLjA0LDMuNy0uNzMsMS42LTEuMSwzLjQ4LTEuMSw1LjYzcy4zNyw0LjA0LDEuMSw1LjY0Yy43NCwxLjYsMS43NSwyLjgzLDMuMDQsMy43LDEuMjkuODcsMi43NywxLjMsNC40MywxLjMsMS41NCwwLDIuOTUtLjQxLDQuMjQtMS4yM1oiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTMzMi4wNCw0OC4zN2MtMS45My0xLjA4LTMuNDQtMi42MS00LjUzLTQuNjEtMS4wOS0xLjk5LTEuNjQtNC4zMS0xLjY0LTYuOTZzLjQ4LTUuMDgsMS40NS03LjFjLjk2LTIuMDMsMi4zMS0zLjU4LDQuMDQtNC42OCwxLjczLTEuMDksMy42OS0xLjY0LDUuODgtMS42NCwzLjM2LDAsNS45NywxLjA5LDcuODIsMy4yNiwxLjg1LDIuMTcsMi43Nyw1LjI3LDIuNzcsOS4yOSwwLC43OC0uMDIsMS4zNy0uMDUsMS43NmgtMTkuMDFjLjE2LDIuOTcsMS4xOCw1LjMzLDMuMDQsNy4wOCwxLjg2LDEuNzUsNC4yNiwyLjYyLDcuMiwyLjYyLDEuMzcsMCwyLjc0LS4xOCw0LjEyLS41NCwxLjM3LS4zNiwyLjUzLS44MywzLjQ4LTEuNDJ2Mi43NGMtMS4wMS41Ni0yLjIyLDEtMy42MywxLjMyLTEuNC4zMy0yLjg2LjQ5LTQuMzYuNDktMi40NSwwLTQuNjQtLjU0LTYuNTctMS42MlpNMzQ1LjAzLDM1LjQ4YzAtMy4xNC0uNjctNS41MS0yLjAxLTcuMTMtMS4zNC0xLjYyLTMuMjMtMi40My01LjY4LTIuNDNzLTQuNDMuODctNS45NSwyLjZjLTEuNTIsMS43My0yLjM5LDQuMDUtMi42Miw2Ljk2aDE2LjI3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMzUyLjcyLDIzLjc3aDIuNnY0LjU2Yy43NS0xLjU3LDEuODgtMi43OCwzLjM4LTMuNjUsMS41LS44NywzLjMyLTEuMyw1LjQ0LTEuMywyLjc4LDAsNC45NC43OSw2LjQ5LDIuMzgsMS41NSwxLjU4LDIuMzMsMy44MywyLjMzLDYuNzR2MTcuMDVoLTIuODR2LTE2Ljc2YzAtMi4xOS0uNTUtMy44Ny0xLjY0LTUuMDUtMS4xLTEuMTgtMi42OS0xLjc2LTQuNzgtMS43Ni0xLjcsMC0zLjE3LjM4LTQuNDEsMS4xMy0xLjI0Ljc1LTIuMTcsMS43MS0yLjc5LDIuODktLjYyLDEuMTgtLjkzLDIuNDItLjkzLDMuNzJ2MTUuODNoLTIuODR2LTI1Ljc3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMzgyLjA4LDQ4LjAzYy0xLjEzLTEuMzEtMS42OS0zLjIzLTEuNjktNS43OHYtMTUuOTJoLTQuN3YtMi41NWg0Ljd2LTYuNDJoMi44NHY2LjQyaDguMjN2Mi41NWgtOC4yM3YxNS40M2MwLDEuOS4zNywzLjMyLDEuMSw0LjI2LjczLjk1LDEuOCwxLjQyLDMuMjEsMS40MiwxLjIxLDAsMi41Mi0uMzEsMy45Mi0uOTN2Mi42Yy0xLjYzLjU5LTMuMTguODgtNC42NS44OC0yLjAzLDAtMy42LS42NS00LjczLTEuOTZaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0zOTUuMzgsMTguNjhjLS4zOS0uMzktLjU5LS45My0uNTktMS42MnMuMi0xLjIzLjU5LTEuNjRjLjM5LS40MS45LS42MSwxLjUyLS42MS41OSwwLDEuMDkuMiwxLjQ5LjYxLjQxLjQxLjYxLjk2LjYxLDEuNjRzLS4yLDEuMjMtLjYxLDEuNjJjLS40MS4zOS0uOTEuNTktMS40OS41OS0uNjIsMC0xLjEzLS4yLTEuNTItLjU5Wk0zOTUuNDgsMjMuNzdoMi44NHYyNS43N2gtMi44NHYtMjUuNzdaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00MDguOTMsNDguNDljLTEuNzgtMS0zLjItMi41LTQuMjYtNC41MS0xLjA2LTIuMDEtMS41OS00LjQzLTEuNTktNy4yOHMuNTYtNS4zNiwxLjY3LTcuMzVjMS4xMS0xLjk5LDIuNTgtMy40OSw0LjQxLTQuNDgsMS44My0xLDMuODItMS40OSw1Ljk4LTEuNDksMi42MSwwLDQuODguNjIsNi44MSwxLjg2djIuNzRjLTEuOC0xLjM0LTMuOTItMi4wMS02LjM3LTIuMDEtMi44NCwwLTUuMTUuOTMtNi45MywyLjc5LTEuNzgsMS44Ni0yLjY3LDQuNTEtMi42Nyw3Ljk0cy44NSw2LjAyLDIuNTUsNy44NmMxLjcsMS44NSwzLjk0LDIuNzcsNi43MSwyLjc3czQuOTYtLjY3LDYuOTYtMi4wMXYyLjg0Yy0yLjA5LDEuMjEtNC41NiwxLjgxLTcuNCwxLjgxLTIuMTIsMC00LjA4LS41LTUuODYtMS40OVoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTQzOC4zMSwxNC43MWgxMS4zN2MyLjE5LDAsNC4yMy4zNCw2LjEyLDEuMDNzMy40NSwxLjgsNC42NiwzLjMzYzEuMjEsMS41NCwxLjgxLDMuNTEsMS44MSw1LjkzLDAsMi44OC0uOTMsNS4yLTIuNzksNi45OC0xLjg2LDEuNzgtNC4zNSwyLjg1LTcuNDUsMy4yMWwxMC43OCwxNC4zNmgtMy41OGwtMTAuNjMtMTQuMjFoLTcuNHYxNC4yMWgtMi44OVYxNC43MVpNNDQ5LjgyLDMyLjY5YzIuNjUsMCw0Ljg5LS42Miw2Ljc0LTEuODYsMS44NS0xLjI0LDIuNzctMy4xOSwyLjc3LTUuODNzLS45My00LjQ4LTIuNzktNS42OGMtMS44Ni0xLjIxLTQuMTItMS44MS02Ljc2LTEuODFoLTguNTd2MTUuMTloOC42MloiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTQ3OS42OSwxNC43MWgzLjE0bDEzLjY3LDM0Ljg0aC0zLjIzbC0zLjg3LTEwLjA5aC0xNi4yN2wtMy44NywxMC4wOWgtMy4xOWwxMy42Mi0zNC44NFpNNDg4LjM3LDM2LjgxbC03LjEtMTguNTctNy4xLDE4LjU3aDE0LjIxWiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNTA1LjQ1LDQ3LjkzYy0yLjQ3LTEuMzQtNC40My0zLjM0LTUuODgtNi0xLjQ1LTIuNjYtMi4xOC01Ljg3LTIuMTgtOS42M3MuNzQtNi45OSwyLjIzLTkuN2MxLjQ5LTIuNzEsMy40NS00Ljc3LDUuOS02LjE3LDIuNDUtMS40LDUuMTEtMi4xMSw3Ljk5LTIuMTEsMy40NiwwLDYuNDUuNzgsOC45NywyLjM1djIuODRjLTIuNDItMS42My01LjI5LTIuNDUtOC42Mi0yLjQ1LTIuNDUsMC00LjcuNTktNi43NiwxLjc2LTIuMDYsMS4xOC0zLjcsMi45MS00LjkyLDUuMTktMS4yMywyLjI5LTEuODQsNS4wNS0xLjg0LDguMjhzLjYyLDUuOTcsMS44Niw4LjIxYzEuMjQsMi4yNCwyLjg3LDMuOSw0LjksNSwyLjAyLDEuMSw0LjIzLDEuNjQsNi42MSwxLjY0czQuNjctLjUxLDYuNTctMS41MnYtMTIuMmgtOC45MnYtMi43NGgxMS43NnYxNi44NmMtMi44MSwxLjYtNS45NiwyLjQtOS40NiwyLjQtMy4wMSwwLTUuNzQtLjY3LTguMjEtMi4wMVoiLz4KICA8L2c+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik03NS4wMiwxMy45OWgtMTMuMTN2MzUuNTZoNS44M3YtMTMuOTZoNy4zNWM3Ljk2LDAsMTIuMzQtMy44OSwxMi4zNC0xMC45NSwwLTMuMi0xLjIxLTEwLjY2LTEyLjM5LTEwLjY2TTgxLjQ4LDI0Ljc1YzAsNC4wMS0yLjA4LDUuNjUtNy4xOCw1LjY1aC02LjU4di0xMS4xNWg3LjM1YzQuMzIsMCw2LjQxLDEuOCw2LjQxLDUuNU0xMDQuNzUsMjMuNjRsLjQ0LjIxLS45OSw1LjI2LS42OC0uMjFjLS41Ni0uMTctMS4xMi0uMjYtMS42OC0uMjYtNS40NCwwLTUuODksNC4zNC01Ljg5LDkuNTh2MTEuMzNoLTUuNHYtMjYuMTFoNS4wNnYzLjE1YzEuMzgtMi4xMiwzLjA0LTMuMjEsNS4yMy0zLjQ4LDEuNDQtLjE3LDIuODQuMDMsMy45LjU0TTExOC4wMSwyMi45MWMtNC4yNSwwLTcuNjUsMS42Mi05Ljg0LDQuNjgtMi4zLDMuMjEtMi42NCw2Ljk5LTIuNjQsOC45NSwwLDguMjUsNC45LDEzLjU4LDEyLjQ4LDEzLjU4LDkuMjEsMCwxMi40OC03LjQyLDEyLjQ4LTEzLjc4LDAtMy42Ni0xLjA4LTYuOTctMy4wNS05LjM0LTIuMjItMi42OC01LjQ5LTQuMS05LjQzLTQuMU0xMTguMDEsNDUuMzFjLTQuMjIsMC02Ljg1LTMuMzYtNi44NS04Ljc2czIuNjItOC44Niw2Ljg1LTguODYsNi44OSwzLjQ0LDYuODksOC43Ni0yLjY0LDguODYtNi44OSw4Ljg2TTE3NS44NCwyMy42NGwuNDQuMjEtLjk5LDUuMjYtLjY4LS4yMWMtLjU1LS4xNy0xLjEyLS4yNi0xLjY4LS4yNi01LjQ0LDAtNS44OCw0LjM0LTUuODgsOS41OHYxMS4zM2gtNS40di0yNi4xMWg1LjA2djMuMTVjMS4zOC0yLjEyLDMuMDQtMy4yMSw1LjIzLTMuNDgsMS40NC0uMTcsMi44My4wMywzLjkuNTRNMTk1LjIyLDQxLjE4bC0uMS4yOWMtMS4xMywzLjIxLTMuODIsMy44OC01Ljg4LDMuODgtNC4wOCwwLTYuNzEtMi43MS02Ljk3LTcuMTFoMTguNDZsLjA3LS41MWMuMDgtLjYuMDctMS40Ni4wNi0yLjA4LDAtLjE3LDAtLjMyLDAtLjQ3LS4yNy03LjMxLTUuMDMtMTIuMjItMTEuODYtMTIuMjItMy45OSwwLTcuMjUsMS41Ny05LjQ1LDQuNTMtMS43OCwyLjQtMi43OSw1LjcyLTIuNzksOS4xLDAsOC4wNyw1LjAyLDEzLjQ5LDEyLjQ4LDEzLjQ5LDUuNzgsMCw5Ljc1LTIuOTQsMTEuMi04LjI2bC4xNy0uNjRoLTUuNFpNMTgyLjQ1LDMzLjU1Yy40NS0zLjYyLDIuOTMtNS45Miw2LjQ1LTUuOTIsMi42OSwwLDUuODcsMS41Niw2LjMyLDUuOTJoLTEyLjc3Wk0xNTEuODIsMjUuNjNjLTEuNzQtMS44MS00LjA3LTIuNzItNi45NC0yLjcyLTcuOTIsMC0xMS41Miw2Ljk3LTExLjUyLDEzLjQ0czMuNTYsMTMuMzQsMTEuNTIsMTMuMzRjMi42NiwwLDUuMDMtLjk4LDYuNzQtMi43My0uMDIsMS4xNS0uMDUsMi4yNS0uMDgsMi43MS0uMjksNC4zMS0yLjM2LDYuMzEtNi41MSw2LjMxLTIuMjYsMC00Ljg1LS44LTUuMzUtMy4wNWwtLjExLS41aC01LjMycy4wOS43MS4wOS43MWMuNTYsNC42LDQuNiw3LjQ2LDEwLjU1LDcuNDYsNS4yMiwwLDguOTMtMS45NywxMC43NC01LjY4Ljg3LTEuNzksMS4zMS00LjQsMS4zMS03Ljc2di0yMy43NGgtNS4xMXYyLjE5Wk0xNDUuMjEsNDQuODdjLTEuODksMC02LjI3LS44Ni02LjI3LTguNzYsMC01LjIsMi40Ni04LjQzLDYuNDEtOC40MywzLjA2LDAsNi4zMiwyLjIxLDYuMzIsOC40MywwLDUuNDktMi40Miw4Ljc2LTYuNDYsOC43Nk0yMjUuNzgsNDEuNjljMCw0LjE1LTMuNDUsOC4zNC0xMS4xNSw4LjM0LTYuODEsMC0xMC44Ni0yLjk1LTExLjQxLTguM2wtLjA2LS41NWg1LjMxbC4wOC40Yy42NSwzLjIyLDMuNzIsMy44OSw2LjE4LDMuODksMi42OSwwLDUuNTctLjg3LDUuNTctMy4zLDAtMS4yMy0uOC0yLjExLTIuMzgtMi42LS45NC0uMjgtMi4wOS0uNi0zLjMxLS45NC0yLjEtLjU5LTQuMjctMS4yLTUuNjEtMS42Ni0zLjMxLTEuMTktNS4yMS0zLjUtNS4yMS02LjM0LDAtNS4yNyw1LjEzLTcuNjIsMTAuMi03LjYyLDYuNzksMCwxMC4zMSwyLjU2LDEwLjc1LDcuODJsLjA0LjU0aC01LjIzcy0uMDctLjQyLS4wNy0uNDJjLS41My0zLjAzLTMuNTQtMy40OC01LjI5LTMuNDgtMS41MSwwLTUuMDIuMjctNS4wMiwyLjc3LDAsMS4xNC45NywxLjk3LDIuOTcsMi41NS42LjE3LDEuNDkuNCwyLjUxLjY2LDIuMTMuNTUsNC43OCwxLjI0LDYuMTIsMS43LDMuMzMsMS4xNyw1LjAxLDMuMzcsNS4wMSw2LjU0TTI1MC43LDQxLjY5YzAsNC4xNS0zLjQ1LDguMzQtMTEuMTUsOC4zNC02LjgxLDAtMTAuODctMi45NS0xMS40MS04LjNsLS4wNi0uNTVoNS4zMWwuMDguNGMuNjUsMy4yMiwzLjcyLDMuODksNi4xOCwzLjg5LDIuNjksMCw1LjU3LS44Nyw1LjU3LTMuMywwLTEuMjMtLjgtMi4xMS0yLjM4LTIuNi0uOTQtLjI4LTIuMDktLjYtMy4zMS0uOTQtMi4xLS41OS00LjI3LTEuMi01LjYxLTEuNjYtMy4zMS0xLjE5LTUuMjEtMy41LTUuMjEtNi4zNCwwLTUuMjcsNS4xMi03LjYyLDEwLjItNy42Miw2Ljc5LDAsMTAuMywyLjU2LDEwLjc1LDcuODJsLjA1LjU0aC01LjIzcy0uMDctLjQyLS4wNy0uNDJjLS41My0zLjAzLTMuNTQtMy40OC01LjI5LTMuNDgtMS41MSwwLTUuMDIuMjctNS4wMiwyLjc3LDAsMS4xNC45NywxLjk3LDIuOTcsMi41NS42LjE3LDEuNDguNCwyLjUxLjY2LDIuMTMuNTUsNC43OCwxLjI0LDYuMTIsMS43LDMuMzIsMS4xNyw1LjAxLDMuMzcsNS4wMSw2LjU0Ii8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0yNTMuOTcsMjYuMjRjLTIuMDEsMC0zLjY4LTEuNTctMy42OC0zLjcyczEuNjctMy43MiwzLjY4LTMuNzIsMy42OCwxLjU2LDMuNjgsMy43Mi0xLjY3LDMuNzItMy42OCwzLjcyTTI1My45NywxOS40M2MtMS42NywwLTMuMDEsMS4yOC0zLjAxLDMuMDlzMS4zNCwzLjA5LDMuMDEsMy4wOSwzLjAxLTEuMjgsMy4wMS0zLjA5LTEuMzQtMy4wOS0zLjAxLTMuMDlNMjUzLjU1LDIzLjIxdjEuMjRoLTEuMXYtMy45aDEuODNjLjg3LDAsMS40NC41MSwxLjQ0LDEuMzYsMCwuNjEtLjI4LDEuMDItLjc1LDEuMThsLjg5LDEuMzZoLTEuMjJsLS43NS0xLjI0aC0uMzVaTTI1NC4xNiwyMS40NmgtLjYxdi44N2guNjFjLjMzLDAsLjUxLS4xNi41MS0uNDNzLS4xOC0uNDUtLjUxLS40NSIvPgogIDwvZz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00OC40OSw0MC43OGMwLC41Ny0uNCwxLjI3LS45LDEuNTVsLTEyLjQ5LDcuMjF2LTI3LjgzTDExLDcuODEsMjMuNS42Yy40OS0uMjksMS4zLS4yOSwxLjgsMGwyMy4yLDEzLjM5djI2Ljc5Wk0yOS43NCwyNC44MUwxMy4yNCwxNS4yOGMtLjQ5LS4yOC0xLjMtLjI4LTEuNzksMEwuMjksMjEuNzJsMTcuNCwxMC4wNXYyMC4xczExLjE1LTYuNDQsMTEuMTUtNi40NGMuNDktLjI5LjktLjk4LjktMS41NXYtMTkuMDZaTS4yOSw0MS44MmwxMi4wNCw2Ljk2di0xMy45MUwuMjksNDEuODJaIi8+Cjwvc3ZnPg==" alt="Progress Agentic RAG"></a>
+  <span class="proto"><i></i>Prototype <span>· demo data · not a production system</span></span>
+  <span class="spacer"></span>
+  <button class="lnk hide-sm" id="openDrawer" aria-controls="drawer" aria-expanded="false">How it works</button>
+  <div class="seg" id="langs" aria-label="Assistant language"><button class="on" data-lang="en">EN</button><button data-lang="zh">中文</button><button data-lang="vi">Tiếng Việt</button></div>
+  <button class="toggle" id="reveal" aria-pressed="false"><i></i><span class="lbl">Data layer</span></button>
+</header>
+
+<div class="phead">
+  <div class="dealer"><span class="mark">HL</span><div><b>Harbourline Toyota</b><span>Parramatta · configurator</span></div></div>
+  <nav class="steps" id="steps" aria-label="Build steps"></nav>
+  <div class="actions">
+    <button class="btn secondary sm" id="openFinder">Find the right car</button>
+    <button class="btn sm hide-sm" data-toast="Reservation placed against this build (prototype)">Reserve this build</button>
+  </div>
+</div>
+
+<div class="pagewrap">
+<main class="ws">
+
+  <!-- BUILD -->
+  <aside class="pane build" id="f-build"><div class="card">
+    <div class="ribbon" id="ribbon" hidden></div>
+    <div class="bsec" id="f-models">
+      <div class="bhead"><h3>Model</h3><span class="sub">drive-away from <span class="ann kb">KB · price_list</span></span></div>
+      <div class="blist" id="models"></div>
+      <button class="finderlink" id="openFinder2"><div><b>Not sure which one?</b><span>Five quick questions, then we recommend</span></div><span class="btn on-dark sm">Start</span></button>
+    </div>
+    <div class="bsec" id="f-grades">
+      <div class="bhead"><h3>Grade</h3><span class="sub">cars on the lot <span class="ann domo">Domo</span></span></div>
+      <div class="blist" id="grades"></div>
+    </div>
+    <div class="bsec" id="f-colours">
+      <div class="bhead"><h3>Colour</h3><span class="sub">who has it <span class="ann domo">Domo</span></span></div>
+      <div class="swatches" id="colours"></div>
+    </div>
+    <div class="bsec" id="f-interiors">
+      <div class="bhead"><h3>Interior</h3></div>
+      <div class="blist" id="interiors"></div>
+    </div>
+    <div class="bsec" id="f-packs">
+      <div class="bhead"><h3>Genuine accessories</h3><span class="sub">dealer-fitted</span></div>
+      <div class="blist" id="packs"></div>
+    </div>
+    <div class="bfoot" id="f-cta">
+      <div class="tot"><span>Drive-away, NSW <span class="ann kb">KB · price_list</span></span><b class="num" id="price2">$0</b></div>
+      <div class="row"><button class="btn ghost" data-toast="Test drive booked at Parramatta (prototype)">Test drive</button><button class="btn" data-toast="Reservation placed against this build (prototype)">Reserve</button></div>
+      <span class="ann dms">DMS · write-back: lead + VIN + site</span>
+    </div>
+  </div></aside>
+
+  <!-- STAGE -->
+  <section class="pane stage">
+    <div id="stageView" class="stage" style="display:contents">
+      <div class="hero" id="f-stage">
+        <div class="titles">
+          <div>
+            <div class="kick" id="kick">Toyota · mid-size SUV · hybrid</div>
+            <h1 id="title">RAV4 Cruiser</h1>
+            <p class="spec" id="spec"></p>
+            <div class="site"><b>Harbourline Toyota Parramatta</b><span>·</span><span>nearest to you</span><span class="ann dms">DMS · site_config</span></div>
+          </div>
+          <div class="price"><div class="big num" id="price">$0</div><div class="sm">drive-away, NSW, private buyer <span class="ann kb">KB · price_list</span></div></div>
+        </div>
+        <div class="carwrap" id="carwrap"></div>
+        <div class="facts" id="facts"></div>
+      </div>
+      <div class="card avail" id="f-avail">
+        <div class="head">
+          <div><h2>How you can have this car</h2><div class="sub">Checked against stock at Parramatta and three sites within 35 km</div></div>
+          <span class="status"><i></i>stock refreshed 6 min ago <span class="ann domo">Domo · stock_by_site</span></span>
+        </div>
+        <div class="ways" id="ways"></div>
+      </div>
+      <div class="card offers" id="f-offers">
+        <div class="head"><div><h2>This week at Harbourline</h2><div class="sub">Cars we can do a better price on right now, chosen for the kind of car you are looking at <span class="ann domo">Domo · aged_stock_actions · placement: stage_strip</span></div></div><span class="status"><i></i>ranked 6 min ago</span></div>
+        <div class="otiles" id="otiles"></div>
+      </div>
+      <div class="card foryou" id="f-foryou">
+        <div class="head"><div><h2>For you</h2><div class="sub">Rows built from what you have told us, matched against the knowledge box <span class="ann kb">ARAG · /find · labels model/*</span></div></div></div>
+        <div id="foryou"></div>
+      </div>
+    </div>
+    <div id="finderView" class="card finder" hidden></div>
+  </section>
+
+  <!-- ASSISTANT -->
+  <section class="pane assist" id="f-assist"><div class="card">
+    <div class="ahead">
+      <div class="av">HL</div>
+      <div class="who"><b>Harbourline assistant</b><span>Progress Agentic RAG · spec sheets, pricing, finance terms and live stock</span></div>
+      <div class="live">LIVE</div>
+    </div>
+    <div class="thread" id="thread"></div>
+    <div class="chips" id="chips"></div>
+    <div class="langnote" id="langnote"></div>
+    <form class="ask" id="ask"><input id="askin" type="text" autocomplete="off"><button type="submit" class="btn" id="askbtn">Ask</button></form>
+  </div></section>
+
+</main>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer" aria-label="How it works" aria-hidden="true">
+  <div class="dhead">
+    <div><div class="kick">How it works</div><h2>Every feature, what powers it</h2><div class="meta"><span id="dver"></span><span id="dupd"></span></div></div>
+    <button class="close" id="closeDrawer" aria-label="Close">×</button>
+  </div>
+  <nav class="dnav" id="dnav"></nav>
+  <div class="dbody" id="dbody"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const fmt=n=>'$'+Math.round(n).toLocaleString('en-AU');
+  const by=(arr,id)=>(arr||[]).find(x=>x.id===id);
+  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e;}
+
+  // ======================= DATA =======================
+  // The build script inlines content/catalog.json and content/domo/*.json into window.__DATA__.
+  // Until then (or on a host with no server) the compact fallback below keeps the page working.
+  const FALLBACK_CATALOG={generated:'2026-10-13',currency:'AUD',priceNote:'Drive-away NSW estimates, illustrative only',
+    colours:[{id:'glacier-white',name:'Glacier White',hex:'#E8EBEE',price:0},{id:'frosted-white',name:'Frosted White',hex:'#F2F1EA',price:675},{id:'silver-sky',name:'Silver Sky',hex:'#B9BEC6',price:675},{id:'graphite',name:'Graphite',hex:'#5B6066',price:675},{id:'eclipse-black',name:'Eclipse Black',hex:'#15171A',price:675},{id:'saturn-blue',name:'Saturn Blue',hex:'#1F3B7A',price:675},{id:'atomic-rush',name:'Atomic Rush',hex:'#A51C24',price:675},{id:'jungle-khaki',name:'Jungle Khaki',hex:'#6F7557',price:675}],
+    interiors:[{id:'fabric-black',name:'Black fabric',price:0},{id:'leather-black',name:'Black leather-accented',price:1900},{id:'leather-tan',name:'Saddle tan leather-accented',price:1900}],
+    accessories:[{id:'tow',name:'Towing Pack',price:1650,desc:'Genuine tow bar, wiring harness, trailer wiring'},{id:'protection',name:'Protection Pack',price:890,desc:'Bonnet protector, weathershields, floor mats, boot liner'},{id:'roof',name:'Roof & Cargo Pack',price:1290,desc:'Roof racks, cargo barrier, cargo liner'}],
+    models:[
+      {id:'yaris-cross',name:'Yaris Cross',body:'suv-small',bodyLabel:'Small SUV',silhouette:'hatch',powertrain:'hybrid',powertrainLabel:'1.5L hybrid',seats:5,towKg:400,fromPrice:30990,tags:['commute','city','efficiency'],blurb:'City-sized hybrid SUV that is easy to park and cheap to run.',colours:['glacier-white','frosted-white','silver-sky','graphite','eclipse-black','atomic-rush'],interiors:['fabric-black','leather-black'],accessories:['protection','roof'],grades:[{id:'gx',name:'GX',price:30990,leather:false,highlights:['Toyota Safety Sense','8-inch display','Apple CarPlay and Android Auto']},{id:'gxl',name:'GXL',price:33990,leather:false,highlights:['Blind spot monitor','Keyless entry','16-inch alloys']},{id:'urban',name:'Urban',price:38490,leather:true,highlights:['Leather-accented seats','Head-up display','Panoramic view monitor']}]},
+      {id:'corolla',name:'Corolla',body:'hatch',bodyLabel:'Small hatch',silhouette:'hatch',powertrain:'hybrid',powertrainLabel:'1.8L or 2.0L hybrid',seats:5,towKg:450,fromPrice:34990,tags:['commute','city','efficiency'],blurb:'The hybrid hatch that does the daily grind on very little fuel.',colours:['glacier-white','frosted-white','silver-sky','graphite','eclipse-black','atomic-rush'],interiors:['fabric-black','leather-black'],accessories:['protection','roof'],grades:[{id:'ascent-sport',name:'Ascent Sport',price:34990,leather:false,highlights:['Toyota Safety Sense','10.5-inch display']},{id:'sx',name:'SX',price:38490,leather:false,highlights:['Wireless charging','Keyless entry','Dual-zone climate']},{id:'zr',name:'ZR',price:42990,leather:true,highlights:['Leather-accented seats','JBL audio','Head-up display']}]},
+      {id:'corolla-cross',name:'Corolla Cross',body:'suv-small',bodyLabel:'Small SUV',silhouette:'suv',powertrain:'hybrid',powertrainLabel:'2.0L hybrid, 2WD or AWD',seats:5,towKg:750,fromPrice:36990,tags:['commute','family','efficiency','safety'],blurb:'Corolla running costs with a proper boot and a higher seat.',colours:['glacier-white','frosted-white','silver-sky','graphite','eclipse-black','saturn-blue','atomic-rush'],interiors:['fabric-black','leather-black'],accessories:['tow','protection','roof'],grades:[{id:'gx',name:'GX',price:36990,leather:false,highlights:['Toyota Safety Sense','8-inch display']},{id:'gxl',name:'GXL',price:40990,leather:false,highlights:['Power tailgate','Blind spot monitor','Wireless charging']},{id:'atmos',name:'Atmos',price:49990,leather:true,highlights:['Leather-accented seats','Panoramic roof','JBL audio','Head-up display']}]},
+      {id:'c-hr',name:'C-HR',body:'suv-small',bodyLabel:'Small SUV coupe',silhouette:'hatch',powertrain:'hybrid',powertrainLabel:'1.8L or 2.0L hybrid',seats:5,towKg:725,fromPrice:42990,tags:['commute','style','city'],blurb:'The style pick in the small-SUV range, hybrid only.',colours:['glacier-white','silver-sky','graphite','eclipse-black','atomic-rush'],interiors:['fabric-black','leather-black'],accessories:['protection','roof'],grades:[{id:'gxl',name:'GXL',price:42990,leather:false,highlights:['Toyota Safety Sense','12.3-inch display']},{id:'koba',name:'Koba',price:49990,leather:true,highlights:['Leather-accented seats','Head-up display','Panoramic view monitor']},{id:'gr-sport',name:'GR Sport',price:54990,leather:true,highlights:['AWD','20-inch alloys','Sports seats']}]},
+      {id:'camry',name:'Camry',body:'sedan',bodyLabel:'Mid-size sedan',silhouette:'sedan',powertrain:'hybrid',powertrainLabel:'2.5L hybrid',seats:5,towKg:400,fromPrice:39990,tags:['commute','distance','comfort','efficiency'],blurb:'Quiet, roomy and frugal. The long-distance commuter.',colours:['glacier-white','frosted-white','silver-sky','graphite','eclipse-black','saturn-blue'],interiors:['fabric-black','leather-black'],accessories:['protection'],grades:[{id:'ascent',name:'Ascent',price:39990,leather:false,highlights:['Toyota Safety Sense','12.3-inch display']},{id:'ascent-sport',name:'Ascent Sport',price:42990,leather:false,highlights:['Wireless charging','Keyless entry','18-inch alloys']},{id:'sl',name:'SL',price:53990,leather:true,highlights:['Leather-accented seats','Head-up display','JBL audio','Panoramic view monitor']}]},
+      {id:'rav4',name:'RAV4',body:'suv-mid',bodyLabel:'Mid-size SUV',silhouette:'suv',powertrain:'hybrid',powertrainLabel:'2.5L hybrid, 2WD or AWD',seats:5,towKg:1500,fromPrice:42990,tags:['family','commute','safety','efficiency','awd'],blurb:'The default family SUV: hybrid AWD, big boot, five-star safety.',safety:'Toyota Safety Sense with pre-collision, lane trace, adaptive cruise, blind spot monitor',colours:['glacier-white','frosted-white','silver-sky','graphite','eclipse-black','saturn-blue','atomic-rush','jungle-khaki'],interiors:['fabric-black','leather-black'],accessories:['tow','protection','roof'],grades:[{id:'gx',name:'GX',price:42990,leather:false,highlights:['Toyota Safety Sense','8-inch display','17-inch alloys']},{id:'gxl',name:'GXL',price:46490,leather:false,highlights:['10.5-inch display','Wireless charging','Dual-zone climate','Blind spot monitor']},{id:'cruiser',name:'Cruiser',price:52490,leather:true,highlights:['Leather-accented heated seats','Power tailgate','JBL audio','Panoramic view monitor','19-inch alloys']},{id:'edge',name:'Edge',price:59490,leather:true,highlights:['AWD with trail mode','Ventilated seats','Unique styling','Digital rear-view mirror']}]},
+      {id:'kluger',name:'Kluger',body:'suv-large',bodyLabel:'Large SUV, 7 seats',silhouette:'suv',powertrain:'hybrid',powertrainLabel:'2.5L hybrid AWD',seats:7,towKg:2000,fromPrice:61990,tags:['family','seven','safety','comfort'],blurb:'Seven seats, hybrid economy, and 2,000 kg towing.',colours:['glacier-white','frosted-white','silver-sky','graphite','eclipse-black','saturn-blue'],interiors:['fabric-black','leather-black'],accessories:['tow','protection','roof'],grades:[{id:'gx',name:'GX',price:61990,leather:false,highlights:['Toyota Safety Sense','Seven seats','8-inch display']},{id:'gxl',name:'GXL',price:70990,leather:true,highlights:['Leather-accented seats','Power tailgate','12.3-inch display']},{id:'grande',name:'Grande',price:83990,leather:true,highlights:['Panoramic roof','JBL audio','Ventilated seats','Head-up display']}]},
+      {id:'prado',name:'Prado',body:'suv-large',bodyLabel:'Large 4WD, 5 or 7 seats',silhouette:'suv',powertrain:'diesel',powertrainLabel:'2.8L turbo-diesel 48V',seats:7,towKg:3500,fromPrice:72990,tags:['towing','offroad','family','seven','touring'],blurb:'Full-time 4WD, 3,500 kg towing, built for the long way round.',colours:['glacier-white','frosted-white','silver-sky','graphite','eclipse-black','jungle-khaki'],interiors:['fabric-black','leather-black','leather-tan'],accessories:['tow','protection','roof'],grades:[{id:'gx',name:'GX',price:72990,leather:false,highlights:['Full-time 4WD','Five seats','Toyota Safety Sense']},{id:'gxl',name:'GXL',price:79990,leather:false,highlights:['Seven seats','12.3-inch display','Power tailgate']},{id:'vx',name:'VX',price:87990,leather:true,highlights:['Leather-accented seats','Adaptive suspension','JBL audio']},{id:'altitude',name:'Altitude',price:92990,leather:true,highlights:['Rear diff lock','Stabiliser disconnect','All-terrain tyres']},{id:'kakadu',name:'Kakadu',price:99990,leather:true,highlights:['Multi-terrain select','Ventilated seats','Head-up display']}]},
+      {id:'landcruiser-300',name:'LandCruiser 300',body:'suv-large',bodyLabel:'Large 4WD, 5 or 7 seats',silhouette:'suv',powertrain:'diesel',powertrainLabel:'3.3L twin-turbo diesel',seats:7,towKg:3500,fromPrice:97990,tags:['towing','offroad','touring','seven','luxury'],blurb:'The heavy tourer: 3,500 kg towing and outback range.',colours:['glacier-white','silver-sky','graphite','eclipse-black'],interiors:['fabric-black','leather-black','leather-tan'],accessories:['tow','protection','roof'],grades:[{id:'gx',name:'GX',price:97990,leather:false,highlights:['Five seats','Full-time 4WD']},{id:'gxl',name:'GXL',price:107990,leather:false,highlights:['Seven seats','12.3-inch display']},{id:'vx',name:'VX',price:121990,leather:true,highlights:['Leather-accented seats','JBL audio']},{id:'sahara',name:'Sahara',price:137990,leather:true,highlights:['Ventilated seats','Rear entertainment','Head-up display']},{id:'sahara-zx',name:'Sahara ZX',price:145990,leather:true,highlights:['Adaptive suspension','20-inch alloys']},{id:'gr-sport',name:'GR Sport',price:145990,leather:true,highlights:['Front and rear diff locks','E-KDSS suspension']}]},
+      {id:'fortuner',name:'Fortuner',body:'suv-large',bodyLabel:'Large 4WD, 7 seats',silhouette:'suv',powertrain:'diesel',powertrainLabel:'2.8L turbo-diesel',seats:7,towKg:3100,fromPrice:55990,tags:['towing','offroad','seven','value'],blurb:'HiLux underneath, seven seats on top.',colours:['glacier-white','silver-sky','graphite','eclipse-black'],interiors:['fabric-black','leather-black'],accessories:['tow','protection','roof'],grades:[{id:'gx',name:'GX',price:55990,leather:false,highlights:['Seven seats','Part-time 4WD']},{id:'gxl',name:'GXL',price:61990,leather:false,highlights:['Keyless entry','Rear diff lock']},{id:'crusade',name:'Crusade',price:69990,leather:true,highlights:['Leather-accented seats','JBL audio','Power tailgate']}]},
+      {id:'hilux',name:'HiLux',body:'ute',bodyLabel:'Dual-cab ute',silhouette:'ute',powertrain:'diesel',powertrainLabel:'2.8L turbo-diesel, 48V on SR5 and up',seats:5,towKg:3500,fromPrice:53990,tags:['work','towing','offroad','payload'],blurb:'The work ute. 3,500 kg towing and a tonne in the tray.',colours:['glacier-white','silver-sky','graphite','eclipse-black','saturn-blue','atomic-rush'],interiors:['fabric-black','leather-black'],accessories:['tow','protection','roof'],grades:[{id:'workmate',name:'WorkMate',price:47990,leather:false,highlights:['Vinyl floor','Steel wheels']},{id:'sr',name:'SR',price:53990,leather:false,highlights:['Rear diff lock','8-inch display','Toyota Safety Sense']},{id:'sr5',name:'SR5',price:63490,leather:false,highlights:['48V assist','Keyless entry','18-inch alloys','Sports bar']},{id:'rogue',name:'Rogue',price:71990,leather:true,highlights:['Wider track','Leather-accented seats','Power tailgate','Roller cover']},{id:'gr-sport',name:'GR Sport',price:74990,leather:true,highlights:['Tuned suspension','Front and rear diff locks','GR seats']}]},
+      {id:'bz4x',name:'bZ4X',body:'suv-mid',bodyLabel:'Electric mid-size SUV',silhouette:'suv',powertrain:'ev',powertrainLabel:'Battery electric, 71 kWh',seats:5,towKg:750,fromPrice:66990,tags:['ev','commute','family','tech'],blurb:'Toyota\'s electric SUV: around 500 km of range, home charging overnight.',colours:['glacier-white','silver-sky','graphite','eclipse-black'],interiors:['fabric-black','leather-black'],accessories:['protection','roof'],grades:[{id:'fwd',name:'FWD',price:66990,leather:false,highlights:['Up to 516 km range','12.3-inch display','Toyota Safety Sense']},{id:'awd',name:'AWD',price:74990,leather:true,highlights:['Dual motor AWD','X-Mode','Leather-accented seats','Panoramic roof']}]},
+      {id:'gr-yaris',name:'GR Yaris',body:'hatch',bodyLabel:'Hot hatch',silhouette:'hatch',powertrain:'petrol',powertrainLabel:'1.6L turbo, AWD',seats:4,towKg:0,fromPrice:59990,tags:['performance','fun'],blurb:'A rally car with number plates.',colours:['glacier-white','graphite','eclipse-black','atomic-rush'],interiors:['fabric-black'],accessories:['protection'],grades:[{id:'gt',name:'GT',price:59990,leather:false,highlights:['GR-Four AWD','Manual or automatic']},{id:'gts',name:'GTS',price:65990,leather:false,highlights:['Torsen diffs','Forged wheels']}]},
+      {id:'gr-corolla',name:'GR Corolla',body:'hatch',bodyLabel:'Hot hatch',silhouette:'hatch',powertrain:'petrol',powertrainLabel:'1.6L turbo, AWD',seats:5,towKg:0,fromPrice:69990,tags:['performance','fun'],blurb:'The GR Yaris drivetrain with five doors.',colours:['glacier-white','graphite','eclipse-black','atomic-rush'],interiors:['fabric-black'],accessories:['protection'],grades:[{id:'gts',name:'GTS',price:69990,leather:false,highlights:['GR-Four AWD','Torsen diffs']}]},
+      {id:'gr86',name:'GR86',body:'coupe',bodyLabel:'Sports coupe',silhouette:'coupe',powertrain:'petrol',powertrainLabel:'2.4L, rear-wheel drive',seats:4,towKg:0,fromPrice:46990,tags:['performance','fun'],blurb:'Light, rear-drive, manual if you want it.',colours:['glacier-white','silver-sky','graphite','eclipse-black','atomic-rush'],interiors:['fabric-black','leather-black'],accessories:['protection'],grades:[{id:'gt',name:'GT',price:46990,leather:false,highlights:['Manual or automatic']},{id:'gts',name:'GTS',price:49990,leather:true,highlights:['Brembo brakes','Leather and suede seats']}]}
+    ]};
+  const FALLBACK_STOCK={refreshed_at:'2026-10-13T08:54:00+11:00',stock_by_site:[
+    {id:'HL-2231',model:'rav4',grade:'cruiser',colour:'graphite',interior:'leather-black',packs:['protection'],site:'par',age:94,bonus:1800,priority:1},
+    {id:'HL-2290',model:'rav4',grade:'gxl',colour:'silver-sky',interior:'fabric-black',packs:[],site:'par',age:31,bonus:0},
+    {id:'HL-2402',model:'rav4',grade:'gxl',colour:'saturn-blue',interior:'fabric-black',packs:['tow'],site:'par',age:0,bonus:0,transit:9},
+    {id:'HL-1988',model:'rav4',grade:'cruiser',colour:'frosted-white',interior:'leather-black',packs:['roof'],site:'hor',age:58,bonus:0},
+    {id:'HL-2104',model:'rav4',grade:'edge',colour:'atomic-rush',interior:'leather-black',packs:['protection'],site:'pen',age:67,bonus:1200,priority:3},
+    {id:'HL-2325',model:'rav4',grade:'gx',colour:'glacier-white',interior:'fabric-black',packs:[],site:'par',age:8,bonus:0},
+    {id:'HL-2310',model:'kluger',grade:'gxl',colour:'eclipse-black',interior:'leather-black',packs:['tow'],site:'par',age:12,bonus:0},
+    {id:'HL-1941',model:'kluger',grade:'grande',colour:'graphite',interior:'leather-black',packs:['protection'],site:'hor',age:110,bonus:2400,priority:2},
+    {id:'HL-2150',model:'prado',grade:'gxl',colour:'frosted-white',interior:'fabric-black',packs:['tow'],site:'liv',age:21,bonus:0},
+    {id:'HL-2477',model:'prado',grade:'vx',colour:'eclipse-black',interior:'leather-tan',packs:[],site:'par',age:35,bonus:0},
+    {id:'HL-2440',model:'hilux',grade:'sr5',colour:'glacier-white',interior:'fabric-black',packs:['tow'],site:'pen',age:29,bonus:0},
+    {id:'HL-2399',model:'hilux',grade:'sr',colour:'graphite',interior:'fabric-black',packs:[],site:'par',age:88,bonus:1500,priority:4},
+    {id:'HL-2510',model:'camry',grade:'ascent-sport',colour:'silver-sky',interior:'fabric-black',packs:[],site:'par',age:40,bonus:0},
+    {id:'HL-2488',model:'camry',grade:'sl',colour:'saturn-blue',interior:'leather-black',packs:[],site:'liv',age:75,bonus:900,priority:5},
+    {id:'HL-2700',model:'corolla-cross',grade:'gxl',colour:'glacier-white',interior:'fabric-black',packs:[],site:'par',age:10,bonus:0},
+    {id:'HL-2701',model:'corolla-cross',grade:'atmos',colour:'saturn-blue',interior:'leather-black',packs:[],site:'par',age:10,bonus:0},
+    {id:'HL-2720',model:'yaris-cross',grade:'gx',colour:'frosted-white',interior:'fabric-black',packs:[],site:'par',age:15,bonus:0},
+    {id:'HL-2602',model:'bz4x',grade:'awd',colour:'eclipse-black',interior:'leather-black',packs:[],site:'par',age:18,bonus:0},
+    {id:'HL-2577',model:'bz4x',grade:'fwd',colour:'glacier-white',interior:'fabric-black',packs:[],site:'hor',age:52,bonus:0},
+    {id:'HL-2300',model:'landcruiser-300',grade:'sahara',colour:'eclipse-black',interior:'leather-tan',packs:[],site:'par',age:44,bonus:0},
+    {id:'HL-2611',model:'corolla',grade:'sx',colour:'glacier-white',interior:'fabric-black',packs:[],site:'par',age:22,bonus:0},
+    {id:'HL-2650',model:'c-hr',grade:'gxl',colour:'atomic-rush',interior:'fabric-black',packs:[],site:'par',age:60,bonus:700,priority:6}
+  ],order_bank_eta:{rav4:[14,18],kluger:[10,14],prado:[20,26],'landcruiser-300':[24,30],hilux:[8,12],camry:[8,12],'corolla-cross':[10,14],'yaris-cross':[8,12],bz4x:[12,16],corolla:[8,12],'c-hr':[10,14],fortuner:[12,16],'gr-yaris':[16,24],'gr-corolla':[16,24],gr86:[12,20]}};
+  const SITES={par:{name:'Parramatta',home:true},hor:{name:'Hornsby',km:28,when:'Thursday'},pen:{name:'Penrith',km:34,when:'Friday'},liv:{name:'Liverpool',km:22,when:'Thursday'}};
+
+  // Accepts either the compact shape above or the Domo stand-in files (each dataset wrapped as {dataset, refreshed_at, rows:[...]})
+  function normaliseStock(raw){if(!raw)return FALLBACK_STOCK;const arr=x=>Array.isArray(x)?x:(x&&(x.rows||x.units||x.data))||[];
+    const sb=arr(raw.stock_by_site).map(u=>Object.assign({},u,{age:u.age??u.days_in_stock??0,bonus:u.bonus||0,packs:u.packs||[]}));
+    arr(raw.inbound_pipeline).forEach(i=>{const id=i.unit_id||i.id;const t=i.eta_days||i.transit||7;const u=sb.find(x=>x.id===id);if(u)u.transit=t;else sb.push({id,model:i.model,grade:i.grade,colour:i.colour,interior:i.interior,packs:i.packs||[],site:i.destination_site||i.site||'par',age:0,bonus:0,transit:t});});
+    sb.forEach(u=>{if(u.status==='in_transit'&&!u.transit)u.transit=u.eta_days||7;});
+    arr(raw.aged_stock_actions).forEach(a=>{const u=sb.find(x=>x.id===(a.unit_id||a.id));if(u){u.bonus=a.incentive_headroom??u.bonus;u.priority=a.move_priority??u.priority;u.reason_code=a.reason_code||u.reason_code;}});
+    const eta={};const er=arr(raw.order_bank_eta);er.forEach(r=>{eta[r.model]=[r.eta_weeks_min??r.weeks_low??r.weeks?.[0],r.eta_weeks_max??r.weeks_high??r.weeks?.[1]];});
+    if(!er.length&&raw.order_bank_eta&&!Array.isArray(raw.order_bank_eta))Object.keys(raw.order_bank_eta).forEach(k=>{if(Array.isArray(raw.order_bank_eta[k]))eta[k]=raw.order_bank_eta[k];});
+    const ref=raw.refreshed_at||(raw.stock_by_site&&raw.stock_by_site.refreshed_at)||null;return{refreshed_at:ref,stock_by_site:sb,order_bank_eta:eta};}
+  let CAT=(window.__DATA__&&window.__DATA__.catalog&&window.__DATA__.catalog.models)?window.__DATA__.catalog:FALLBACK_CATALOG;
+  let STOCK=normaliseStock((window.__DATA__&&window.__DATA__.stock)||FALLBACK_STOCK);
+  function units(){return STOCK.stock_by_site||[];}
+  function eta(mid){const w=STOCK.order_bank_eta&&STOCK.order_bank_eta[mid];return (w&&w[0])?w:[12,18];}
+  let API=false; // true once /api/health answers; then ARAG + Domo paths are used
+  const cfg={model:'rav4',grade:'cruiser',colour:'graphite',interior:'leather-black',packs:['protection']};
+  const finder={answers:[],done:false,recs:null,summary:''};
+  let lang='en';
+
+  const M=()=>by(CAT.models,cfg.model);
+  const G=()=>by(M().grades,cfg.grade)||M().grades[0];
+  const COL=id=>by(CAT.colours,id);
+  const INT=id=>by(CAT.interiors,id);
+  const ACC=id=>by(CAT.accessories,id);
+  function normalise(){const m=M();if(!by(m.grades,cfg.grade))cfg.grade=m.grades[Math.min(1,m.grades.length-1)].id;
+    if(!m.colours.includes(cfg.colour))cfg.colour=m.colours.includes('graphite')?'graphite':m.colours[0];
+    const g=G();const ints=m.interiors.filter(i=>!(g.leather&&i==='fabric-black'));if(!ints.includes(cfg.interior))cfg.interior=g.leather?(ints[0]||'leather-black'):'fabric-black';
+    cfg.packs=cfg.packs.filter(p=>m.accessories.includes(p));}
+  function priceOf(c){const m=by(CAT.models,c.model),g=by(m.grades,c.grade);let p=g.price+(COL(c.colour)?.price||0);
+    const i=INT(c.interior);if(i&&!(g.leather&&c.interior!=='fabric-black'))p+=i.price;if(g.leather&&c.interior!=='fabric-black')p+=0;
+    c.packs.forEach(id=>p+=ACC(id)?.price||0);return p;}
+  const price=()=>priceOf(cfg);
+  function unitCfg(u){return{model:u.model,grade:u.grade,colour:u.colour,interior:u.interior,packs:u.packs||[]};}
+  function unitPrice(u){try{return priceOf(unitCfg(u));}catch(e){return 0;}}
+  function unitName(u){const m=by(CAT.models,u.model);const g=m&&by(m.grades,u.grade);return (m?m.name:u.model)+' '+(g?g.name:u.grade);}
+  function describe(c){const ps=c.packs.map(id=>ACC(id)?.name).filter(Boolean).join(' + ');return (COL(c.colour)?.name||'')+' · '+(INT(c.interior)?.name||'')+(ps?' · '+ps:'');}
+  function diffs(u,c){const d=[];if(u.model!==c.model)return null;const m=by(CAT.models,c.model);
+    if(u.grade!==c.grade)d.push((by(m.grades,u.grade)?.name||u.grade)+' grade instead of '+(by(m.grades,c.grade)?.name||c.grade));
+    if(u.colour!==c.colour)d.push((COL(u.colour)?.name||u.colour)+' instead of '+(COL(c.colour)?.name||c.colour));
+    if(u.interior!==c.interior)d.push((INT(u.interior)?.name||u.interior)+' instead of '+(INT(c.interior)?.name||c.interior));
+    const missing=c.packs.filter(p=>!(u.packs||[]).includes(p));if(missing.length)d.push('without the '+missing.map(p=>ACC(p)?.name).join(' and '));return d;}
+  function extras(u,c){return (u.packs||[]).filter(p=>!c.packs.includes(p)).map(p=>ACC(p)?.name).filter(Boolean);}
+
+  // ======================= CAR SILHOUETTES =======================
+  const SHAPES={
+    suv:{body:'M64 196 L64 150 Q64 136 78 132 L156 118 L212 66 Q222 54 240 54 L432 54 Q454 54 470 68 L534 120 L592 130 Q612 134 612 152 L612 196 Q612 206 602 206 L74 206 Q64 206 64 196 Z',glass:['M176 116 L218 70 Q224 62 236 62 L316 62 L316 116 Z','M328 62 L428 62 Q446 62 458 72 L508 116 L328 116 Z'],wheels:[172,500],front:'M598 136 L612 142 L612 156 L596 152 Z',rear:'M64 152 L78 148 L78 166 L64 166 Z',lines:'M322 62 L322 116'},
+    sedan:{body:'M64 196 L64 158 Q64 144 78 140 L176 132 L234 86 Q244 76 262 76 L404 76 Q426 76 444 88 L498 130 L592 138 Q612 142 612 158 L612 196 Q612 206 602 206 L74 206 Q64 206 64 196 Z',glass:['M196 130 L240 90 Q246 84 258 84 L326 84 L326 130 Z','M338 84 L400 84 Q418 84 432 94 L480 130 L338 130 Z'],wheels:[172,500],front:'M598 144 L612 148 L612 160 L596 158 Z',rear:'M64 160 L78 156 L78 172 L64 172 Z',lines:'M332 84 L332 130'},
+    hatch:{body:'M104 196 L104 150 Q104 136 118 132 L184 122 L232 70 Q242 58 260 58 L420 58 Q442 58 458 72 L512 122 L562 132 Q578 136 578 152 L578 196 Q578 206 568 206 L114 206 Q104 206 104 196 Z',glass:['M204 120 L238 78 Q244 66 258 66 L328 66 L328 120 Z','M340 66 L416 66 Q432 66 446 78 L494 120 L340 120 Z'],wheels:[192,500],front:'M564 138 L578 144 L578 158 L562 154 Z',rear:'M104 152 L118 148 L118 166 L104 166 Z',lines:'M334 66 L334 120'},
+    ute:{body:'M64 196 L64 130 L74 124 L298 124 L298 72 Q298 58 314 58 L422 58 Q444 58 460 72 L514 122 L592 132 Q612 136 612 152 L612 196 Q612 206 602 206 L74 206 Q64 206 64 196 Z',glass:['M310 118 L310 76 Q310 68 320 68 L372 68 L372 118 Z','M384 68 L418 68 Q434 68 448 80 L494 118 L384 118 Z'],wheels:[172,500],front:'M598 138 L612 144 L612 158 L596 154 Z',rear:'M64 136 L78 132 L78 150 L64 150 Z',lines:'M378 68 L378 118',tray:'M80 130 L290 130 L290 150 L80 150 Z'},
+    coupe:{body:'M64 196 L64 162 Q64 150 78 146 L186 136 L246 92 Q258 80 278 80 L396 80 Q420 80 440 92 L498 134 L592 142 Q612 146 612 160 L612 196 Q612 206 602 206 L74 206 Q64 206 64 196 Z',glass:['M206 134 L250 96 Q256 88 270 88 L336 88 L336 134 Z','M348 88 L392 88 Q412 88 428 98 L478 134 L348 134 Z'],wheels:[172,500],front:'M598 148 L612 152 L612 164 L596 162 Z',rear:'M64 164 L78 160 L78 176 L64 176 Z',lines:'M342 88 L342 134'}
+  };
+  function carSVG(sil,hex,bg,uid){const s=SHAPES[sil]||SHAPES.suv;const id=uid||'c'+Math.random().toString(36).slice(2,7);
+    return `<svg viewBox="0 0 660 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Side profile of the car"><defs>
+      <linearGradient id="sh${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".36"/><stop offset=".45" stop-color="#fff" stop-opacity=".04"/><stop offset=".7" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+      <linearGradient id="gl${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fa4c0" stop-opacity=".9"/><stop offset="1" stop-color="#1a2130"/></linearGradient>
+      <radialGradient id="gr${id}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+      <ellipse cx="330" cy="236" rx="300" ry="14" fill="url(#gr${id})"/>
+      <path d="${s.body}" fill="${hex}"/><path d="${s.body}" fill="url(#sh${id})"/>
+      ${s.glass.map(g=>`<path d="${g}" fill="url(#gl${id})"/>`).join('')}
+      ${s.tray?`<path d="${s.tray}" fill="#000" opacity=".35"/>`:''}
+      <rect x="64" y="186" width="548" height="6" fill="#000" opacity=".25"/>
+      <path d="${s.lines}" stroke="#000" stroke-opacity=".35" stroke-width="3"/>
+      <path d="${s.front}" fill="#f3f0d8"/><path d="${s.rear}" fill="#c8302a"/>
+      ${s.wheels.map(x=>`<circle cx="${x}" cy="204" r="44" fill="${bg}"/>`).join('')}
+      ${s.wheels.map(x=>`<circle cx="${x}" cy="204" r="36" fill="#1c1f24"/><circle cx="${x}" cy="204" r="19" fill="#b8bec8"/><circle cx="${x}" cy="204" r="6" fill="#4a505a"/>`).join('')}
+    </svg>`;}
+
+  // ======================= STOCK HELPERS =======================
+  function stockFor(pred){const u=units();return{here:u.filter(x=>!x.transit&&x.site==='par'&&pred(x)).length,near:u.filter(x=>!x.transit&&x.site!=='par'&&pred(x)).length,tr:u.filter(x=>x.transit&&pred(x)).length};}
+  function stockLine(s){const p=[];if(s.here)p.push(`<span><i class="sd here"></i>${s.here} on the lot</span>`);if(s.near)p.push(`<span><i class="sd near"></i>${s.near} nearby</span>`);if(s.tr)p.push(`<span><i class="sd near"></i>${s.tr} arriving</span>`);if(!p.length)p.push('<span><i class="sd none"></i>factory order</span>');return p.join('');}
+  function matches(c){const scored=units().map(u=>({u,d:diffs(u,c),x:extras(u,c)})).filter(s=>s.d);const rank=s=>s.u.transit?2:s.u.site==='par'?0:1;
+    return{exact:scored.filter(s=>s.d.length===0).sort((a,b)=>rank(a)-rank(b)),close:scored.filter(s=>s.d.length===1).sort((a,b)=>(b.u.bonus-a.u.bonus)||(rank(a)-rank(b)))};}
+  function availabilityOf(mid){const u=units().filter(x=>x.model===mid);const onLot=u.filter(x=>!x.transit&&x.site==='par').length,nearby=u.filter(x=>!x.transit&&x.site!=='par').length,inTransit=u.filter(x=>x.transit).length;
+    const soonest=onLot?'ready now':nearby?'here '+SITES[u.find(x=>!x.transit&&x.site!=='par').site].when:inTransit?'arriving in '+u.find(x=>x.transit).transit+' days':'factory order, '+eta(mid).join(' to ')+' weeks';return{onLot,nearby,inTransit,soonest};}
+  // ======================= BUILD PANE =======================
+  function renderModels(){const elm=$('models');elm.innerHTML='';CAT.models.forEach(m=>{const s=stockFor(u=>u.model===m.id);const b=el('button','opt'+(cfg.model===m.id?' on':''));b.id='model-'+m.id;
+    b.innerHTML=`<span class="rad"></span><span class="n">${esc(m.name)}</span><span class="p num">from ${fmt(m.fromPrice)}</span><span class="d">${esc(m.bodyLabel)} · ${esc(m.powertrainLabel)}</span><span class="stock">${stockLine(s)}</span>`;
+    b.onclick=()=>{cfg.model=m.id;normalise();update();};elm.appendChild(b);});}
+  function renderGrades(){const elm=$('grades');elm.innerHTML='';M().grades.forEach(g=>{const s=stockFor(u=>u.model===cfg.model&&u.grade===g.id);const b=el('button','opt'+(cfg.grade===g.id?' on':''));b.id='grade-'+g.id;
+    b.innerHTML=`<span class="rad"></span><span class="n">${esc(g.name)}</span><span class="p num">${fmt(g.price)}</span><span class="d">${esc((g.highlights||[]).join(' · '))}</span><span class="stock">${stockLine(s)}</span>`;
+    b.onclick=()=>{cfg.grade=g.id;normalise();update();};elm.appendChild(b);});}
+  function renderColours(){const elm=$('colours');elm.innerHTML='';M().colours.map(COL).filter(Boolean).forEach(c=>{const s=stockFor(u=>u.model===cfg.model&&u.colour===c.id);let tag='order';if(s.here)tag=s.here+' here';else if(s.near)tag=s.near+' nearby';else if(s.tr)tag='arriving';const cls=s.here?'here':(s.near||s.tr)?'near':'none';
+    const b=el('button','sw'+(cfg.colour===c.id?' on':''));b.id='col-'+c.id;b.title=c.name+(c.price?' · +'+fmt(c.price):'');
+    b.innerHTML=`<span class="c" style="background:${c.hex}"></span><span class="l">${esc(c.name)}</span><span class="s"><i class="sd ${cls}"></i>${tag}</span>`;b.onclick=()=>{cfg.colour=c.id;update();};elm.appendChild(b);});}
+  function renderInteriors(){const elm=$('interiors');elm.innerHTML='';const g=G();M().interiors.map(INT).filter(Boolean).forEach(i=>{const dis=g.leather&&i.id==='fabric-black';const s=stockFor(u=>u.model===cfg.model&&u.interior===i.id);
+    const b=el('button','opt'+(cfg.interior===i.id?' on':''));b.id='int-'+i.id;b.disabled=dis;const p=dis?'not on '+g.name:(g.leather&&i.id!=='fabric-black')?'included':(i.price?'+'+fmt(i.price):'standard');
+    b.innerHTML=`<span class="rad"></span><span class="n">${esc(i.name)}</span><span class="p num">${p}</span><span class="stock">${stockLine(s)}</span>`;b.onclick=()=>{cfg.interior=i.id;update();};elm.appendChild(b);});}
+  function renderPacks(){const elm=$('packs');elm.innerHTML='';M().accessories.map(ACC).filter(Boolean).forEach(p=>{const on=cfg.packs.includes(p.id);const b=el('button','opt'+(on?' on':''));b.id='pack-'+p.id;b.setAttribute('aria-pressed',on);
+    b.innerHTML=`<span class="box"></span><span class="n">${esc(p.name)}</span><span class="p num">+${fmt(p.price)}</span><span class="d">${esc(p.desc||'')}</span>`;b.onclick=()=>{cfg.packs=on?cfg.packs.filter(x=>x!==p.id):cfg.packs.concat(p.id);update();};elm.appendChild(b);});}
+
+  // steps nav + scroll spy
+  const STEPS=[['f-models','Model'],['f-grades','Grade'],['f-colours','Colour'],['f-interiors','Interior'],['f-packs','Accessories']];let stepIdx=0;
+  function renderSteps(){const n=$('steps');n.innerHTML='';STEPS.forEach(([id,label],i)=>{const b=el('button',i===stepIdx?'on':i<stepIdx?'done':'',`<i>${i<stepIdx?'✓':i+1}</i>${label}`);b.onclick=()=>{$(id).scrollIntoView({behavior:'smooth',block:'start'});};n.appendChild(b);});}
+  const buildPane=document.querySelector('.pane.build');
+  buildPane.addEventListener('scroll',()=>{const top=buildPane.scrollTop+60;let idx=0;STEPS.forEach(([id],i)=>{if($(id).offsetTop<=top)idx=i;});if(idx!==stepIdx){stepIdx=idx;renderSteps();}});
+
+  // ======================= STAGE =======================
+  function renderHero(){const m=M(),g=G();$('kick').textContent='Toyota · '+m.bodyLabel+' · '+m.powertrain.replace('ev','electric');$('title').textContent=m.name+' '+g.name;$('spec').textContent=describe(cfg);
+    $('price').textContent=fmt(price());$('price2').textContent=fmt(price());$('carwrap').innerHTML=carSVG(m.silhouette,COL(cfg.colour)?.hex||'#888','#00123C','hero');
+    const {exact}=matches(cfg);const here=exact.filter(s=>s.u.site==='par'&&!s.u.transit).length,near=exact.filter(s=>s.u.site!=='par').length,tr=exact.filter(s=>s.u.transit).length;const w=eta(m.id);
+    $('facts').innerHTML=`<div class="fact"><div class="k">Exactly this car</div><div class="v ${here?'good':''}">${here?here+' on the lot now':near?near+' nearby':tr?'arriving in '+exact.find(s=>s.u.transit).u.transit+' days':'none in the group'}</div></div>
+      <div class="fact"><div class="k">Nearby and inbound</div><div class="v">${near+tr?[near?near+' at other sites':'',tr?tr+' in transit':''].filter(Boolean).join(' · '):'—'}</div></div>
+      <div class="fact"><div class="k">Factory order</div><div class="v">${w[0]} to ${w[1]} weeks</div></div>`;}
+  function renderWays(){const elm=$('ways');elm.innerHTML='';const {exact,close}=matches(cfg);const rows=[];exact.forEach(s=>rows.push(wayRow(s,true)));
+    const nudge=close.find(s=>s.u.bonus>0);if(nudge)rows.push(wayRow(nudge,false,true));else if(close[0]&&!exact.some(e=>e.u.site==='par'&&!e.u.transit))rows.push(wayRow(close[0],false,false));
+    rows.push(factoryRow());rows.forEach(r=>elm.appendChild(r));}
+  function wayRow(s,exact,nudge){const u=s.u,site=SITES[u.site]||{name:u.site};const row=el('div');let tag,cls,title,desc,ann=[];
+    if(u.transit){tag='Arrives in '+u.transit+' days';cls='domo';title='In transit to Parramatta';desc='Stock '+u.id+' · landed order, not yet on the lot';ann.push('Domo · inbound_pipeline');}
+    else if(u.site==='par'){tag='Ready now';cls='good';title='On the lot at Parramatta';desc='Stock '+u.id+' · '+u.age+' days in stock';ann.push('Domo · stock_by_site');}
+    else{tag='Here '+site.when;cls='warn';title='At Harbourline '+site.name+', '+site.km+' km away';desc='Stock '+u.id+' · transfer on the next run';ann.push('Domo · transfer_feasibility');}
+    desc=(exact?(s.x.length?'Exactly your spec, and it also has the '+s.x.join(' and ')+'. ':'Exactly your spec. '):'Same car, '+s.d[0]+'. ')+desc;
+    if(u.bonus){desc+=' · Ready-now bonus of '+fmt(u.bonus)+' because it has been on the lot longer than we would like.';ann.push('Domo · aged_stock_actions · priority '+u.priority+' · headroom '+fmt(u.bonus));}
+    if(nudge){tag='Worth a look';cls='warn';}
+    row.className='way'+(exact&&u.site==='par'&&!u.transit?' hot':'')+(nudge?' nudge':'');const p=unitPrice(u);
+    const btn=exact?`<button class="btn sm ${u.site==='par'&&!u.transit?'':'secondary'}" data-toast="${u.transit?'Arrival held for you':'Held for 48 hours'} · ${u.id} (prototype)">${u.transit?'Hold the arrival':u.site==='par'?'Reserve this one':'Hold for transfer'}</button>`:`<button class="btn sm secondary" data-unit="${u.id}">Switch to this car</button>`;
+    row.innerHTML=`<div class="top"><span class="chip ${cls}">${tag}</span><span class="t">${title}</span></div><div class="d">${desc}<span class="annrow">${ann.map(a=>`<span class="ann domo">${a}</span>`).join('')}</span></div><div class="act"><span class="pr num">${u.bonus?`<s>${fmt(p)}</s>${fmt(p-u.bonus)}`:fmt(p)}</span>${btn}</div>`;return row;}
+  function factoryRow(){const w=eta(cfg.model);const row=el('div','way');
+    row.innerHTML=`<div class="top"><span class="chip dms">Built to order</span><span class="t">Exactly your spec from the factory</span></div><div class="d">${w[0]} to ${w[1]} weeks. We will confirm the build week when the slot is allocated.<span class="annrow"><span class="ann domo">Domo · order_bank_eta</span><span class="ann dms">DMS · order bank</span></span></div><div class="act"><span class="pr num">${fmt(price())}</span><button class="btn sm secondary" data-toast="Factory order started (prototype)">Place order</button></div>`;return row;}
+
+  // ======================= OFFERS (Domo-driven internal ads) =======================
+  function localOffers(){const m=M();const {exact}=matches(cfg);const shown=new Set(exact.map(s=>s.u.id));
+    return units().filter(u=>u.bonus>0&&!u.transit&&!shown.has(u.id)).map(u=>{const um=by(CAT.models,u.model)||{};return{unitId:u.id,modelId:u.model,gradeId:u.grade,colourId:u.colour,price:unitPrice(u),bonus:u.bonus,site:u.site,age:u.age,priority:u.priority||9,sameBody:um.body===m.body,reason:u.age>=90?'on the lot over 90 days':u.age>=60?'on the lot over 60 days':'more of these than we need'};})
+      .sort((a,b)=>(b.sameBody-a.sameBody)||(a.priority-b.priority));}
+  async function renderOffers(){let offers=null;if(API){try{const r=await fetch(`/api/offers?model=${cfg.model}&body=${M().body}`);if(r.ok)offers=await r.json();}catch(e){}}
+    if(!Array.isArray(offers)||!offers.length)offers=localOffers();const top=offers.slice(0,3);const elm=$('otiles');elm.innerHTML='';
+    top.forEach((o,i)=>{const m=by(CAT.models,o.modelId)||{};const g=m.grades?by(m.grades,o.gradeId):null;const c=COL(o.colourId)||{hex:'#888',name:o.colourId};const site=SITES[o.site]||{name:o.site};
+      const t=el('button','otile');t.setAttribute('data-unit',o.unitId);
+      t.innerHTML=`<span class="ok">${o.site==='par'?'Ready now · Parramatta':'At '+site.name+' · here '+(site.when||'soon')}</span>${carSVG(m.silhouette||'suv',c.hex,'#0b1a45','o'+i)}<span class="on">${esc((m.name||o.modelId)+' '+(g?g.name:o.gradeId))}</span><span class="od">${esc(c.name)} · ${esc(o.reason||'')}</span><span class="op"><s>${fmt(o.price)}</s><b>${fmt(o.price-o.bonus)}</b><em>save ${fmt(o.bonus)}</em></span><span class="annrow"><span class="ann domo">Domo · aged_stock_actions · priority ${o.priority} · rank ${i+1}</span></span>`;elm.appendChild(t);});
+    const rib=$('ribbon');const r0=offers.find(o=>o.modelId===cfg.model)||offers[0];if(r0){const m=by(CAT.models,r0.modelId)||{};const g=m.grades?by(m.grades,r0.gradeId):null;rib.hidden=false;rib.innerHTML=`<span><b>${fmt(r0.bonus)} off</b> a ${esc((m.name||'')+' '+(g?g.name:''))} ready now <span class="ann domo">Domo · placement: build_ribbon</span></span><button data-unit="${r0.unitId}">See it</button>`;}else rib.hidden=true;}
+
+  // ======================= FOR YOU (Spotify-style rows, semantic find) =======================
+  function tagRows(){const m=M();const rows=[];const a=Object.fromEntries(finder.answers.map(x=>[x.id,x.value]));const stockOf=mid=>units().filter(u=>u.model===mid&&!u.transit);
+    const item=(mid,gid,uid,blurb)=>{const mm=by(CAT.models,mid);const g=gid&&mm?by(mm.grades,gid):null;return{modelId:mid,gradeId:gid||null,unitId:uid||null,title:mm.name+(g?' '+g.name:''),blurb};};
+    // row 1: because you chose this model
+    const others=stockOf(m.id).filter(u=>!(u.grade===cfg.grade&&u.colour===cfg.colour)).slice(0,4);
+    if(others.length)rows.push({id:'chosen',title:`Because you're looking at the ${m.name}`,reason:'Other '+m.name+'s in the group right now',query:`${m.name} in stock across Harbourline sites`,items:others.map(u=>item(u.model,u.grade,u.id,(COL(u.colour)?.name||'')+' · '+(u.site==='par'?'ready now':'at '+SITES[u.site].name)))});
+    // row 2: because you like this colour
+    const col=COL(cfg.colour);const sameCol=units().filter(u=>u.colour===cfg.colour&&u.model!==m.id&&!u.transit).slice(0,4);
+    if(sameCol.length)rows.push({id:'colour',title:`Because you like ${col.name}`,reason:'Other Toyotas we have in this colour',query:`${col.name} paint availability`,items:sameCol.map(u=>item(u.model,u.grade,u.id,unitName(u)+' · '+(u.site==='par'?'ready now':'at '+SITES[u.site].name)))});
+    // rows from finder answers
+    const byTag=(tag,title,reason,q,blurbFn)=>{const ms=CAT.models.filter(x=>x.tags.includes(tag)&&x.id!==m.id).slice(0,4);if(ms.length)rows.push({id:tag,title,reason,query:q,items:ms.map(x=>item(x.id,null,null,blurbFn(x)))});};
+    if(a.use==='family'||m.tags.includes('family'))byTag('family','Because you need room for the family','Five seats or seven, big boots, top safety scores','family SUV with seven seats and Toyota Safety Sense',x=>x.seats+' seats · '+x.blurb);
+    if(a.towing||a.use==='tow'||m.towKg>=2500)byTag('towing','Because you tow','Braked towing capacity that covers a caravan','towing capacity caravan 2500 kg braked',x=>x.towKg.toLocaleString()+' kg braked · '+x.powertrainLabel);
+    if(a.power==='ev'||m.powertrain==='ev')byTag('ev','Because you\'re going electric','Charging, range and running costs','electric vehicle range and home charging',x=>x.blurb);
+    if(a.worktype||a.use==='work'||m.body==='ute')byTag('offroad','Because you go off-road','Diff locks, clearance and all-terrain modes','off-road capability diff lock multi-terrain select',x=>x.blurb);
+    if(!rows.some(r=>r.id==='family'))byTag('safety','Because safety matters','Models with the full Toyota Safety Sense suite','Toyota Safety Sense pre-collision lane trace adaptive cruise',x=>(x.safety||x.blurb));
+    return rows.slice(0,4);}
+  async function renderForYou(){let rows=null;if(API){try{const qs=new URLSearchParams({model:cfg.model,grade:cfg.grade,colour:cfg.colour,answers:finder.answers.map(a=>a.id+':'+a.value).join(',')});const r=await fetch('/api/foryou?'+qs);if(r.ok)rows=await r.json();}catch(e){}}
+    if(!Array.isArray(rows)||!rows.length)rows=tagRows();const host=$('foryou');host.innerHTML='';
+    rows.forEach((r,ri)=>{const sec=el('div','fy');sec.innerHTML=`<div class="fyh"><div><h3>${esc(r.title)}</h3><div class="sub">${esc(r.reason||'')}</div></div><span class="ann kb">ARAG · /find · "${esc(r.query||'')}"</span></div><div class="fyrow"></div>`;const row=sec.querySelector('.fyrow');
+      (r.items||[]).forEach((it,i)=>{const mm=by(CAT.models,it.modelId);if(!mm)return;const u=it.unitId?by(units(),it.unitId):null;const hex=COL(u?u.colour:(mm.colours.includes('graphite')?'graphite':mm.colours[0]))?.hex||'#888';
+        const c=el('button','fycard');c.innerHTML=`${carSVG(mm.silhouette,hex,'var(--raised)','f'+ri+i)}<b>${esc(it.title)}</b><span>${esc(it.blurb||'')}</span>${it.citation?`<em class="cite">${esc(it.citation.title)}</em>`:''}`;
+        c.onclick=()=>{if(u)applyUnit(u.id);else{cfg.model=it.modelId;if(it.gradeId)cfg.grade=it.gradeId;normalise();update();toast('Now configuring the '+mm.name);}};row.appendChild(c);});
+      host.appendChild(sec);});
+    $('f-foryou').hidden=!rows.length;}
+
+  function applyUnit(id){const u=by(units(),id);if(!u)return;Object.assign(cfg,unitCfg(u));cfg.packs=cfg.packs.slice();normalise();showStage();update();toast('Build updated to stock '+u.id);$('f-stage').scrollIntoView({behavior:'smooth',block:'start'});}
+  function update(){normalise();renderModels();renderGrades();renderColours();renderInteriors();renderPacks();renderSteps();renderHero();renderWays();renderOffers();renderForYou();}
+  function showStage(){$('finderView').hidden=true;$('stageView').style.display='contents';}
+  // ======================= FINDER (five dynamic questions, JSON from the agent) =======================
+  const FQ={
+    use:{text:'What will this car mostly do?',why:'This sets the shortlist: body style, seats and towing.',options:[{id:'commute',label:'Daily driving and commuting',sub:'City, suburbs, the odd weekend away'},{id:'family',label:'Family duty',sub:'School runs, sport, holidays with the boot full'},{id:'tow',label:'Towing and touring',sub:'Caravan, camper, boat, long trips'},{id:'work',label:'Work',sub:'Tools, sites, client visits'}]},
+    distance:{text:'How far is a typical day?',why:'Distance decides whether hybrid or electric pays off.',options:[{id:'under30',label:'Under 30 km',sub:'Mostly short hops'},{id:'30to80',label:'30 to 80 km',sub:'A real commute'},{id:'over80',label:'Over 80 km',sub:'Highway most days'}]},
+    people:{text:'How many people are usually in the car?',why:'Five seats covers most families. Seven changes the shortlist.',options:[{id:'two3',label:'Two or three',sub:'Plus the dog'},{id:'four5',label:'Four or five',sub:'Everyone, most days'},{id:'more',label:'Five, and sometimes more',sub:'Friends, grandparents, car pool'}]},
+    towing:{text:'What are you towing?',why:'Braked towing capacity is the hard limit here.',options:[{id:'camper',label:'Camper or small trailer',sub:'Under 1.5 t'},{id:'caravan',label:'Caravan',sub:'2 to 2.5 t'},{id:'heavy',label:'Big van or boat',sub:'Over 2.5 t, up to 3.5 t'}]},
+    worktype:{text:'What is the work?',why:'Payload and ground clearance, or comfort for the kilometres.',options:[{id:'tools',label:'Tools and materials',sub:'Tray or big boot, payload matters'},{id:'site',label:'Sites and rural roads',sub:'Gravel, mud, long distances'},{id:'client',label:'Client visits',sub:'Sealed roads, comfort and economy'}]},
+    power:{text:'How do you feel about going electric?',why:'Toyota has hybrid in most of the range, one full EV, and diesel for the heavy work.',options:[{id:'ev',label:'Ready now',sub:'I can charge at home'},{id:'hybrid',label:'Hybrid first',sub:'Efficient without the charging question'},{id:'diesel',label:'Petrol or diesel',sub:'Simplest for long trips and towing'}]},
+    budget:{text:'What is your drive-away budget?',why:'We match the grade to the budget, not just the model.',options:[{id:'u45',label:'Under $45k',sub:''},{id:'45to65',label:'$45k to $65k',sub:''},{id:'65to90',label:'$65k to $90k',sub:''},{id:'o90',label:'Over $90k',sub:''}]},
+    when:{text:'When do you need it?',why:'Some of the shortlist is on the lot now. Some is a factory order.',options:[{id:'now',label:'In the next few weeks',sub:''},{id:'summer',label:'Before the summer holidays',sub:'NSW holidays start 19 December'},{id:'norush',label:'No rush',sub:'Happy to order exactly what I want'}]}
+  };
+  const BUDGET={u45:[0,45000],'45to65':[45000,65000],'65to90':[65000,90000],o90:[90000,1e9]};
+  function localNext(answers){const a=Object.fromEntries(answers.map(x=>[x.id,x.value]));const n=answers.length;let qid;
+    if(n===0)qid='use';else if(n===1)qid={commute:'distance',family:'people',tow:'towing',work:'worktype'}[a.use]||'people';else if(n===2)qid='power';else if(n===3)qid='budget';else if(n===4)qid='when';
+    if(!qid)return localRecs(answers);
+    const q=JSON.parse(JSON.stringify(FQ[qid]));
+    if(qid==='power'){if(a.towing==='caravan'||a.towing==='heavy')q.options[0].note='EV range drops ~40% when towing';if(a.distance==='over80')q.options[0].note='516 km range covers it with home charging';if(a.worktype==='site')q.options[2].note='Diesel 4WDs own this brief';}
+    if(qid==='when'){const ready=units().filter(u=>!u.transit&&u.site==='par').length;q.options[0].note=ready+' cars on the lot today';}
+    return{step:n+1,of:5,question:{id:qid,text:q.text,why:q.why,options:q.options},trace:[{kind:'kb',label:'KB · finder-guide'},{kind:'kb',label:'KB · spec sheets'},...(qid==='when'?[{kind:'domo',label:'Domo · stock_by_site'}]:[])]};}
+  function localRecs(answers){const a=Object.fromEntries(answers.map(x=>[x.id,x.value]));const out=[];
+    CAT.models.forEach(m=>{let s=0;const why=[],watch=[];const has=t=>m.tags.includes(t);
+      if(a.use==='commute'){if(has('commute'))s+=3;if(m.body==='ute')s-=2;if(m.body==='suv-large')s-=1;if(has('commute'))why.push(m.blurb);}
+      if(a.use==='family'){if(has('family'))s+=3;if(m.seats>=7)s+=1;if(m.body==='hatch'||m.body==='coupe')s-=2;if(has('family'))why.push(m.seats+' seats and a boot that takes the holidays');}
+      if(a.use==='tow'){if(m.towKg>=3000)s+=3;else if(m.towKg>=2000)s+=1;else s-=3;if(m.towKg>=2000)why.push(m.towKg.toLocaleString()+' kg braked towing');}
+      if(a.use==='work'){if(m.body==='ute')s+=4;if(has('offroad'))s+=1;if(m.body==='coupe')s-=3;}
+      if(a.distance==='under30'&&has('city'))s+=2;if(a.distance==='over80'){if(has('distance')||has('comfort'))s+=2;if(m.powertrain==='ev')s-=1;}
+      if(a.people==='more'){if(m.seats>=7){s+=3;why.push('Seven seats');}else{s-=2;watch.push('Five seats only');}}if(a.people==='four5'&&has('family'))s+=1;
+      if(a.towing){const need={camper:1500,caravan:2500,heavy:3500}[a.towing];if(m.towKg>=need){s+=3;why.push(m.towKg.toLocaleString()+' kg braked covers it');}else{s-=3;watch.push('Tows '+m.towKg.toLocaleString()+' kg, under what you need');}}
+      if(a.worktype==='tools'&&m.body==='ute'){s+=3;why.push('One tonne payload in the tray');}if(a.worktype==='site'){if(has('offroad'))s+=3;}if(a.worktype==='client'){if(has('comfort')||has('commute'))s+=2;if(m.body==='ute')s-=2;}
+      if(a.power==='ev'){if(m.powertrain==='ev'){s+=5;why.push('Full electric, around 500 km of range');}else s-=1;}
+      if(a.power==='hybrid'){if(m.powertrain==='hybrid'){s+=2;why.push('Hybrid: '+m.powertrainLabel);}else if(m.powertrain==='ev')s-=1;}
+      if(a.power==='diesel'){if(m.powertrain==='diesel'){s+=2;why.push(m.powertrainLabel);}if(m.powertrain==='ev')s-=4;}
+      let grade=m.grades[0];if(a.budget){const [lo,hi]=BUDGET[a.budget];const fits=m.grades.filter(g=>g.price>=lo*0.9&&g.price<=hi);if(fits.length){s+=2;grade=fits[fits.length-1];why.push(grade.name+' fits your budget at '+fmt(grade.price));}else if(m.grades[0].price>hi){s-=4;watch.push('Starts above your budget at '+fmt(m.grades[0].price));}else{grade=m.grades[m.grades.length-1];}}
+      const av=availabilityOf(m.id);if(a.when==='now'){if(av.onLot){s+=1;why.push(av.onLot+' on the lot now');}else watch.push('Nothing on the lot today: '+av.soonest);}if(a.when==='summer'&&(av.onLot||av.nearby||av.inTransit))s+=1;
+      if(a.use==='commute'&&has('performance'))s-=2;if(m.seats<5&&(a.use==='family'))s-=3;
+      out.push({modelId:m.id,gradeId:grade.id,score:s,why:[...new Set(why)].slice(0,3),watch:[...new Set(watch)].slice(0,2),availability:av});});
+    out.sort((x,y)=>y.score-x.score);const recs=out.slice(0,3).map((r,i)=>Object.assign(r,{fit:Math.max(40,Math.min(97,52+r.score*4-i*3))}));const top=by(CAT.models,recs[0].modelId);
+    return{done:true,summary:`Based on your five answers, the ${top.name} is the best fit. Here is why, and two alternatives worth a look.`,recommendations:recs,trace:[{kind:'kb',label:'KB · finder-guide'},{kind:'kb',label:'KB · spec sheets, towing guide'},{kind:'domo',label:'Domo · stock_by_site'},{kind:'domo',label:'Domo · order_bank_eta'}]};}
+  async function finderNext(){let res=null;if(API){try{const r=await fetch('/api/finder/next',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({answers:finder.answers})});if(r.ok)res=await r.json();}catch(e){}}
+    return res&&(res.question||res.done)?res:localNext(finder.answers);}
+  let finderOpen=false;
+  function openFinder(){finderOpen=true;$('stageView').style.display='none';const v=$('finderView');v.hidden=false;renderFinderStep();v.scrollIntoView({behavior:'smooth',block:'start'});}
+  function closeFinder(){finderOpen=false;showStage();}
+  async function renderFinderStep(){const v=$('finderView');const n=finder.answers.length;
+    v.innerHTML=`<div class="fhead"><div><div class="kick">Find the right car · ${n<5?'question '+(n+1)+' of 5':'your matches'}</div><h2>Choosing the next question…</h2></div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div><div class="fwork" id="fwork"></div>`;
+    v.querySelector('#finderClose').onclick=closeFinder;
+    const steps=n<5?['Reading finder guide and spec sheets','Checking what the last answer rules out','Checking stock for the shortlist','Writing question '+(n+1)]:['Scoring every model against your answers','Matching grades to your budget','Checking stock and factory ETAs','Ranking the top three'];
+    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const box=v.querySelector('#fwork');steps.forEach((s,i)=>setTimeout(()=>box&&box.appendChild(el('div','step',s)),reduce?0:220*i));
+    const res=await finderNext();await new Promise(r=>setTimeout(r,reduce?0:Math.max(0,220*steps.length+200)));
+    if(res.done){finder.done=true;finder.recs=res.recommendations;finder.summary=res.summary;renderFinderResults(res);}else renderFinderQuestion(res);}
+  function answersChips(){return finder.answers.map((a,i)=>`<span class="chip" data-back="${i}" title="Change this answer">${esc(a.label)}</span>`).join('');}
+  function renderFinderQuestion(res){const v=$('finderView');const q=res.question;const n=res.step-1;
+    v.innerHTML=`<div class="fhead"><div><div class="kick">Find the right car · question ${res.step} of ${res.of}</div><h2>${esc(q.text)}</h2><p class="why">${esc(q.why||'')}</p></div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div>
+      <div class="dots">${[0,1,2,3,4].map(i=>`<i class="${i<n?'done':i===n?'cur':''}"></i>`).join('')}</div>
+      <div class="fopts">${q.options.map(o=>`<button class="fopt" data-opt="${esc(o.id)}" data-label="${esc(o.label)}"><b>${esc(o.label)}</b>${o.sub?`<span>${esc(o.sub)}</span>`:''}${o.note?`<span class="note">${esc(o.note)}</span>`:''}</button>`).join('')}</div>
+      <div class="fnav"><div class="answers">${answersChips()}</div><div>${n>0?'<button class="btn ghost sm" id="finderBack">Back</button>':''}</div></div>
+      <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">ARAG · /ask · answer_json_schema</span></div>
+      <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
+    v.querySelector('#finderClose').onclick=closeFinder;const bk=v.querySelector('#finderBack');if(bk)bk.onclick=()=>{finder.answers.pop();renderFinderStep();};
+    v.querySelectorAll('.fopt').forEach(b=>b.onclick=()=>{finder.answers.push({id:q.id,value:b.dataset.opt,label:b.dataset.label});renderFinderStep();});
+    v.querySelectorAll('[data-back]').forEach(c=>c.onclick=()=>{finder.answers=finder.answers.slice(0,+c.dataset.back);renderFinderStep();});}
+  function renderFinderResults(res){const v=$('finderView');
+    v.innerHTML=`<div class="fhead"><div><div class="kick">Find the right car · your matches</div><h2>${esc(res.summary||'Your best matches')}</h2></div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div>
+      <div class="dots">${[0,1,2,3,4].map(()=>'<i class="done"></i>').join('')}</div>
+      <div class="recs">${res.recommendations.map((r,i)=>{const m=by(CAT.models,r.modelId);if(!m)return '';const g=by(m.grades,r.gradeId)||m.grades[0];const hex=COL(m.colours.includes(cfg.colour)?cfg.colour:m.colours[0])?.hex||'#888';const av=r.availability||availabilityOf(m.id);
+        return`<div class="rec ${i===0?'best':''}"><div class="pic">${carSVG(m.silhouette,hex,i===0?'var(--accent-soft)':'var(--raised)','r'+i)}</div>
+          <div class="rh"><span class="chip ${i===0?'good':'dms'}">${i===0?'Best match':'#'+(i+1)}</span><b>${esc(m.name)} ${esc(g.name)}</b><span class="fit">fit ${r.fit}% · from ${fmt(g.price)}</span></div>
+          <ul>${(r.why||[]).map(w=>`<li>${esc(w)}</li>`).join('')}</ul>${(r.watch||[]).length?`<ul class="watch">${r.watch.map(w=>`<li>${esc(w)}</li>`).join('')}</ul>`:''}
+          <div class="ravail">${av.onLot?av.onLot+' on the lot · ':''}${av.nearby?av.nearby+' nearby · ':''}${av.inTransit?av.inTransit+' in transit · ':''}${esc(av.soonest||'')}</div>
+          <div class="ract"><button class="btn ${i===0?'':'secondary'} sm" data-rec="${m.id}:${g.id}">Configure this car</button></div></div>`;}).join('')}</div>
+      <div class="fnav"><div class="answers">${answersChips()}</div><button class="btn ghost sm" id="finderReset">Start over</button></div>
+      <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">ARAG · /ask · answer_json_schema</span></div>
+      <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
+    v.querySelector('#finderClose').onclick=closeFinder;v.querySelector('#finderReset').onclick=()=>{finder.answers=[];finder.done=false;finder.recs=null;renderFinderStep();};
+    v.querySelectorAll('[data-back]').forEach(c=>c.onclick=()=>{finder.answers=finder.answers.slice(0,+c.dataset.back);finder.done=false;renderFinderStep();});
+    v.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>{const [mid,gid]=b.dataset.rec.split(':');cfg.model=mid;cfg.grade=gid;const real=units().filter(u=>u.model===mid&&u.grade===gid).sort((a,b)=>(a.transit?2:a.site==='par'?0:1)-(b.transit?2:b.site==='par'?0:1))[0];if(real){cfg.colour=real.colour;cfg.interior=real.interior;cfg.packs=(real.packs||[]).slice();}const a=Object.fromEntries(finder.answers.map(x=>[x.id,x.value]));if((a.towing||a.use==='tow')&&by(CAT.models,mid).accessories.includes('tow')&&!cfg.packs.includes('tow'))cfg.packs.push('tow');normalise();closeFinder();update();
+      const m=by(CAT.models,mid),g=by(m.grades,gid);toast('Now configuring the '+m.name+' '+g.name);
+      addAssistant(`You picked the ${m.name} ${g.name} from the finder. I'll keep your answers in mind: ${finder.answers.map(x=>x.label.toLowerCase()).join(', ')}. Ask me anything about it, or tell me when you need it and I'll check what's on the lot.`,[{kind:'kb',label:'KB · finder-guide'},{kind:'domo',label:'Domo · stock_by_site'}]);
+      $('f-stage').scrollIntoView({behavior:'smooth',block:'start'});});}
+  $('openFinder').onclick=openFinder;$('openFinder2').onclick=openFinder;
+
+  // ======================= ASSISTANT (Progress Agentic RAG) =======================
+  const T={
+    en:{greet:'Hi, I’m the Harbourline assistant. You’re configuring a Toyota at Harbourline Toyota Parramatta. I can see what’s on the lot here and at Hornsby, Penrith and Liverpool, and I know the spec sheets, pricing, warranty and finance terms. Ask me anything, in any language.',
+      tip:'Tell me how you’ll use the car and when you need it, and I’ll steer the build. Or use “Find the right car” for five quick questions.',
+      chips:['Can it tow my caravan?','GXL or Cruiser?','I need it before the school holidays','Any deals on one you have now?'],
+      ph:'Ask about the car, pricing, finance or delivery…',ask:'Ask',note:'Detected: English. The assistant answers in whatever language you write in.',
+      free:'This prototype isn’t connected to its knowledge box on this host, so only the four suggested questions are scripted. On the live build this goes to the Progress Agentic RAG agent, which answers from the knowledge box and checks Domo for stock when it needs to.',switched:'Assistant switched to English',
+      q:{tow:{steps:['Reading RAV4 spec sheet · towing','Reading the towing guide','Checking Prado, Kluger and HiLux stock nearby'],a:'The RAV4 Hybrid AWD tows 1,500 kg braked, which suits a camper or a small trailer, but a 2 to 2.5 t caravan is beyond it. For that weight you want a Kluger at 2,000 kg if the van is light, or a Prado, LandCruiser 300 or HiLux at 3,500 kg with margin to spare. All of them need the Genuine Towing Pack. There’s a Prado GXL with the pack already fitted at our Liverpool site.',tr:[['kb','KB · RAV4 spec sheet'],['kb','KB · towing guide'],['domo','Domo · stock_by_site']],acts:[['Show the Prado GXL at Liverpool','unit:HL-2150'],['Add the Towing Pack to this build','pack:tow']]},
+        grade:{steps:['Reading RAV4 grade comparison','Checking GXL and Cruiser stock within 35 km'],a:'GXL gives you the 10.5-inch display, wireless charging, dual-zone climate and the full Toyota Safety Sense suite. Cruiser adds leather-accented heated seats, a power tailgate, JBL audio, the panoramic view monitor and 19-inch wheels, for about $6,000 more. If it’s the safety kit you’re after, GXL already has it. Stock-wise there’s a Cruiser on our lot now in Graphite, and a GXL arriving in 9 days.',tr:[['kb','KB · RAV4 grades'],['domo','Domo · stock_by_site · 6 min ago']],acts:[['Choose GXL','grade:gxl'],['Choose Cruiser','grade:cruiser']]},
+        holiday:{steps:['Reading NSW school term dates 2026','Checking RAV4 factory order ETA','Checking stock and inbound cars that fit your build'],a:'NSW school holidays start on Saturday 19 December. A RAV4 factory order placed today lands mid-February, so that won’t make it. Two ways to get there in time: the Graphite Cruiser on our lot now, with $1,800 off because it’s been here a while, or the Saturn Blue GXL with the Towing Pack that arrives in 9 days. Either is ready well before the 19th.',tr:[['kb','KB · NSW term dates 2026'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],acts:[['Switch to the Graphite Cruiser','unit:HL-2231'],['Switch to the Saturn Blue arrival','unit:HL-2402']]},
+        deal:{steps:['Checking aged stock actions','Reading the ready-now bonus policy'],a:'Yes, two. A Graphite RAV4 Cruiser here at Parramatta, $1,800 off drive-away. And a Graphite Kluger Grande at Hornsby, $2,400 off, which we can have here by Thursday. Both are current model year with the full five-year warranty. The discount is there because they’ve been on the lot longer than we’d like, not because anything is wrong with them.',tr:[['domo','Domo · aged_stock_actions · priority 1, 2'],['kb','KB · dealer policy']],acts:[['Show me the RAV4 Cruiser','unit:HL-2231'],['Show me the Kluger Grande','unit:HL-1941']]}}},
+    zh:{greet:'你好，我是 Harbourline 助手。您正在 Harbourline Toyota Parramatta 配置一辆丰田。我可以查看本店以及 Hornsby、Penrith 和 Liverpool 的现车库存，也熟悉规格表、价格、保修和金融条款。有任何问题都可以问我，用什么语言都可以。',
+      tip:'告诉我您的用车场景和提车时间，我会帮您调整配置。也可以点击“Find the right car”，回答五个问题。',chips:['它能拖我的房车吗？','GXL 还是 Cruiser？','我需要在学校假期前提车','现车有什么优惠吗？'],
+      ph:'询问车辆、价格、金融或交车…',ask:'发送',note:'已识别：中文。您用什么语言提问，助手就用什么语言回答。',
+      free:'此原型在当前主机上未连接知识库，只接入了四个建议问题。在正式版本中，问题会交给 Progress Agentic RAG 代理，它从知识库中作答，并在需要时通过 Domo 查询库存。',switched:'助手已切换为中文',
+      q:{tow:{steps:['正在查阅 RAV4 规格表 · 拖曳','正在查阅拖曳指南','正在查询附近的 Prado、Kluger 和 HiLux 库存'],a:'RAV4 混动四驱的制动拖曳能力为 1,500 公斤，适合露营拖车或小型拖车，但 2 至 2.5 吨的房车超出了它的能力。这个重量建议选择 Kluger（2,000 公斤，房车较轻时），或 Prado、LandCruiser 300、HiLux（3,500 公斤，余量充足）。它们都需要加装原厂拖曳套件。我们 Liverpool 店有一辆已装好套件的 Prado GXL。',tr:[['kb','知识库 · RAV4 规格表'],['kb','知识库 · 拖曳指南'],['domo','Domo · stock_by_site']],acts:[['查看 Liverpool 的 Prado GXL','unit:HL-2150'],['为当前配置添加拖曳套件','pack:tow']]},
+        grade:{steps:['正在查阅 RAV4 版本对比','正在查询 35 公里内 GXL 和 Cruiser 库存'],a:'GXL 配备 10.5 英寸屏幕、无线充电、双区空调和完整的 Toyota Safety Sense 安全套件。Cruiser 增加真皮加热座椅、电动尾门、JBL 音响、全景影像和 19 英寸轮毂，价格高出约 $6,000。如果您看重的是安全配置，GXL 已经齐全。库存方面，本店现有一辆石墨灰 Cruiser，另有一辆 GXL 将在 9 天后到店。',tr:[['kb','知识库 · RAV4 版本'],['domo','Domo · stock_by_site · 6 分钟前']],acts:[['选择 GXL','grade:gxl'],['选择 Cruiser','grade:cruiser']]},
+        holiday:{steps:['正在查阅 2026 年新州学期日期','正在查询 RAV4 工厂订单交付时间','正在查询符合您配置的现车和在途车'],a:'新南威尔士州的学校假期从 12 月 19 日（周六）开始。今天下单的 RAV4 工厂订单要到二月中旬才能到车，赶不上。有两种方式可以按时提车：一辆现在就在本店的石墨灰 Cruiser，因为在店时间较长可优惠 $1,800；或一辆 9 天后到店、已装拖曳套件的土星蓝 GXL。两辆都能在 19 日之前准备好。',tr:[['kb','知识库 · 2026 新州学期日期'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],acts:[['换成石墨灰 Cruiser','unit:HL-2231'],['换成即将到店的土星蓝','unit:HL-2402']]},
+        deal:{steps:['正在查询库龄车处理方案','正在查阅现车优惠政策'],a:'有，两辆。一辆在 Parramatta 本店的石墨灰 RAV4 Cruiser，落地价优惠 $1,800。另一辆在 Hornsby 的石墨灰 Kluger Grande，优惠 $2,400，周四可调到本店。两辆都是当前年款，享受完整五年保修。优惠是因为它们在店时间比我们希望的长，并不是车有任何问题。',tr:[['domo','Domo · aged_stock_actions · 优先级 1、2'],['kb','知识库 · 经销商政策']],acts:[['看看这辆 RAV4 Cruiser','unit:HL-2231'],['看看这辆 Kluger Grande','unit:HL-1941']]}}},
+    vi:{greet:'Xin chào, tôi là trợ lý Harbourline. Bạn đang cấu hình một chiếc Toyota tại Harbourline Toyota Parramatta. Tôi có thể xem xe sẵn có tại đây và tại Hornsby, Penrith, Liverpool, đồng thời nắm rõ thông số, giá, bảo hành và điều khoản tài chính. Hãy hỏi tôi bất cứ điều gì, bằng ngôn ngữ nào cũng được.',
+      tip:'Cho tôi biết bạn dùng xe thế nào và cần xe khi nào, tôi sẽ gợi ý cấu hình. Hoặc bấm “Find the right car” để trả lời năm câu hỏi nhanh.',chips:['Xe có kéo được caravan của tôi không?','GXL hay Cruiser?','Tôi cần xe trước kỳ nghỉ học','Có ưu đãi cho xe sẵn có không?'],
+      ph:'Hỏi về xe, giá, tài chính hoặc giao xe…',ask:'Gửi',note:'Đã nhận diện: Tiếng Việt. Trợ lý trả lời bằng ngôn ngữ bạn viết.',
+      free:'Bản mô phỏng này chưa kết nối kho tri thức trên máy chủ hiện tại, nên chỉ có bốn câu hỏi gợi ý được lập trình sẵn. Ở bản thật, câu hỏi được chuyển đến tác tử Progress Agentic RAG, trả lời từ kho tri thức và kiểm tra tồn kho qua Domo khi cần.',switched:'Trợ lý đã chuyển sang Tiếng Việt',
+      q:{tow:{steps:['Đang đọc thông số RAV4 · kéo moóc','Đang đọc hướng dẫn kéo moóc','Đang kiểm tra xe Prado, Kluger và HiLux gần đây'],a:'RAV4 Hybrid AWD kéo được 1.500 kg có phanh, phù hợp với camper hoặc rơ-moóc nhỏ, nhưng caravan 2 đến 2,5 tấn thì vượt quá khả năng. Với trọng lượng đó bạn nên chọn Kluger (2.000 kg nếu caravan nhẹ), hoặc Prado, LandCruiser 300, HiLux (3.500 kg, còn dư nhiều). Tất cả đều cần Gói Kéo Moóc chính hãng. Chúng tôi có một chiếc Prado GXL đã lắp sẵn gói này tại Liverpool.',tr:[['kb','KB · Thông số RAV4'],['kb','KB · Hướng dẫn kéo moóc'],['domo','Domo · stock_by_site']],acts:[['Xem Prado GXL tại Liverpool','unit:HL-2150'],['Thêm Gói Kéo Moóc vào cấu hình này','pack:tow']]},
+        grade:{steps:['Đang đọc bảng so sánh phiên bản RAV4','Đang kiểm tra xe GXL và Cruiser trong 35 km'],a:'GXL có màn hình 10,5 inch, sạc không dây, điều hòa hai vùng và đầy đủ gói Toyota Safety Sense. Cruiser thêm ghế da sưởi, cốp điện, âm thanh JBL, camera toàn cảnh và mâm 19 inch, đắt hơn khoảng 6.000 đô. Nếu bạn cần gói an toàn thì GXL đã có đủ. Về xe sẵn có, có một chiếc Cruiser màu Graphite tại đây, và một chiếc GXL sẽ về sau 9 ngày.',tr:[['kb','KB · Phiên bản RAV4'],['domo','Domo · stock_by_site · 6 phút trước']],acts:[['Chọn GXL','grade:gxl'],['Chọn Cruiser','grade:cruiser']]},
+        holiday:{steps:['Đang đọc lịch học kỳ NSW 2026','Đang kiểm tra thời gian đặt RAV4 từ nhà máy','Đang kiểm tra xe sẵn có và xe sắp về phù hợp cấu hình'],a:'Kỳ nghỉ học ở NSW bắt đầu thứ Bảy 19 tháng 12. Đặt RAV4 từ nhà máy hôm nay thì giữa tháng 2 mới về, nên sẽ không kịp. Có hai cách để kịp: chiếc Cruiser màu Graphite đang có sẵn tại đây, giảm 1.800 đô vì đã ở bãi một thời gian, hoặc chiếc GXL màu Saturn Blue có Gói Kéo Moóc sẽ về sau 9 ngày. Cả hai đều sẵn sàng trước ngày 19.',tr:[['kb','KB · Lịch học kỳ NSW 2026'],['domo','Domo · order_bank_eta'],['domo','Domo · stock_by_site'],['domo','Domo · inbound_pipeline']],acts:[['Chuyển sang Cruiser Graphite','unit:HL-2231'],['Chuyển sang Saturn Blue sắp về','unit:HL-2402']]},
+        deal:{steps:['Đang kiểm tra xe tồn lâu','Đang đọc chính sách ưu đãi xe sẵn có'],a:'Có, hai chiếc. Một chiếc RAV4 Cruiser màu Graphite tại Parramatta, giảm 1.800 đô giá lăn bánh. Và một chiếc Kluger Grande màu Graphite tại Hornsby, giảm 2.400 đô, có thể về đây vào thứ Năm. Cả hai đều là đời hiện tại, bảo hành đủ năm năm. Giảm giá vì xe ở bãi lâu hơn mong muốn, không phải vì xe có vấn đề gì.',tr:[['domo','Domo · aged_stock_actions · ưu tiên 1, 2'],['kb','KB · Chính sách đại lý']],acts:[['Xem RAV4 Cruiser','unit:HL-2231'],['Xem Kluger Grande','unit:HL-1941']]}}}
+  };
+  const QKEYS=['tow','grade','holiday','deal'];const thread=$('thread');const history=[];
+  function scrollT(){thread.scrollTop=thread.scrollHeight;}
+  function addUser(text){const m=el('div','msg u');m.appendChild(el('div','bub',esc(text)));thread.appendChild(m);history.push({role:'user',text});scrollT();}
+  function addSys(text){thread.appendChild(el('div','msg sys',esc(text)));scrollT();}
+  function addAssistant(text,tr,acts){const m=el('div','msg a');m.appendChild(el('div','bub',esc(text).replace(/\n/g,'<br>')));
+    if(tr&&tr.length){const t=el('div','trace');tr.forEach(x=>{const [k,l]=Array.isArray(x)?x:[x.kind,x.label];t.appendChild(el('span','tr '+k,esc(l)));});m.appendChild(t);}
+    if(acts&&acts.length){const a=el('div','acts');acts.forEach(x=>{const [label,action]=Array.isArray(x)?x:[x.label,x.type+':'+x.value];const b=el('button','btn secondary sm',esc(label));b.onclick=()=>doAction(action,b);a.appendChild(b);});m.appendChild(a);}
+    thread.appendChild(m);history.push({role:'assistant',text});scrollT();}
+  function doAction(action,btn){const i=action.indexOf(':');const k=action.slice(0,i),v=action.slice(i+1);
+    if(k==='pack'){if(M().accessories.includes(v)&&!cfg.packs.includes(v))cfg.packs.push(v);update();toast((ACC(v)?.name||v)+' added to your build');}
+    if(k==='grade'){if(by(M().grades,v)){cfg.grade=v;normalise();update();toast('Grade set to '+G().name);}}
+    if(k==='model'){const [mid,gid]=v.split('/');if(by(CAT.models,mid)){cfg.model=mid;if(gid)cfg.grade=gid;normalise();showStage();update();toast('Now configuring the '+M().name);}}
+    if(k==='unit'){applyUnit(v);}
+    btn.disabled=true;btn.style.opacity=.6;}
+  function working(steps){const w=el('div','msg a');const box=el('div','working');w.appendChild(box);thread.appendChild(w);const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;steps.forEach((s,i)=>setTimeout(()=>{box.appendChild(el('div','step',esc(s)));scrollT();},reduce?0:350*i));return{el:w,ms:reduce?50:350*steps.length+400};}
+  async function askApi(question){const w=working(['Reading the knowledge box','Checking your build and live stock','Writing the answer']);
+    try{const r=await fetch('/api/ask',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question,lang,build:{modelId:cfg.model,gradeId:cfg.grade,colourId:cfg.colour,interiorId:cfg.interior,packs:cfg.packs},finder:{answers:finder.answers},history:history.slice(-8)})});
+      if(!r.ok)throw new Error('ask '+r.status);const res=await r.json();w.el.remove();
+      const tr=[...(res.trace||[]),...(res.citations||[]).map(c=>({kind:'kb',label:'KB · '+c.title}))];addAssistant(res.answer||'…',tr,res.actions||[]);}
+    catch(e){w.el.remove();addAssistant('I couldn’t reach the knowledge box just now. Try again in a moment.',[{kind:'kb',label:'ARAG · /ask · error'}]);}}
+  function ask(key){const q=T[lang].q[key];const text=T[lang].chips[QKEYS.indexOf(key)];addUser(text);if(API)return askApi(text);
+    const w=working(q.steps);setTimeout(()=>{w.el.remove();addAssistant(q.a,q.tr,q.acts);},w.ms);}
+  function renderAssistant(reset){const t=T[lang];if(reset){thread.innerHTML='';history.length=0;addAssistant(t.greet);addAssistant(t.tip);}
+    const chips=$('chips');chips.innerHTML='';t.chips.forEach((c,i)=>{const b=el('button','qchip',esc(c));b.onclick=()=>ask(QKEYS[i]);chips.appendChild(b);});
+    $('askin').placeholder=t.ph;$('askbtn').textContent=t.ask;$('langnote').textContent=t.note+(API?' · Connected to the knowledge box.':'');}
+  $('ask').addEventListener('submit',e=>{e.preventDefault();const inp=$('askin');const v=inp.value.trim();if(!v)return;addUser(v);inp.value='';if(API)askApi(v);else setTimeout(()=>addAssistant(T[lang].free,[['kb','ARAG · /ask · not connected on this host']]),400);});
+  $('langs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;lang=b.dataset.lang;document.querySelectorAll('#langs button').forEach(x=>x.classList.toggle('on',x===b));renderAssistant(true);addSys(T[lang].switched);});
+
+  const HOW={
+    version:'0.5.0',updated:'13 Oct 2026',
+    intro:'Two systems do the work. Domo turns dealer management system data into stock intelligence. Progress Agentic RAG turns product knowledge plus that intelligence into a conversation. The configurator is where they meet. Every feature below says what the customer sees, what powers it, and how the data gets there.',
+    systems:[
+      {k:'dms',name:'Dealer management system',d:'System of record: stock by VIN, orders, deals, leads, bookings.'},
+      {k:'domo',name:'Domo',d:'ETL and stock intelligence. Dataflows publish datasets the page and the agent read through the Domo API.'},
+      {k:'rag',name:'Progress Agentic RAG',d:'Knowledge box plus agents: cited retrieval, tool calls into Domo, language handling, consult flow.'},
+      {k:'page',name:'Configurator',d:'The experience itself. Reads Domo datasets, talks to the agent, writes back to the DMS.'},
+      {k:'cust',name:'Customer',d:'Sees one page and one conversation.'}
+    ],
+    overview:{cols:5,rows:3,nodes:[
+      {id:'dms',label:'DMS',sub:'stock · orders · deals',kind:'dms',c:0,r:0},
+      {id:'domo',label:'Domo',sub:'dataflows → datasets',kind:'domo',c:1,r:0},
+      {id:'avail',label:'Availability service',sub:'matches · ETAs · offers',kind:'page',c:2,r:0},
+      {id:'cfg',label:'Configurator',sub:'options · stage · offers',kind:'page',c:3,r:0},
+      {id:'cust',label:'Customer',sub:'one page',kind:'cust',c:4,r:0},
+      {id:'src',label:'Product knowledge',sub:'brochures · specs · pricing',kind:'kb',c:0,r:1},
+      {id:'kb',label:'Knowledge box',sub:'indexed, multilingual',kind:'kb',c:1,r:1},
+      {id:'agent',label:'Agentic RAG agent',sub:'retrieve · call tools · answer',kind:'rag',c:2,r:1},
+      {id:'asst',label:'Assistant panel',sub:'cited answers · actions',kind:'page',c:3,r:1},
+      {id:'wb',label:'Leads and bookings',sub:'written back to the DMS',kind:'dms',c:3,r:2}
+    ],edges:[
+      {from:'dms',to:'domo',label:'15 min'},{from:'domo',to:'avail',label:'API'},{from:'avail',to:'cfg'},{from:'cfg',to:'cust'},
+      {from:'src',to:'kb',label:'ingest'},{from:'kb',to:'agent',label:'retrieval'},{from:'domo',to:'agent',label:'stock tool'},{from:'agent',to:'asst'},{from:'asst',to:'cust'},
+      {from:'agent',to:'cfg',label:'build changes'},{from:'cfg',to:'wb',label:'reserve · test drive'}
+    ]},
+    features:[
+      {id:'finder',name:'Find the right car (five dynamic questions)',target:'f-models',
+        sees:'“Find the right car” asks five questions, one at a time. Each question depends on the answers so far: say “towing” and the next question is about weight; say “family” and it asks how many people. After five, it ranks the three best Toyotas with reasons, caveats and live availability, and one tap starts configuring the winner.',
+        powered:['rag','domo','page'],
+        how:['The page posts the answers so far to the finder endpoint. The agent is prompted with the finder guide, every spec sheet and a stock summary, and must return JSON, not prose, using answer_json_schema.','The schema allows either {question} or {done, recommendations}. Question ids come from a fixed vocabulary so the page can validate them, and options carry optional notes the agent adds from the knowledge box (for example “EV range drops when towing”).','At five answers the agent scores every model, picks the grade that fits the budget, pulls availability from Domo and returns three recommendations with why and watch lists.','The page renders the JSON directly. With the data layer on, the raw payload is shown under each step.','If the agent is unreachable or returns invalid ids, a deterministic rule engine with the same contract takes over, so the flow never dead-ends.'],
+        contract:'<i>POST /api/finder/next</i>  { answers:[{id,value,label}] }\n→ { step, of:5, question:{ id ∈ use|people|distance|towing|worktype|terrain|power|budget|when|priorities, text, why, options:[{id,label,sub,note?}] }, trace[] }\n→ { done:true, summary, recommendations:[{ modelId, gradeId, fit 0-100, why[], watch[], availability:{onLot,nearby,inTransit,soonest} }], trace[] }',
+        diagram:{cols:4,rows:2,nodes:[{id:'a',label:'Answers so far',sub:'0 to 5, typed ids',kind:'cust',c:0,r:0},{id:'k',label:'Knowledge box',sub:'finder guide · specs',kind:'kb',c:0,r:1},{id:'g',label:'Agent',sub:'answer_json_schema',kind:'rag',c:1,r:0},{id:'d',label:'Domo stock',sub:'availability',kind:'domo',c:1,r:1},{id:'j',label:'JSON',sub:'question | recommendations',kind:'rag',c:2,r:0},{id:'p',label:'Finder view',sub:'rendered, validated',kind:'page',c:3,r:0}],edges:[{from:'a',to:'g'},{from:'k',to:'g',label:'retrieval'},{from:'d',to:'g',label:'tool'},{from:'g',to:'j'},{from:'j',to:'p'}]}},
+      {id:'offers',name:'Internal offers driven by stock (“This week at Harbourline”)',target:'f-offers',
+        sees:'A strip of three cars with a real discount, and a slim ribbon at the top of the build rail. They are never the car being configured; they are cars the group wants to move, shown as honest offers with the reason stated.',
+        powered:['domo','page'],
+        how:['Domo’s aged_stock_actions dataset scores every VIN for move priority from days in stock, days of supply and the group’s ageing policy, and computes incentive headroom from margin.','The offers endpoint ranks those VINs: same body type as the current build first, then priority. The exact match already shown in the availability panel is excluded so the strip never repeats it.','Placements are hints in the data (stage_strip, build_ribbon), so merchandising rules live in Domo, not in the page.','Tapping a tile switches the build to that car, which lands the customer on a real VIN with the bonus applied.'],
+        contract:'<i>GET /api/offers?model=rav4&body=suv-mid</i>\n→ [{ unitId, modelId, gradeId, colourId, price, bonus, site, age, priority, placement: "stage_strip" | "build_ribbon", reason }]',
+        diagram:{cols:4,rows:1,nodes:[{id:'a',label:'Ageing + margin',sub:'DMS, nightly',kind:'dms',c:0,r:0},{id:'b',label:'aged_stock_actions',sub:'priority · headroom',kind:'domo',c:1,r:0},{id:'c',label:'Offers ranking',sub:'same body first',kind:'page',c:2,r:0},{id:'d',label:'Strip + ribbon',sub:'placements',kind:'page',c:3,r:0}],edges:[{from:'a',to:'b'},{from:'b',to:'c',label:'API'},{from:'c',to:'d'}]}},
+      {id:'foryou',name:'“For you” rows (semantic matching with /find)',target:'f-foryou',
+        sees:'Rows in the style of a music app: “Because you’re looking at the RAV4”, “Because you like Graphite”, “Because you tow”, “Because safety matters”. Each row is a horizontal shelf of cars with a one-line reason and a citation.',
+        powered:['rag','domo','page'],
+        how:['The page sends what it knows: the chosen model and grade, the colour, and the finder answers.','The server composes a semantic query per row from those inputs (for example “towing capacity caravan 2500 kg braked”) and calls the knowledge box’s /find endpoint. /find returns the paragraphs and resources that match the meaning of the query, not just the words.','Every resource in the knowledge box is labelled with a model id, so hits map straight back to catalogue models. The server then joins to Domo stock so a row can point at a real VIN when one exists.','The same mechanism works for a free-text query from the customer, which is how the assistant’s extra context is built.'],
+        contract:'<i>GET /api/foryou?model=rav4&grade=cruiser&colour=graphite&answers=use:family,towing:caravan</i>\n→ [{ id, title, reason, query, items:[{ modelId, gradeId?, unitId?, title, blurb, citation:{title,resourceId} }] }]\n<i>ARAG /find</i>  query → resources + paragraphs with scores, filtered by label model/*',
+        diagram:{cols:4,rows:2,nodes:[{id:'i',label:'Build + answers',sub:'model · colour · needs',kind:'cust',c:0,r:0},{id:'q',label:'Query composer',sub:'one query per row',kind:'page',c:1,r:0},{id:'f',label:'/find',sub:'semantic matching',kind:'rag',c:2,r:0},{id:'l',label:'model labels',sub:'hit → catalogue model',kind:'kb',c:2,r:1},{id:'s',label:'Domo stock',sub:'join to VIN',kind:'domo',c:3,r:1},{id:'r',label:'Rows',sub:'“Because you…”',kind:'page',c:3,r:0}],edges:[{from:'i',to:'q'},{from:'q',to:'f'},{from:'f',to:'r'},{from:'l',to:'f',label:'labels'},{from:'s',to:'r',label:'VIN'}]}},
+      {id:'wiring',name:'How the knowledge box is wired',target:'f-assist',
+        sees:'Nothing directly. This is the plumbing behind every assistant answer, the finder and the “for you” rows.',
+        powered:['rag','domo','dms'],
+        how:['One Progress Agentic RAG knowledge box holds the corpus: a spec sheet per model, grade comparisons, the towing guide, accessories, pricing, warranty, servicing, finance, safety, dealer policy, NSW term dates and the finder guide. Each resource carries model and topic labels.','The page never talks to the knowledge box directly. A small API server holds the service token and exposes /api/ask, /api/finder/next, /api/foryou and /api/find.','Stock reaches the agent two ways: the server passes a compact stock summary as extra_context on every /ask, and a context agent on the knowledge box can call the server’s /api/stock endpoint, which fronts Domo. Either way the answer can say “there is one on the lot in Graphite”.','Answers are requested as JSON ({answer, actions[]}) so the assistant can change the build, and citations come back with the resource they came from.'],
+        contract:'<i>Knowledge box</i>  harbourline-toyota-configurator · labelsets model/*, topic/*\n<i>Server</i>  /api/health · /api/catalog · /api/stock · /api/offers · /api/ask · /api/finder/next · /api/foryou · /api/find\n<b>Domo</b>  stock_by_site · aged_stock_actions · transfer_feasibility · inbound_pipeline · order_bank_eta (stand-in datasets when no Domo credentials are configured)',
+        diagram:{cols:4,rows:2,nodes:[{id:'c',label:'Corpus',sub:'markdown + catalogue',kind:'kb',c:0,r:0},{id:'k',label:'Knowledge box',sub:'labels model · topic',kind:'kb',c:1,r:0},{id:'s',label:'API server',sub:'holds the token',kind:'page',c:2,r:0},{id:'p',label:'Page',sub:'ask · finder · for you',kind:'page',c:3,r:0},{id:'d',label:'Domo',sub:'stock datasets',kind:'domo',c:1,r:1},{id:'a',label:'Context agent',sub:'calls /api/stock',kind:'rag',c:2,r:1}],edges:[{from:'c',to:'k',label:'ingest'},{from:'k',to:'s',label:'/ask · /find'},{from:'s',to:'p'},{from:'d',to:'s',label:'API'},{from:'a',to:'s',label:'REST'}]}},
+      {id:'stock-on-options',name:'Live stock on every option',target:'f-colours',
+        sees:'Under every colour swatch, grade and interior: “2 here”, “1 nearby”, “arriving” or “factory order”. The customer learns what is actually available while choosing, not after.',
+        powered:['domo','page'],
+        how:['The DMS publishes vehicle stock by VIN, site and status to Domo every 15 minutes.','A Domo dataflow joins stock to the group’s site table and builds stock_by_site, one row per VIN with grade, colour, interior and packs decoded from the build code.','The page reads stock_by_site once on load and counts units per attribute for the home site, nearby sites and in-transit.','Counts rerender with every click because the match runs in the browser against the cached dataset.'],
+        contract:'<b>Domo · stock_by_site</b>\nvin, stock_no, site_id, status (on_lot | in_transit | demo), grade, colour, interior, packs[], days_in_stock, landed_cost, refreshed_at',
+        diagram:{cols:4,rows:1,nodes:[{id:'a',label:'DMS stock',sub:'VIN · site · status',kind:'dms',c:0,r:0},{id:'b',label:'Domo dataflow',sub:'decode build code · join sites',kind:'domo',c:1,r:0},{id:'c',label:'stock_by_site',sub:'one row per VIN',kind:'domo',c:2,r:0},{id:'d',label:'Option tiles',sub:'counts per attribute',kind:'page',c:3,r:0}],edges:[{from:'a',to:'b',label:'15 min'},{from:'b',to:'c'},{from:'c',to:'d',label:'API, cached'}]}},
+      {id:'availability',name:'“How you can have this car”',target:'f-avail',
+        sees:'A ranked list of real ways to get the current build: on the lot now, at a nearby site with a transfer day, in transit with an arrival date, or built to order with a realistic window. It recomputes on every change.',
+        powered:['domo','page','dms'],
+        how:['Every VIN in stock_by_site is scored against the build: grade, colour, interior and packs. Zero differences is an exact match; one difference is a close match.','Exact matches are ranked home site first, then nearby, then in transit.','Nearby units get a transfer day from transfer_feasibility, which Domo derives from the group’s truck schedule and distance between sites.','In-transit units get an arrival date from inbound_pipeline, fed by the factory’s shipping notices in the DMS.','The factory-order row always appears last with the window from order_bank_eta, so the customer sees the honest alternative.'],
+        contract:'<b>Domo · transfer_feasibility</b>  from_site, to_site, next_run_date, km, cost\n<b>Domo · inbound_pipeline</b>  vin, dest_site, eta_date, stage (built | shipped | landed)\n<b>Domo · order_bank_eta</b>  model, grade, next_slot_month, weeks_low, weeks_high',
+        diagram:{cols:4,rows:2,nodes:[{id:'s',label:'stock_by_site',kind:'domo',c:0,r:0},{id:'t',label:'transfer_feasibility',kind:'domo',c:0,r:1},{id:'i',label:'inbound_pipeline',sub:'+ order_bank_eta',kind:'domo',c:1,r:1},{id:'m',label:'Match and rank',sub:'exact → close → factory',kind:'page',c:2,r:0},{id:'p',label:'Availability panel',kind:'page',c:3,r:0}],edges:[{from:'s',to:'m'},{from:'t',to:'m',label:'transfer day'},{from:'i',to:'m',label:'ETAs'},{from:'m',to:'p'}]}},
+      {id:'ready-now',name:'Ready-now bonuses',target:'f-avail',
+        sees:'A near-match car offered with a discount and a plain reason: “because it has been on the lot longer than we would like”. Marked “Worth a look”, dashed border, never pretending to be an exact match.',
+        powered:['domo','page'],
+        how:['Domo scores every VIN for move priority from days in stock, days of supply for that model and colour, and the group’s ageing policy.','Incentive headroom comes from landed cost versus list, so the page only ever shows a discount the dealer can actually fund.','The page shows at most one nudge, the highest-priority close match with headroom, so the offer stays credible.','The reason is stated in the customer’s words. The data-layer toggle shows the priority and headroom behind it.'],
+        contract:'<b>Domo · aged_stock_actions</b>\nvin, days_in_stock, days_of_supply, move_priority (1 = move first), incentive_headroom, reason_code, valid_until',
+        diagram:{cols:4,rows:1,nodes:[{id:'a',label:'Ageing + margin',sub:'days in stock · landed cost',kind:'dms',c:0,r:0},{id:'b',label:'Move-priority score',sub:'Domo dataflow',kind:'domo',c:1,r:0},{id:'c',label:'aged_stock_actions',sub:'headroom per VIN',kind:'domo',c:2,r:0},{id:'d',label:'“Worth a look” card',sub:'one nudge, reason stated',kind:'page',c:3,r:0}],edges:[{from:'a',to:'b',label:'nightly'},{from:'b',to:'c'},{from:'c',to:'d'}]}},
+      {id:'cited-answers',name:'Cited answers from the knowledge box',target:'f-assist',
+        sees:'Plain-language answers about towing, grades, warranty and finance, each with the sources the assistant read. Try “Can it tow my caravan?”',
+        powered:['rag','page'],
+        how:['Brochures, spec sheets, price lists, warranty booklets, finance terms, dealer policies and NSW term dates are ingested into a Progress Agentic RAG knowledge box.','The agent retrieves the passages that answer the question, reasons over them and replies with citations to the exact document and page.','Answers are consultative by design: the agent is prompted to ask about use and timing and to recommend, not just describe.','The page shows the agent’s steps while it works so the customer can see what it is reading.'],
+        contract:'<i>Knowledge box</i>  RAV4 spec sheet · grade comparison · accessory sheets · price list · warranty · finance T&Cs · pricing policy · NSW term dates\n<i>Agent</i>  consult prompt · retrieval with citations · answer language = question language',
+        diagram:{cols:4,rows:1,nodes:[{id:'a',label:'Documents',sub:'PDF · web · DMS exports',kind:'kb',c:0,r:0},{id:'b',label:'Knowledge box',sub:'chunked, indexed, cited',kind:'kb',c:1,r:0},{id:'c',label:'Agent',sub:'retrieve → reason → answer',kind:'rag',c:2,r:0},{id:'d',label:'Assistant panel',sub:'answer + trace + citations',kind:'page',c:3,r:0}],edges:[{from:'a',to:'b',label:'ingest'},{from:'b',to:'c',label:'passages'},{from:'c',to:'d'}]}},
+      {id:'stock-in-answer',name:'Stock inside an answer',target:'f-assist',
+        sees:'“Cruiser stock is thin right now. There’s one on site in Saturn Blue.” The assistant mentions availability when it matters, without the customer asking. Try “GXL or Cruiser?”',
+        powered:['rag','domo'],
+        how:['The agent has a tool that queries Domo’s published datasets by model, grade, colour and radius.','When a question touches availability, the agent calls the tool mid-answer and folds the result into its reply.','The trace shows the call and how fresh the data was, so the answer is auditable.','The same tool powers deadline questions and deal questions.'],
+        contract:'<i>Tool · domo.stock</i>  in: model, grade?, colour?, radius_km  → out: units[], refreshed_at\n<i>Tool · domo.aged_actions</i>  in: model  → out: offers[]\n<i>Tool · domo.eta</i>  in: model, grade  → out: weeks_low, weeks_high, next_slot',
+        diagram:{cols:4,rows:1,nodes:[{id:'q',label:'Question',sub:'“GXL or Cruiser?”',kind:'cust',c:0,r:0},{id:'a',label:'Agent',sub:'decides a tool is needed',kind:'rag',c:1,r:0},{id:'d',label:'Domo API',sub:'stock_by_site',kind:'domo',c:2,r:0},{id:'r',label:'Answer',sub:'spec + stock, cited',kind:'page',c:3,r:0}],edges:[{from:'q',to:'a'},{from:'a',to:'d',label:'tool call'},{from:'d',to:'r',label:'result folded in'}]}},
+      {id:'deadline',name:'Deadline reasoning',target:'f-assist',
+        sees:'“A factory order won’t make it. Two cars will.” The assistant combines a date from the knowledge box with ETAs from Domo and offers specific cars. Try “I need it before the school holidays”.',
+        powered:['rag','domo','page'],
+        how:['The agent resolves the deadline from the knowledge box (NSW term dates) or from what the customer typed.','It calls the ETA tool for a factory order and the stock tool for exact and close matches.','It compares dates and recommends only cars that arrive before the deadline, with the ready-now bonus if one applies.','Each recommendation carries a build change the page can apply in one tap.'],
+        contract:'<i>KB</i>  NSW term dates 2026  ·  <b>Domo</b>  order_bank_eta · stock_by_site · inbound_pipeline · aged_stock_actions',
+        diagram:{cols:4,rows:2,nodes:[{id:'k',label:'Term dates',kind:'kb',c:0,r:0},{id:'e',label:'order_bank_eta',kind:'domo',c:0,r:1},{id:'s',label:'stock + inbound',kind:'domo',c:1,r:1},{id:'a',label:'Agent',sub:'compare dates, pick cars',kind:'rag',c:2,r:0},{id:'p',label:'Two offers',sub:'with build-change buttons',kind:'page',c:3,r:0}],edges:[{from:'k',to:'a',label:'deadline'},{from:'e',to:'a',label:'late Feb'},{from:'s',to:'a',label:'now · 9 days'},{from:'a',to:'p'}]}},
+      {id:'multilingual',name:'Any language',target:'f-assist',
+        sees:'Switch the assistant to 中文 or Tiếng Việt. The greeting, suggestions and answers follow, including the Domo-sourced parts.',
+        powered:['rag','page'],
+        how:['The agent detects the language of each message and answers in it. Retrieval is multilingual, so English source documents answer Vietnamese questions.','Numbers, dates and stock come from the same tools regardless of language; only the prose changes.','In this mockup the toggle translates the assistant panel. In production the whole page follows the customer’s language.'],
+        contract:'<i>Agent</i>  detect(language) → retrieve(multilingual) → answer(language)  ·  page chrome: i18n bundle keyed by the same code',
+        diagram:{cols:3,rows:1,nodes:[{id:'q',label:'Question in Vietnamese',kind:'cust',c:0,r:0},{id:'a',label:'Agent',sub:'detect · retrieve across languages',kind:'rag',c:1,r:0},{id:'r',label:'Answer in Vietnamese',sub:'same citations, same stock',kind:'page',c:2,r:0}],edges:[{from:'q',to:'a'},{from:'a',to:'r'}]}},
+      {id:'build-changes',name:'The assistant changes the build',target:'f-assist',
+        sees:'Buttons inside answers: “Add the Towing Pack”, “Switch to the Graphite Cruiser”. One tap updates the car, the price and the availability panel.',
+        powered:['rag','page'],
+        how:['Alongside its prose, the agent returns structured actions: add a pack, set a grade, or adopt a specific VIN’s spec.','The page validates the action against the catalogue and applies it to the build state.','Everything downstream rerenders from that state, so the availability panel and stock indicators stay in step with what the assistant said.'],
+        contract:'<i>Agent response</i>  { text, citations[], actions[]: { type: "pack" | "grade" | "unit", value } }',
+        diagram:{cols:3,rows:1,nodes:[{id:'a',label:'Agent',sub:'text + actions[]',kind:'rag',c:0,r:0},{id:'p',label:'Build state',sub:'validated against catalogue',kind:'page',c:1,r:0},{id:'r',label:'Stage · price · availability',sub:'rerender',kind:'page',c:2,r:0}],edges:[{from:'a',to:'p',label:'action'},{from:'p',to:'r'}]}},
+      {id:'write-back',name:'Reserve and test drive against a VIN',target:'f-cta',
+        sees:'“Reserve this one” on a specific car, “Hold for transfer”, “Place order”. Bookings are for this car at this site, not a generic enquiry form.',
+        powered:['page','dms'],
+        how:['Every button carries the VIN or order spec, the site and the customer’s build.','The page writes a lead and a booking to the DMS through its API, and marks the VIN as held so the next refresh of stock_by_site reflects it.','The sales team sees the lead with the full conversation transcript and the build attached.'],
+        contract:'<u>DMS write-back</u>  lead { customer, site_id, vin | build_spec, source: "configurator", transcript_ref }  ·  hold { vin, until }',
+        diagram:{cols:3,rows:1,nodes:[{id:'p',label:'Reserve button',sub:'VIN · site · build',kind:'page',c:0,r:0},{id:'d',label:'DMS',sub:'lead + hold',kind:'dms',c:1,r:0},{id:'s',label:'Next Domo refresh',sub:'status: held',kind:'domo',c:2,r:0}],edges:[{from:'p',to:'d',label:'API'},{from:'d',to:'s',label:'15 min'}]}},
+      {id:'freshness',name:'Freshness and refresh cadence',target:'f-avail',
+        sees:'“Stock refreshed 6 min ago” next to the availability panel. The assistant’s trace shows the same timestamp.',
+        powered:['domo','dms'],
+        how:['Stock refreshes every 15 minutes, fast enough that a sold car disappears before most customers notice, slow enough to keep DMS load trivial.','Ageing and margin refresh nightly because they move slowly and feed pricing decisions that should not flicker.','The page shows the dataset’s refreshed_at, not the page load time, so the number is honest.'],
+        contract:'<b>Domo</b>  stock_by_site · inbound_pipeline: every 15 min  ·  aged_stock_actions · transfer_feasibility · order_bank_eta: nightly',
+        diagram:{cols:3,rows:2,nodes:[{id:'d',label:'DMS',kind:'dms',c:0,r:0},{id:'f',label:'Fast dataflow',sub:'stock · inbound · 15 min',kind:'domo',c:1,r:0},{id:'n',label:'Nightly dataflow',sub:'ageing · margin · transfers',kind:'domo',c:1,r:1},{id:'p',label:'Page + agent',sub:'shows refreshed_at',kind:'page',c:2,r:0}],edges:[{from:'d',to:'f'},{from:'d',to:'n'},{from:'f',to:'p'},{from:'n',to:'p'}]}},
+      {id:'data-layer',name:'Data-layer toggle (for reviewers)',target:'f-stage',
+        sees:'“Data layer” in the header overlays a tag on every element naming the Domo dataset, knowledge box source or DMS call behind it.',
+        powered:['page'],
+        how:['Purely a review aid. It is not part of the customer experience.','Tags are written into the page next to the element they describe, so they stay accurate as features change.'],
+        contract:'',
+        diagram:null}
+    ],
+    assumptions:['Harbourline Toyota is a fictional dealership. Toyota models, grades and specifications are real; prices, stock, ages and bonuses are illustrative and chosen so each behaviour appears at least once.','When the page is served by its API server, every question goes to the Progress Agentic RAG knowledge box. On a host without the server (for example the claude.ai artifact) the four suggested questions are scripted and the finder uses a local rule engine.','Domo is consumed through its API. The page never embeds a Domo card.','Discounts are always explained. The customer should never feel steered without knowing why.'],
+    changelog:[
+      {v:'0.5.0',d:'13 Oct 2026',items:['Switched to the current Toyota Australia lineup, 15 models','Progress Agentic RAG kit styling: ink band with the Progress wordmark, prototype label, three scrolling panes','Find the right car: five dynamic JSON-driven questions ending in ranked recommendations','This week at Harbourline: Domo-driven offers strip and build ribbon','For you rows built from semantic /find queries','Knowledge box provisioned; API server for /ask, /finder, /foryou, /find with local fallback']},
+      {v:'0.3.0',d:'13 Oct 2026',items:['Rebuilt in Progress Agentic RAG palette with a navy stage','Added this half-page “How it works” drawer with per-feature diagrams','Fixed the column-order bug that squeezed the stage into the options column','Added the three-fact summary strip under the car']},
+      {v:'0.2.0',d:'13 Oct 2026',items:['Published to GitHub and Fly','Full HTML document with nginx container']},
+      {v:'0.1.0',d:'13 Oct 2026',items:['First mockup: configurator, Domo availability panel, Agentic RAG assistant in three languages']}
+    ]
+  };
+
+  // --- SVG diagram renderer ---
+  const KIND={dms:{fill:'var(--hairline)',stroke:'var(--subtle)',text:'var(--text)'},domo:{fill:'var(--info-bg)',stroke:'var(--info-fg)',text:'var(--text)'},rag:{fill:'var(--brand-600)',stroke:'var(--brand-600)',text:'#fff'},kb:{fill:'var(--brand-50)',stroke:'var(--brand-500)',text:'var(--text)'},page:{fill:'var(--raised)',stroke:'var(--text)',text:'var(--text)'},cust:{fill:'var(--accent-soft)',stroke:'var(--accent-500)',text:'var(--text)'},ext:{fill:'var(--raised)',stroke:'var(--muted)',text:'var(--text)'}};
+  function diagram(d){
+    const W=172,H=60,GX=96,GY=46,PAD=8;const width=d.cols*W+(d.cols-1)*GX+PAD*2,height=d.rows*H+(d.rows-1)*GY+PAD*2;
+    const pos=id=>{const n=d.nodes.find(x=>x.id===id);return{n,x:PAD+n.c*(W+GX),y:PAD+n.r*(H+GY)};};
+    let out=`<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" font-family="Inter,system-ui,sans-serif"><defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker></defs>`;
+    d.edges.forEach(e=>{const a=pos(e.from),b=pos(e.to);let path,lx,ly;
+      if(a.n.r===b.n.r){const x1=a.x+W,y=a.y+H/2,x2=b.x;path=`M${x1} ${y} L${x2} ${y}`;lx=(x1+x2)/2;ly=y-13;}
+      else if(a.n.c===b.n.c){const x=a.x+W/2,y1=a.y+H,y2=b.y;path=`M${x} ${y1} L${x} ${y2}`;lx=x;ly=(y1+y2)/2;}
+      else{const x1=a.x+W,y1=a.y+H/2,x2=b.x,y2=b.y+H/2,mx=x1+GX/2;path=`M${x1} ${y1} L${mx} ${y1} Q${mx+6} ${y1} ${mx+6} ${y1+(y2>y1?6:-6)} L${mx+6} ${y2+(y2>y1?-6:6)} Q${mx+6} ${y2} ${mx+12} ${y2} L${x2} ${y2}`;lx=mx+6;ly=(y1+y2)/2;}
+      out+=`<path d="${path}" fill="none" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>`;
+      if(e.label){const w=e.label.length*6.3+12;out+=`<rect x="${lx-w/2}" y="${ly-9}" width="${w}" height="18" rx="9" fill="var(--raised)" stroke="var(--border)"/><text x="${lx}" y="${ly+3.5}" text-anchor="middle" font-size="10" font-family="Roboto Mono,monospace" fill="var(--muted)">${esc(e.label)}</text>`;}});
+    d.nodes.forEach(n=>{const p=pos(n.id),k=KIND[n.kind]||KIND.ext;
+      out+=`<g><rect x="${p.x}" y="${p.y}" width="${W}" height="${H}" rx="10" fill="${k.fill}" stroke="${k.stroke}" stroke-width="1.5"/><text x="${p.x+W/2}" y="${p.y+(n.sub?26:35)}" text-anchor="middle" font-size="13" font-weight="700" fill="${k.text}">${esc(n.label)}</text>${n.sub?`<text x="${p.x+W/2}" y="${p.y+43}" text-anchor="middle" font-size="10.5" fill="${k.text}" opacity=".8">${esc(n.sub)}</text>`:''}</g>`;});
+    return out+'</svg>';}
+
+  function renderDrawer(){
+    document.getElementById('dver').textContent='v'+HOW.version;document.getElementById('dupd').textContent='updated '+HOW.updated;
+    const nav=document.getElementById('dnav'),body=document.getElementById('dbody');nav.innerHTML='';body.innerHTML='';
+    const sysName=k=>({dms:'DMS',domo:'Domo',rag:'Progress Agentic RAG',kb:'Knowledge box',page:'Configurator',cust:'Customer'})[k]||k;
+    const addNav=(id,label)=>{const b=el('button','',label);b.onclick=()=>document.getElementById('hw-'+id).scrollIntoView({behavior:'smooth',block:'start'});nav.appendChild(b);};
+    // overview
+    addNav('overview','Overview');
+    const ov=el('section','dsec');ov.id='hw-overview';
+    ov.innerHTML=`<div class="n">Overview</div><h3>What the customer never sees</h3><p class="lede">${HOW.intro}</p>
+      <div class="legend">${HOW.systems.map(s=>`<div class="lg"><i style="background:var(--${s.k==='rag'?'brand-600':s.k==='cust'?'accent-500':s.k==='domo'?'info-fg':s.k==='dms'?'subtle':'brand-500'})"></i><div><b>${s.name}</b><span>${s.d}</span></div></div>`).join('')}</div>
+      <div class="diagram">${diagram(HOW.overview)}</div>`;
+    body.appendChild(ov);
+    // features
+    HOW.features.forEach((f,i)=>{addNav(f.id,f.name);const s=el('section','dsec');s.id='hw-'+f.id;
+      s.innerHTML=`<div class="n">Feature ${i+1} of ${HOW.features.length}</div><h3>${f.name}</h3>
+        <div class="sys">${f.powered.map(k=>`<span class="chip ${k==='domo'?'domo':k==='dms'?'dms':k==='page'?'dms':'kb'}">${sysName(k)}</span>`).join('')}</div>
+        <div class="dgrid two">
+          <div class="dbox"><h4>What the customer sees</h4><p class="sees">${f.sees}</p></div>
+          <div class="dbox"><h4>How it works</h4><ol>${f.how.map(h=>`<li>${h}</li>`).join('')}</ol></div>
+        </div>
+        ${f.contract?`<div class="dbox" style="margin-top:14px"><h4>Data contract</h4><div class="contract">${f.contract}</div></div>`:''}
+        ${f.diagram?`<div class="diagram">${diagram(f.diagram)}</div>`:''}
+        <div class="drow">${f.target?`<button class="btn secondary sm" data-target="${f.target}">Show me on the page</button>`:''}</div>`;
+      body.appendChild(s);});
+    // assumptions + changelog
+    addNav('assumptions','Assumptions');const as=el('section','dsec');as.id='hw-assumptions';
+    as.innerHTML=`<div class="n">Read before reviewing</div><h3>Assumptions in this mockup</h3><div class="dbox" style="margin-top:12px"><ul>${HOW.assumptions.map(a=>`<li>${a}</li>`).join('')}</ul></div>`;body.appendChild(as);
+    addNav('changelog','Changelog');const cl=el('section','dsec');cl.id='hw-changelog';
+    cl.innerHTML=`<div class="n">Changelog</div><h3>What changed</h3><div class="changelog">${HOW.changelog.map(c=>`<div class="cl"><span class="v">v${c.v}</span><span class="dt">${c.d}</span><ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>`;body.appendChild(cl);
+  }
+
+  // --- drawer open/close ---
+  const drawer=$('drawer');let drawerBuilt=false;
+  function openDrawer(){if(!drawerBuilt){renderDrawer();drawerBuilt=true;}document.body.classList.add('drawer-open');drawer.setAttribute('aria-hidden','false');document.getElementById('openDrawer').setAttribute('aria-expanded','true');}
+  function closeDrawer(){document.body.classList.remove('drawer-open');drawer.setAttribute('aria-hidden','true');document.getElementById('openDrawer').setAttribute('aria-expanded','false');}
+  $('openDrawer').onclick=openDrawer;const od2=$('openDrawer2');if(od2)od2.onclick=openDrawer;
+  document.getElementById('closeDrawer').onclick=closeDrawer;document.getElementById('backdrop').onclick=closeDrawer;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+  function highlight(id){const t=document.getElementById(id);if(!t)return;t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.remove('hl');void t.offsetWidth;t.classList.add('hl');setTimeout(()=>t.classList.remove('hl'),2600);if(window.innerWidth<960)closeDrawer();}
+
+
+  // ======================= MISC =======================
+  const toastEl=$('toast');let tt;
+  function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('show'),2400);}
+  document.body.addEventListener('click',e=>{const t=e.target.closest('[data-toast]');if(t){toast(t.dataset.toast);return;}
+    const u=e.target.closest('[data-unit]');if(u){applyUnit(u.dataset.unit);return;}
+    const h=e.target.closest('[data-target]');if(h){highlight(h.dataset.target);}});
+  const rv=$('reveal');rv.addEventListener('click',()=>{const on=document.body.classList.toggle('reveal');rv.classList.toggle('on',on);rv.setAttribute('aria-pressed',on);rv.querySelector('.lbl').textContent=on?'Data layer on':'Data layer';});
+
+  // ======================= BOOT =======================
+  async function probe(){try{const r=await fetch('/api/health',{cache:'no-store'});if(!r.ok)return;const h=await r.json();if(!h||h.ok===false)return;API=true;
+      try{const c=await fetch('/api/catalog');if(c.ok){const cat=await c.json();if(cat&&cat.models&&cat.models.length)CAT=cat;}}catch(e){}
+      try{const s=await fetch('/api/stock');if(s.ok){const st=await s.json();if(st&&st.stock_by_site)STOCK=normaliseStock(st);}}catch(e){}
+      normalise();update();renderAssistant(false);addSys('Connected to the knowledge box'+(h.domo==='live'?' and Domo':' · Domo stand-in'));}catch(e){}}
+  update();renderAssistant(true);probe();
+})();
+</script>
