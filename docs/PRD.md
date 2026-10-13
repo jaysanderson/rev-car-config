@@ -3,6 +3,7 @@
 | | |
 |---|---|
 | Product | Harbourline Toyota Configurator (prototype) |
+| Customer | Revolution Software (Toyota-owned dealer management system vendor). The prototype is shown to Revolution; "Harbourline Toyota" is a fictional dealership used as the demo tenant. |
 | Owner | Product Manager |
 | Engineering lead | Head of Product Engineering |
 | Status | Draft v1, 13 Oct 2026 |
