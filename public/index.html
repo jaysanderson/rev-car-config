@@ -232,22 +232,22 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:none;box-shadow
 .fyh h3{font-size:.92rem}
 .fyh .sub{font-size:.74rem;color:var(--muted)}
 .fyrow{display:flex;gap:10px;overflow-x:auto;scrollbar-width:thin;padding-bottom:6px;scroll-snap-type:x mandatory}
-.fycard{flex:0 0 190px;scroll-snap-align:start;text-align:left;padding:10px 12px 10px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--raised);display:flex;flex-direction:column;gap:3px;transition:border-color .15s,box-shadow .15s}
+.fycard{flex:0 0 200px;width:200px;min-width:0;scroll-snap-align:start;text-align:left;padding:10px 12px 10px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--raised);display:flex;flex-direction:column;gap:3px;transition:border-color .15s,box-shadow .15s}
 .fycard:hover{border-color:var(--brand-600);box-shadow:var(--shadow)}
 .fycard>svg{width:100%;height:auto;display:block;margin:-6px 0 -8px}
 .fycard b{font-size:.86rem}
 .fycard span{font-size:.74rem;color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.fycard .cite{font-size:.66rem;font-family:var(--mono);color:var(--brand-600);font-style:normal;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fycard .cite{display:block;max-width:100%;font-size:.66rem;font-family:var(--mono);color:var(--brand-600);font-style:normal;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* real photos (from the knowledge box), SVG silhouette as fallback */
 .carpic{position:relative;width:100%}
 .carpic img{display:block;width:100%;height:auto;object-fit:contain}
 .carpic.hero-pic{max-width:820px;margin:0 auto}
-.carpic.hero-pic img{max-height:360px;filter:drop-shadow(0 24px 30px rgba(0,0,0,.45))}
+.carpic.hero-pic img{max-height:340px;border-radius:12px;box-shadow:0 24px 40px rgba(0,0,0,.45);margin:0 auto}
 .carpic.cover{aspect-ratio:16/9;overflow:hidden;border-radius:8px;background:var(--hairline)}
 .carpic.cover img{width:100%;height:100%;object-fit:cover}
 .carpic.cover svg{width:100%;height:100%}
-.credit{font-family:var(--mono);font-size:.62rem;color:rgba(255,255,255,.55);text-align:right;margin-top:4px}
+.credit{font-family:var(--mono);font-size:.62rem;color:rgba(255,255,255,.55);text-align:center;margin-top:8px;white-space:normal;line-height:1.4}
 .credit a{color:inherit}
 .otile .carpic{margin:2px 0 4px}
 .fycard .carpic{margin:0 0 6px}
@@ -287,7 +287,7 @@ body.reveal .json{display:block}
 .recs{display:grid;gap:10px}
 .rec{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:6px 18px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--raised);align-items:start}
 .rec.best{border-color:var(--accent-500);background:var(--accent-soft)}
-.rec .pic{grid-row:1/span 3;align-self:center}
+.rec .pic{grid-row:1/span 3;align-self:center;min-width:0}
 .rec .pic svg{width:100%;height:auto;display:block}
 .rec .rh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .rec .rh b{font-size:1.05rem}
