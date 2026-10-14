@@ -83,12 +83,12 @@ export function histogram(buckets, { height = 200 } = {}) {
   if (!buckets.length) return '';
   const pad = { l: 30, r: 8, t: 16, b: 26 }, ih = height - pad.t - pad.b, iw = W - pad.l - pad.r;
   const max = niceMax(Math.max(...buckets.map(b => b.value || 0)));
-  const step = iw / buckets.length, bw = step - 2; // 2px surface gap
+  const step = iw / buckets.length, bw = Math.min(step - 2, 72); // 2px surface gap, capped width
   const y = v => pad.t + ih - (v / max) * ih;
   let g = `<g class="grid">${[0, .5, 1].map(f => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(f * max)}" y2="${y(f * max)}"/>`).join('')}</g>`;
   g += [0, .5, 1].map(f => `<text x="${pad.l - 6}" y="${y(f * max) + 3.5}" text-anchor="end">${num(f * max)}</text>`).join('');
   buckets.forEach((b, i) => {
-    const x = pad.l + step * i + 1;
+    const x = pad.l + step * i + (step - bw) / 2;
     g += `<g class="m" ${tip(`<b>${esc(b.label)} days</b><br>${num(b.value)} units`)}><rect class="hit" x="${x}" y="${pad.t}" width="${bw}" height="${ih}"/>`;
     g += `<path class="mk" d="${vbar(x, y(b.value || 0), bw, pad.t + ih - y(b.value || 0))}" fill="${b.color}"/>`;
     if (b.value) g += `<text class="val" x="${x + bw / 2}" y="${y(b.value) - 5}" text-anchor="middle">${num(b.value)}</text>`;

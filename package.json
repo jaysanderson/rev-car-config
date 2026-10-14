@@ -4,14 +4,19 @@
   "private": true,
   "type": "module",
   "description": "Harbourline Toyota Configurator: static front-end + Express API over Progress Agentic RAG and Domo stock",
-  "engines": { "node": ">=20.6" },
+  "engines": {
+    "node": ">=20.6"
+  },
   "scripts": {
     "start": "node server/index.mjs",
     "ingest": "node scripts/ingest.mjs",
     "provision": "node scripts/provision.mjs",
-    "check": "for f in server/*.mjs scripts/*.mjs; do node --check \"$f\" || exit 1; done"
+    "dms:smoke": "node tests/dms-smoke.mjs",
+    "dms:mcp": "node scripts/dms-mcp-stdio.mjs",
+    "check": "for f in server/*.mjs server/dms/*.mjs scripts/*.mjs tests/*.mjs; do node --check \"$f\" || exit 1; done"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "1.31.0",
     "express": "4.21.2"
   }
 }

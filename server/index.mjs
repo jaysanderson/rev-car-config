@@ -13,11 +13,15 @@ import { join } from 'node:path';
 import { ROOT } from './env.mjs';
 import * as arag from './arag.mjs';
 import { catalog, catalogPath, stock, stockPublic, stockSummary, offers, domoMode, modelsMentioned, modelById } from './data.mjs';
-import { askAssistant, finderNext } from './assistant.mjs';
+import { askAssistant, finderNext, cleanAnswers } from './assistant.mjs';
+import { canon } from './finder-fallback.mjs';
 import { forYou } from './foryou.mjs';
 import imagesRouter from './images.mjs';
-import { priorities, validatePriorities, savePriorities, promotionsFor, rankOffers } from './dealer.mjs';
+import { priorities, promotionsFor, rankOffers } from './dealer.mjs';
+import { explainPromotions, refreshPromotions } from './promotions.mjs';
 import * as testdrive from './testdrive.mjs';
+import * as events from './events.mjs';
+import dmsRouter, { mcpPost as dmsMcpPost, mcpGet as dmsMcpGet } from './dms/index.mjs';
 
 const PORT = Number(process.env.PORT || 8080);
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
@@ -40,7 +44,10 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use('/api', express.json({ limit: '64kb' }));
+// /api/events bodies are capped at 2 KB; everything else at 64 KB.
+const jsonSmall = express.json({ limit: '2kb' });
+const jsonLarge = express.json({ limit: '64kb' });
+app.use('/api', (req, res, next) => (req.path === '/events' ? jsonSmall : jsonLarge)(req, res, next));
 app.use('/api', (req, res, next) => {
   res.set('Cache-Control', 'no-store');
   // Hard per-request ceiling so a slow upstream never hangs a client.
@@ -50,20 +57,24 @@ app.use('/api', (req, res, next) => {
 
 // Small in-memory token bucket per client IP for the endpoints that spend ARAG
 // tokens (one Fly machine, so in-memory is enough for the prototype).
-const buckets = new Map();
-const RATE = { capacity: Number(process.env.RATE_BURST || 30), perMin: Number(process.env.RATE_PER_MIN || 20) };
-function rateLimit(req, res, next) {
-  const key = req.get('fly-client-ip') || req.ip || 'unknown';
-  const now = Date.now();
-  const b = buckets.get(key) || { tokens: RATE.capacity, at: now };
-  b.tokens = Math.min(RATE.capacity, b.tokens + ((now - b.at) / 60000) * RATE.perMin); b.at = now;
-  if (b.tokens < 1) { buckets.set(key, b); res.set('Retry-After', '10'); return res.status(429).json({ error: 'too many requests, try again shortly' }); }
-  b.tokens -= 1; buckets.set(key, b);
-  if (buckets.size > 5000) for (const [k, v] of buckets) if (now - v.at > 600000) buckets.delete(k);
-  next();
+function limiter({ capacity, perMin }) {
+  const buckets = new Map();
+  return function rateLimit(req, res, next) {
+    const key = req.get('fly-client-ip') || req.ip || 'unknown';
+    const now = Date.now();
+    const b = buckets.get(key) || { tokens: capacity, at: now };
+    b.tokens = Math.min(capacity, b.tokens + ((now - b.at) / 60000) * perMin); b.at = now;
+    if (b.tokens < 1) { buckets.set(key, b); res.set('Retry-After', '10'); return res.status(429).json({ error: 'too many requests, try again shortly' }); }
+    b.tokens -= 1; buckets.set(key, b);
+    if (buckets.size > 5000) for (const [k, v] of buckets) if (now - v.at > 600000) buckets.delete(k);
+    next();
+  };
 }
-app.use(['/api/ask', '/api/finder/next', '/api/foryou', '/api/find', '/api/testdrive/book', '/api/testdrive/answers'], rateLimit);
-app.put('/api/dealer/priorities', rateLimit);
+const rateLimit = limiter({ capacity: Number(process.env.RATE_BURST || 30), perMin: Number(process.env.RATE_PER_MIN || 20) });
+// First-party events are cheap but must not be a write amplifier: own, larger bucket.
+const eventsLimit = limiter({ capacity: Number(process.env.EVENTS_BURST || 120), perMin: Number(process.env.EVENTS_PER_MIN || 90) });
+app.use(['/api/ask', '/api/finder/next', '/api/foryou', '/api/find', '/api/testdrive/book', '/api/testdrive/answers', '/api/testdrive/handover', '/api/promotions/refresh'], rateLimit);
+app.post('/api/events', eventsLimit);
 
 const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((e) => {
   console.error(`[${req.method} ${req.path}] ${e.message}`);
@@ -116,15 +127,16 @@ app.get('/api/offers', wrap(async (req, res) => {
   res.json(rankOffers(offers(s, { model, body: bodies.has(body) ? body : '' }), s));
 }));
 
-// ── dealer priorities (business-editable weights; no auth in the prototype) ──
-app.get('/api/dealer/priorities', (req, res) => res.json(priorities()));
-app.put('/api/dealer/priorities', wrap(async (req, res) => {
-  const v = validatePriorities(req.body);
-  if (v.error) return res.status(400).json({ error: v.error });
-  res.json(await savePriorities(v.value));
-}));
+// ── dealer priorities (derived nightly from Domo dealer_signals; read-only) ──
+app.get('/api/dealer/priorities', wrap(async (req, res) => res.json(priorities(await stock()))));
+app.all('/api/dealer/priorities', (req, res) => res.set('Allow', 'GET').status(405).json({ error: 'Dealer priorities are produced by Domo (dealer_signals, refreshed nightly) and cannot be edited here.' }));
 
-// ── promotions ───────────────────────────────────────────────────────────────
+// ── promotions (Domo targets + ARAG composition; see server/promotions.mjs) ──
+app.get('/api/promotions/explain', wrap(async (req, res) => res.json(explainPromotions(await stock()))));
+app.post('/api/promotions/refresh', wrap(async (req, res) => {
+  await refreshPromotions(await stock(), priorities);
+  res.json(explainPromotions(await stock()));
+}));
 app.get('/api/promotions', wrap(async (req, res) => {
   const s = await stock();
   const model = String(req.query.model || ''); const unit = String(req.query.unit || '').toUpperCase(); const body = String(req.query.body || '');
@@ -133,6 +145,23 @@ app.get('/api/promotions', wrap(async (req, res) => {
   if (body && !catalog().models.some((m) => m.body === body)) return res.status(400).json({ error: 'unknown body' });
   res.json(promotionsFor(s, { model, unit, body }));
 }));
+
+// ── first-party events + report for Domo ─────────────────────────────────────
+app.post('/api/events', wrap(async (req, res) => {
+  const b = req.body || {};
+  const sid = events.sidOf(req);
+  if (!sid) return res.status(400).json({ error: 'sid (8-64 chars of A-Z a-z 0-9 _ -) is required in the body or the x-sid header' });
+  const type = String(b.type || '');
+  if (events.SERVER_ONLY.has(type)) return res.status(202).json({ ok: true, logged: false, note: `${type} is logged by the server` });
+  const v = events.validateEvent(type, b.data, await stock());
+  if (v.error) return res.status(400).json({ error: v.error });
+  const logged = events.logEvent(sid, type, v.data, 'client');
+  res.status(logged ? 201 : 202).json({ ok: true, logged, ...(logged ? {} : { note: 'duplicate within 30 minutes' }) });
+}));
+app.get('/api/report/configurator', (req, res) => {
+  const days = Math.max(1, Math.min(365, Number.parseInt(req.query.days, 10) || 30));
+  res.json(events.configuratorReport(days));
+});
 
 // ── test drives ──────────────────────────────────────────────────────────────
 app.get('/api/testdrive/slots', wrap(async (req, res) => {
@@ -148,11 +177,16 @@ app.get('/api/testdrive/slots', wrap(async (req, res) => {
   res.json(out);
 }));
 app.post('/api/testdrive/book', wrap(async (req, res) => {
-  const r = await testdrive.book(req.body, await stock());
+  const r = await testdrive.book(req.body, await stock(), { sid: events.sidOf(req) });
   res.status(r.status).json(r.body);
 }));
 app.post('/api/testdrive/answers', wrap(async (req, res) => {
-  const r = await testdrive.answers(req.body, await stock());
+  const r = await testdrive.answers(req.body, await stock(), { sid: events.sidOf(req) });
+  res.status(r.status).json(r.body);
+}));
+// Salesperson pre-visit sheet (dealer-side; no auth in the prototype).
+app.get('/api/testdrive/handover/:bookingId', wrap(async (req, res) => {
+  const r = await testdrive.handover(req.params.bookingId, await stock());
   res.status(r.status).json(r.body);
 }));
 
@@ -160,12 +194,23 @@ app.post('/api/ask', wrap(async (req, res) => {
   const b = req.body || {};
   if (typeof b.question !== 'string' || !b.question.trim()) return res.status(400).json({ error: 'question is required' });
   const s = await stock();
-  res.json(await askAssistant(b, s));
+  const out = await askAssistant(b, s);
+  events.logServer(events.sidOf(req), 'ask', { questionLength: b.question.trim().length, lang: b.lang, modelId: b.build?.modelId || modelsMentioned(b.question.slice(0, 1000))[0] || null }, s);
+  res.json(out);
 }));
 
 app.post('/api/finder/next', wrap(async (req, res) => {
   const s = await stock();
-  res.json(await finderNext(req.body || {}, s));
+  const out = await finderNext(req.body || {}, s);
+  // Logged only for real (non-prefetch) steps from a page that sends a sid; see events.mjs.
+  const sid = events.sidOf(req);
+  if (sid && !events.isPrefetch(req)) {
+    const answers = cleanAnswers(req.body?.answers);
+    const last = answers[answers.length - 1];
+    if (last) events.logServer(sid, 'finder_answer', { questionId: last.id, value: canon(last) }, s);
+    if (out.done) events.logServer(sid, 'finder_result', { recommended: out.recommendations.map((r) => r.modelId) }, s);
+  }
+  res.json(out);
 }));
 
 app.get('/api/foryou', wrap(async (req, res) => {
@@ -192,6 +237,12 @@ app.get('/api/find', wrap(async (req, res) => {
 }));
 
 app.use('/api/images', imagesRouter);
+// ── Harbourline DMS (sales back office): API at /dms/api, SPA at /dms (server/dms/) ──
+app.use('/dms/api', dmsRouter);
+app.post('/dms/mcp', express.json({ limit: '1mb' }), dmsMcpPost); // MCP Streamable HTTP (stateless)
+app.get('/dms/mcp', dmsMcpGet);
+app.use('/dms', express.static(join(ROOT, 'public', 'dms'), { maxAge: '5m', setHeaders: (res, path) => { if (path.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache'); } }));
+app.get(['/dms', '/dms/*'], (req, res) => res.sendFile(join(ROOT, 'public', 'dms', 'index.html'), { headers: { 'Cache-Control': 'no-cache' } }, (err) => { if (err && !res.headersSent) res.status(404).type('text').send('DMS UI not built yet'); }));
 app.use('/api', (req, res) => res.status(404).json({ error: 'not found' }));
 // Body-parser errors (malformed JSON, body > 64 kb) as JSON, not Express's HTML page.
 // eslint-disable-next-line no-unused-vars

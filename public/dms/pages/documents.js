@@ -1,3 +1,4 @@
+import { openDrawer } from '../core.js';
 import { api, state, esc, pick, items, num, money, date, dateTime, pagehead, loading, failState, empty, tagArag, ann, statusChip, cap, bindRetry, spinBtn, toast, citations, icon, API } from '../core.js';
 import { listView } from '../parts.js';
 
@@ -8,8 +9,9 @@ const canWrite = () => (state.user?.caps || ['documents.write']).includes('docum
 export default async function documents(root, ctx) {
   if (ctx.params[0]) return detail(root, ctx, ctx.params[0]);
   root.innerHTML = pagehead({ title: 'Documents', tags: tagArag(), sub: 'Contracts, trade-in forms and supplier invoices. Upload a PDF, then Progress Agentic RAG ingests it into the knowledge box and extracts the fields with a per-kind schema, with a confidence for each and the ones a person should check.' }) +
-    `<div class="split"><div id="lv"></div><aside class="stack">${canWrite() ? uploader(ctx.query) : ''}</aside></div>`;
-  if (canWrite()) bindUpload(root, ctx);
+    `<div id="lv"></div>`;
+  const ph = root.querySelector('.pagehead .actions');
+  if (canWrite()) { ph.innerHTML = `<button class="btn" id="uppdf">${icon('upload')}Upload PDF</button>${ann('POST /dms/api/documents')}`; const open = () => { const b = openDrawer('Upload PDF', uploader(ctx.query)); bindUpload(b, ctx); }; ph.querySelector('#uppdf').onclick = open; if (ctx.query.dealId || ctx.query.upload) open(); }
   await listView(root.querySelector('#lv'), {
     endpoint: '/documents', count: 'documents', search: 'Search file name, deal, customer…', annText: 'GET /dms/api/documents', initial: ctx.query,
     filters: [{ key: 'kind', label: 'Any kind', options: KINDS.map(k => [k, KIND_LABEL[k]]) }, { key: 'status', label: 'Any status', options: ['uploaded', 'processing', 'extracted', 'verified'].map(s => [s, cap(s)]) }],
@@ -24,11 +26,11 @@ export default async function documents(root, ctx) {
   });
 }
 
-const uploader = q => `<section class="card aipanel"><div class="chead"><h3>Upload a document</h3>${tagArag()}<div class="r">${ann('POST /dms/api/documents', 'dms')}</div></div><div class="cbody stack" style="gap:12px">
-  <label class="dropzone" id="dz" for="file">${icon('upload')}<b>Choose a PDF</b><span style="font-size:.78rem">or drop it here · up to 10 MB</span><span id="fname" class="mono" style="font-size:.76rem"></span></label>
+const uploader = q => `<section><div class="stack" style="gap:12px">
+  <label class="dropzone" id="dz" for="file">${icon('upload')}<b>Choose a PDF</b><span style="font-size:.78rem">or drop it here · up to 6 MB</span><span id="fname" class="mono" style="font-size:.76rem"></span></label>
   <input type="file" id="file" accept="application/pdf,.pdf" class="sr">
   <div class="grid g2" style="gap:10px"><div class="field"><label for="kind">Kind</label><select class="select" id="kind">${KINDS.map(k => `<option value="${k}">${esc(KIND_LABEL[k])}</option>`).join('')}</select></div><div class="field"><label for="deal">Deal (optional)</label><input class="input mono" id="deal" placeholder="D-01234" value="${esc(q.dealId || '')}"></div></div>
-  <button class="btn" id="up" disabled>${icon('upload')}Upload</button><div class="err" id="uperr"></div>
+  <button class="btn" id="up" disabled>Upload</button><div class="err" id="uperr"></div>
   <p class="subtle" style="font-size:.74rem">Try a sample: the six PDFs in <span class="mono">content/dms/samples/</span>. When the file name matches the sample manifest, the extracted values are shown beside the expected ones.</p>
 </div></section>`;
 
@@ -36,7 +38,7 @@ function guessKind(name) { const n = name.toLowerCase(); return /invoice|inv[-_]
 function bindUpload(root, ctx) {
   const input = root.querySelector('#file'), dz = root.querySelector('#dz'), up = root.querySelector('#up'), err = root.querySelector('#uperr');
   let file = null;
-  const set = f => { if (!f) return; if (!/pdf$/i.test(f.type) && !/\.pdf$/i.test(f.name)) { err.textContent = 'Only PDF files are accepted.'; return; } if (f.size > 10 * 1024 * 1024) { err.textContent = 'That file is over 10 MB.'; return; } err.textContent = ''; file = f; root.querySelector('#fname').textContent = `${f.name} · ${Math.round(f.size / 1024)} KB`; up.disabled = false; const k = guessKind(f.name); if (k) root.querySelector('#kind').value = k; };
+  const set = f => { if (!f) return; if (!/pdf$/i.test(f.type) && !/\.pdf$/i.test(f.name)) { err.textContent = 'Only PDF files are accepted.'; return; } if (f.size > 6 * 1024 * 1024) { err.textContent = 'That file is over 6 MB.'; return; } err.textContent = ''; file = f; root.querySelector('#fname').textContent = `${f.name} · ${Math.round(f.size / 1024)} KB`; up.disabled = false; const k = guessKind(f.name); if (k) root.querySelector('#kind').value = k; };
   input.onchange = () => set(input.files[0]);
   ['dragenter', 'dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('over'); }));
   ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('over'); }));
@@ -62,23 +64,34 @@ async function detail(root, ctx, id) {
   root.innerHTML = pagehead({
     title: doc.fileName || doc.id, crumbs: [['Documents', '#/documents'], [doc.id]], tags: `${statusChip(doc.status)} <span class="chip out">${esc(KIND_LABEL[doc.kind] || cap(doc.kind))}</span>`,
     sub: `Uploaded ${dateTime(doc.uploadedAt)}${doc.dealId ? ` · deal <a class="mono" href="#/deals/${encodeURIComponent(doc.dealId)}">${esc(doc.dealId)}</a>` : ''}${doc.aragResourceId ? ` · KB resource <span class="mono">${esc(String(doc.aragResourceId).slice(0, 12))}…</span>` : ''}`,
-    actions: canWrite() ? `<button class="btn" id="proc">${icon('assistant')}${doc.extracted && Object.keys(doc.extracted).length ? 'Re-process' : 'Process'} with Progress Agentic RAG</button>${ann('POST /dms/api/documents/' + doc.id + '/process', 'kb')}` : '',
+    actions: canWrite() ? `<button class="btn" id="proc">${icon('assistant')}Process with ARAG</button>${tagArag()}${ann('POST /dms/api/documents/' + doc.id + '/process', 'kb')}` : '',
   }) + `<div class="split wide-r"><section class="card"><div class="chead"><h3>Document</h3><div class="r">${ann('GET /dms/api/documents/' + doc.id + '/file')}</div></div><div class="cbody" id="pv">${loading(4)}</div></section><section class="card aipanel" id="ex"><div class="chead"><h3>Extracted fields</h3>${tagArag()}</div><div class="cbody" id="exb"></div></section></div>`;
 
   preview(root.querySelector('#pv'), doc);
   const exb = root.querySelector('#exb');
-  const show = d => { exb.innerHTML = renderFields(d); bindVerify(root, d, ctx); };
+  const [sm, dl] = await Promise.all([api('/documents/samples'), doc.dealId ? api('/deals/' + encodeURIComponent(doc.dealId)) : Promise.resolve({ ok: false })]);
+  const sample = items(sm.data).find(x => x.file && doc.fileName && x.file.toLowerCase() === String(doc.fileName).toLowerCase());
+  const deal = dl.ok ? dl.data : null;
+  const show = d => { exb.innerHTML = renderFields({ ...d, expected: sample?.expected }, deal); bindVerify(root, d, ctx); };
   if (doc.extracted && Object.keys(doc.extracted).length) show(doc);
-  else exb.innerHTML = empty({ inline: true, ic: 'assistant', title: 'Not processed yet', body: 'Process the document to ingest it into the knowledge box and extract its fields.' });
+  else exb.innerHTML = empty({ inline: true, ic: 'assistant', title: 'Not processed yet', body: `Click Process with ARAG to ingest it into the knowledge box and extract its fields.${sample ? ' This file matches a sample in the manifest, so the expected values will be shown beside the extraction.' : ''}` });
   const pb = root.querySelector('#proc');
   const run = async () => {
     spinBtn(pb, true, 'Processing…');
-    exb.innerHTML = `<div class="thinking"><span class="dots"><i></i><i></i><i></i></span>Uploading to the knowledge box, waiting for processing, then extracting with the ${esc(KIND_LABEL[doc.kind] || doc.kind)} schema. This can take up to a minute.</div>`;
-    const y = await api(`/documents/${encodeURIComponent(doc.id)}/process`, { method: 'POST', body: { lang: state.lang }, timeout: 180000 });
+    const t0 = Date.now();
+    const msg = s => { exb.innerHTML = `<div class="thinking"><span class="dots"><i></i><i></i><i></i></span>${esc(s)}</div>`; };
+    msg(`Uploading to the knowledge box as topic/document, then extracting with the ${KIND_LABEL[doc.kind] || doc.kind} schema…`);
+    let y;
+    for (let i = 0; i < 40; i++) {
+      y = await api(`/documents/${encodeURIComponent(doc.id)}/process`, { method: 'POST', body: { lang: state.lang }, timeout: 70000 });
+      if (y.status !== 202) break;
+      msg(`The knowledge box is processing the PDF (text, layout, tables)… ${Math.round((Date.now() - t0) / 1000)} s`);
+      await new Promise(r => setTimeout(r, Math.max(4, Math.min(15, y.data?.retryAfterSeconds || 8)) * 1000));
+    }
     spinBtn(pb, false);
-    if (!y.ok) { exb.innerHTML = failState(y, { what: 'document processing', endpoint: `POST /documents/${doc.id}/process`, inline: true }); return; }
-    doc = { ...doc, ...(y.data?.document || {}), ...(y.data?.document ? {} : y.data) };
-    show(doc); toast('Extraction complete');
+    if (!y.ok || y.status === 202) { exb.innerHTML = y.status === 202 ? empty({ inline: true, title: 'Still processing', body: 'The knowledge box hasn’t finished. Click Process with ARAG again in a minute.' }) : y.status === 409 ? empty({ inline: true, ic: 'doc', title: 'No file to process', body: esc(y.error) }) : failState(y, { what: 'document processing', endpoint: `POST /documents/${doc.id}/process`, inline: true }); bindRetry(exb, run); return; }
+    doc = { ...doc, ...(y.data?.document || {}), extracted: y.data.extracted, confidence: y.data.confidence, verifyFields: y.data.verifyFields, status: y.data.status || 'extracted' };
+    show(doc); toast(`Extraction complete in ${Math.round((Date.now() - t0) / 1000)} s`);
   };
   if (pb) pb.onclick = run;
   if (pb && ctx.query.process && !(doc.extracted && Object.keys(doc.extracted).length)) run();
@@ -91,7 +104,7 @@ async function preview(host, doc) {
     const url = URL.createObjectURL(await res.blob());
     host.innerHTML = `<iframe class="pdfview" src="${url}" title="${esc(doc.fileName || 'Document')}"></iframe>`;
   } catch {
-    host.innerHTML = empty({ inline: true, ic: 'doc', title: doc.fileName || 'No preview', body: doc.kind && !doc.aragResourceId && doc.status === 'uploaded' ? 'Preview not available for this record.' : 'This record has no stored PDF to preview (seeded documents carry extracted data only).' });
+    host.innerHTML = empty({ inline: true, ic: 'doc', title: doc.fileName || 'No preview', body: doc.hasFile ? 'The PDF is stored on the server, but this build’s API has no download route for it yet (GET /dms/api/documents/:id/file), so it can’t be previewed here.' : 'This record has no stored PDF (seeded documents carry metadata only).' });
   }
 }
 
@@ -99,7 +112,7 @@ const flat = (o, p = '') => Object.entries(o || {}).flatMap(([k, v]) => v && typ
 const fmtV = v => v == null || v === '' ? '<span class="subtle">—</span>' : Array.isArray(v) ? (v.length && typeof v[0] === 'object' ? `<span class="mono" style="font-size:.74rem">${v.length} line${v.length === 1 ? '' : 's'}</span>` : esc(v.join(', '))) : typeof v === 'boolean' ? (v ? 'Yes' : 'No') : esc(v);
 const norm = v => String(Array.isArray(v) ? v.length : v ?? '').toLowerCase().replace(/[\s,$]/g, '');
 
-function renderFields(d) {
+function renderFields(d, deal) {
   const ex = d.extracted || {};
   const conf = d.confidence || ex._confidence || {};
   const expected = d.expected || d.sample?.expected || null;
@@ -109,6 +122,17 @@ function renderFields(d) {
   if (!rows.length) return empty({ inline: true, title: 'No fields extracted', body: 'The agent didn’t return any fields for this document.' });
   const expFlat = expected ? Object.fromEntries(flat(expected)) : null;
   let matched = 0, compared = 0;
+  const mism = [];
+  const exv = k => ex[k] ?? ex[Object.keys(ex).find(x => x.toLowerCase() === k.toLowerCase())];
+  if (deal) {
+    const vin = exv('vin'), stock = exv('stockNo'), da = exv('driveAway') ?? exv('driveAwayPrice');
+    if (vin && deal.vehicle?.vin && norm(vin) !== norm(deal.vehicle.vin)) mism.push(`VIN differs from the deal’s vehicle (${deal.vehicle.vin})`);
+    if (stock && deal.stockNo && norm(stock) !== norm(deal.stockNo)) mism.push(`Stock number differs from the deal (${deal.stockNo})`);
+    if (typeof da === 'number' && deal.driveAway && Math.abs(da - deal.driveAway) > 1) mism.push(`Drive-away ${money(da)} vs deal ${money(deal.driveAway)}`);
+  }
+  for (const k of ['buyerSigned', 'dealerSigned', 'signedByBuyer', 'signedByDealer']) if (exv(k) === false) mism.push(`${cap(k.replace(/([A-Z])/g, ' $1'))}: not signed`);
+  const gst = exv('gst'), tot = exv('total');
+  if (typeof gst === 'number' && typeof tot === 'number' && Math.abs(gst - tot / 11) > 0.02) mism.push(`GST ${money(gst)} is not one-eleventh of the total ${money(tot)}`);
   const body = rows.map(([k, v]) => {
     const c = typeof conf === 'number' ? conf : conf[k] ?? conf[k.split('.').pop()];
     const cp = c == null ? null : c > 1 ? c : c * 100;
@@ -116,26 +140,29 @@ function renderFields(d) {
     let cls = '';
     if (e !== undefined) { compared++; if (norm(e) === norm(v)) { cls = 'match'; matched++; } else cls = 'miss'; }
     const chk = verify.has(k) || verify.has(k.split('.').pop()) || (cp != null && cp < 70);
+    const top = !k.includes('.');
     return `<div class="fr${chk ? ' check' : ''}"><span class="k">${esc(cap(k.replace(/\./g, ' › ').replace(/([a-z])([A-Z])/g, '$1 $2')))}${chk ? ' <span class="chip warn" style="font-size:.62rem">Check</span>' : ''}</span>
-      <span class="v">${d.status !== 'verified' && chk && canWrite() && !Array.isArray(v) ? `<input class="input" style="height:30px" data-vf="${esc(k)}" value="${esc(v ?? '')}">` : fmtV(v)}</span>
+      <span class="v">${d.status !== 'verified' && chk && top && canWrite() && !Array.isArray(v) && typeof v !== 'boolean' ? `<input class="input" style="height:30px" data-vf="${esc(k)}" value="${esc(v ?? '')}">` : fmtV(v)}</span>
       ${expFlat ? `<span class="e ${cls}">${e === undefined ? '<span class="subtle">—</span>' : (cls === 'match' ? '✓ ' : '≠ ') + fmtV(e)}</span>` : '<span></span>'}
       <span class="conf">${cp == null ? '<span class="subtle">—</span>' : `<span>${Math.round(cp)}%</span><span class="bar"><i style="width:${cp}%;background:${cp >= 90 ? 'var(--accent-500)' : cp >= 70 ? 'var(--brand-500)' : '#E8A317'}"></i></span>`}</span></div>`;
   }).join('');
   return `<div class="stack" style="gap:12px">
-    ${expFlat ? `<div class="notice info">${icon('check')}<div>Matched the sample manifest: <b>${matched} of ${compared}</b> fields agree with the expected values.</div></div>` : ''}
+    ${expFlat ? `<div class="notice info">${icon('check')}<div><b>Accuracy ${matched} / ${compared}</b> · extracted fields that exactly match the ground truth in the sample manifest.</div></div>` : ''}
+    ${mism.length ? `<div class="notice bad">${icon('alert')}<div><span class="chip bad">Mismatch</span> ${mism.map(esc).join(' · ')}</div></div>` : ''}
+    ${verify.size && d.status !== 'verified' ? `<div class="label" style="color:var(--warn-fg)">Verify these fields · ${verify.size} highlighted in amber</div>` : ''}
     <div class="fields"><div class="fr hd"><span>Field</span><span>Extracted</span><span>${expFlat ? 'Expected (manifest)' : ''}</span><span>Confidence</span></div>${body}</div>
     ${lines ? `<details><summary style="cursor:pointer;font-size:.82rem;font-weight:600">Line items (${lines.length})</summary><div class="datatable compact" style="margin-top:8px"><div class="scroll"><table><thead><tr>${Object.keys(lines[0]).map(k => `<th>${esc(cap(k))}</th>`).join('')}</tr></thead><tbody>${lines.map(l => `<tr>${Object.values(l).map(v => `<td>${esc(typeof v === 'number' && v > 50 ? money(v) : v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div></details>` : ''}
     ${(d.citations || d.sources || []).length ? `<div><span class="label">Grounded in</span>${citations(d.citations || d.sources)}</div>` : ''}
-    <div class="row">${d.status === 'verified' ? `<span class="chip good">${icon('check').replace('<svg', '<svg style="width:12px;height:12px"')} Verified${d.verifiedBy ? ' by ' + esc(d.verifiedBy) : ''}${d.verifiedAt ? ' · ' + dateTime(d.verifiedAt) : ''}</span>` : canWrite() ? `<button class="btn accent" id="verify">${icon('check')}Verify ${verify.size ? `(${verify.size} to check)` : ''}</button>${ann('POST /dms/api/documents/' + d.id + '/verify')}` : ''}<span class="subtle" style="margin-left:auto;font-size:.72rem">${d.extractedAt ? 'extracted ' + dateTime(d.extractedAt) : ''}</span></div>
+    <div class="row">${d.status === 'verified' ? `<span class="chip good">${icon('check').replace('<svg', '<svg style="width:12px;height:12px"')} Verified${d.verifiedBy ? ' by ' + esc(d.verifiedBy) : ''}${d.verifiedAt ? ' · ' + dateTime(d.verifiedAt) : ''}</span>` : canWrite() ? `<button class="btn accent" id="verify">${icon('check')}Verify</button>${ann('POST /dms/api/documents/' + d.id + '/verify')}` : ''}<span class="subtle" style="margin-left:auto;font-size:.72rem">${d.extractedAt ? 'extracted ' + dateTime(d.extractedAt) : ''}</span></div>
     <div class="json">${esc(JSON.stringify({ extracted: d.extracted, confidence: d.confidence, verifyFields: d.verifyFields }, null, 2))}</div>
   </div>`;
 }
 function bindVerify(root, d, ctx) {
   const b = root.querySelector('#verify'); if (!b) return;
   b.onclick = async () => {
-    const corrections = {}; root.querySelectorAll('[data-vf]').forEach(i => { corrections[i.dataset.vf] = i.value; });
+    const corrections = {}; root.querySelectorAll('[data-vf]').forEach(i => { if (String(d.extracted?.[i.dataset.vf] ?? '') !== i.value) corrections[i.dataset.vf] = i.value; });
     spinBtn(b, true, 'Verifying…');
-    const y = await api(`/documents/${encodeURIComponent(d.id)}/verify`, { method: 'POST', body: { fields: corrections, corrections } });
+    const y = await api(`/documents/${encodeURIComponent(d.id)}/verify`, { method: 'POST', body: { corrections: Object.fromEntries(Object.entries(corrections).map(([k, v]) => [k, typeof d.extracted?.[k] === 'number' && v !== '' && !isNaN(v) ? Number(v) : v])) } });
     spinBtn(b, false);
     if (!y.ok) { toast(`Couldn’t verify: ${y.error}`); return; }
     toast('Document verified'); ctx.rerender();

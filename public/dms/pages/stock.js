@@ -1,6 +1,6 @@
 import { drawerForm, notInBuild, downloadCsv, openDrawer, closeDrawer } from '../core.js';
 import { api, state, esc, pick, items, num, money, date, dateTime, pagehead, loading, failState, empty, tagDomo, ann, statusChip, siteName, modelName, cap, bindRetry, spinBtn, toast, SITES, icon } from '../core.js';
-import { listView } from '../parts.js';
+import { listView, gradeName } from '../parts.js';
 import { ageColor, AGE_BUCKETS } from '../charts.js';
 
 const REASON = { aged_90d: '90+ days in stock', aged_60d: '60–89 days in stock', days_of_supply: 'Too many days of supply for the model', model_year_change: 'New model year arriving soon', high_dos: 'Too many days of supply for the model', target_gap: 'Model behind monthly target' };
@@ -14,8 +14,8 @@ export default async function stock(root, ctx) {
   root.innerHTML = pagehead({
     title: 'Stock', tags: tagDomo(),
     sub: `Units on the lot, in transit and demonstrators across ${state.site ? siteName(state.site) : 'all four sites'}. Ageing is coloured by policy band; move priorities and push reasons come from Domo’s dealer_signals.${state.user?.role === 'salesperson' ? ' Read-only for your role.' : ''}`,
-    actions: `<div class="segmented" role="group" aria-label="View"><button aria-pressed="${ctx.query.view !== 'heat'}" data-view="">List</button><button aria-pressed="${ctx.query.view === 'heat'}" data-view="heat">Heat map</button></div><button class="btn ghost" id="csv">Export CSV</button>${canRecompute ? `<button class="btn secondary" id="recomp">${icon('refresh')}Recompute Domo signals</button>${ann('POST /dms/api/domo/recompute-signals', 'domo')}` : ''}`,
-  }) + `<div class="split"><div id="tbl"></div><aside class="stack"><section class="card" id="sig" data-src="GET /domo/signals"><div class="cbody">${loading(8)}</div></section></aside></div>`;
+    actions: `<div class="segmented" role="group" aria-label="View"><button aria-pressed="${ctx.query.view !== 'heat'}" data-view="">List</button><button aria-pressed="${ctx.query.view === 'heat'}" data-view="heat">Heat map</button></div>${caps.includes('domo.read') ? '<button class="btn ghost" id="csv">Export CSV</button>' : ''}${canRecompute ? `<button class="btn secondary" id="recomp">${icon('refresh')}Recompute Domo signals</button>${ann('POST /dms/api/domo/recompute-signals', 'domo')}` : ''}`,
+  }) + `<div class="split split-xl"><div id="tbl"></div><aside class="stack"><section class="card" id="sig" data-src="GET /domo/signals"><div class="cbody">${loading(8)}</div></section></aside></div>`;
 
   const tabs = `<div class="tabs" role="tablist">${['', ...Object.keys(SITES)].map(s => `<button role="tab" aria-selected="${(ctx.query.site ?? state.site) === s}" data-site="${s}">${s ? esc(SITES[s]) : 'All sites'}</button>`).join('')}</div>`;
   const tbl = root.querySelector('#tbl');
@@ -28,19 +28,18 @@ export default async function stock(root, ctx) {
     filters: [{ key: 'status', label: 'Any status', options: [['on_lot,demo,in_transit', 'In stock (lot, demo, transit)'], ['on_lot', 'On lot'], ['demo', 'Demo'], ['in_transit', 'In transit'], ['allocated', 'Allocated'], ['ordered', 'Ordered'], ['sold', 'Sold']] }],
     href: v => '#/stock?unit=' + encodeURIComponent(v.stockNo) + (ctx.query.site ? '&site=' + ctx.query.site : ''),
     cols: [
-      { label: 'Stock no', sort: 'stockNo', render: v => `<span class="cell-title mono">${esc(v.stockNo)}</span><span class="cell-sub mono">${esc(v.vin || '')}</span>` },
-      { label: 'Vehicle', sort: 'model', render: v => `${esc(modelName(v.model))} <span class="subtle">${esc(cap(String(v.grade || '').replace(/-/g, ' ')))}</span><span class="cell-sub">${esc(cap(String(v.colour || '').replace(/-/g, ' ')))}${v.interior ? ' · ' + esc(cap(String(v.interior).replace(/-/g, ' '))) : ''}</span>` },
+      { label: 'Stock no', sort: 'stockNo', render: v => `<span class="cell-title mono">${esc(v.stockNo)}</span>` },
+      { label: 'Vehicle', sort: 'model', render: v => `<span style="white-space:nowrap">${esc(modelName(v.model))} <span class="subtle">${esc(gradeName(v.grade))}</span></span><span class="cell-sub">${esc(cap(String(v.colour || '').replace(/-/g, ' ')))} · ${money(v.listPrice)}</span>` },
       { label: 'Site', render: v => esc(siteName(v.siteId)) },
       { label: 'Status', render: v => statusChip(v.status) + (v.hold || v.heldUntil ? ' <span class="chip warn">Held</span>' : '') },
       { label: 'Days in stock', sort: 'daysInStock', render: v => age(v.daysInStock) },
-      { label: 'List', num: true, sort: 'listPrice', render: v => money(v.listPrice) },
-      { label: 'Bonus headroom', num: true, sort: 'bonusHeadroom', render: v => v.bonusHeadroom ? money(v.bonusHeadroom) : '<span class="subtle">—</span>' },
+      { label: 'Headroom', num: true, sort: 'bonusHeadroom', render: v => v.bonusHeadroom ? money(v.bonusHeadroom) : '<span class="subtle">—</span>' },
       { label: 'Move priority', sort: 'movePriority', render: v => `${prio(v.movePriority)}${v.reasonCode ? `<span class="cell-sub">${esc(reasonText(v.reasonCode))}</span>` : ''}` },
     ],
   });
 
   root.querySelectorAll('[data-view]').forEach(b => b.onclick = () => { location.hash = '#/stock' + (b.dataset.view ? '?view=heat' : ''); });
-  root.querySelector('#csv').onclick = () => downloadCsv('vehicles', { siteId: siteNow });
+  const csvb = root.querySelector('#csv'); if (csvb) csvb.onclick = () => downloadCsv('vehicles', { siteId: siteNow });
   if (ctx.query.view === 'heat') { lv.then?.(() => {}); heat(tbl, siteNow); }
   if (ctx.query.unit) unitDrawer(ctx.query.unit, ctx);
   await Promise.all([lv, signals(root, ctx)]);
@@ -59,6 +58,7 @@ async function signals(root, ctx) {
   const box = root.querySelector('#sig');
   box.innerHTML = `<div class="cbody">${loading(8)}</div>`;
   const r = await api('/domo/signals', { query: { siteId: state.site } });
+  if (r.status === 403) { box.parentElement.remove(); root.querySelector('.split-xl')?.classList.remove('split', 'split-xl'); return; }
   if (!r.ok) { box.innerHTML = failState(r, { what: 'Domo signals', endpoint: 'GET /dms/api/domo/signals', inline: true }); bindRetry(box, () => signals(root, ctx)); return; }
   const d = r.data || {};
   const models = d.models || d.rows || d.dealer_signals?.rows || d.signals?.rows || (Array.isArray(d) ? d : []);
@@ -80,8 +80,8 @@ async function signals(root, ctx) {
     ${pri.length ? pri.slice(0, 12).map(p => {
       const stockNo = p.stockNo || p.unit_id || p.unitId || p.id;
       const hd = p.bonusHeadroom ?? p.incentive_headroom; const dd = p.daysInStock ?? p.days_in_stock; const rc = p.reasonCode || p.reason_code;
-      const why = p.why || `${modelName(p.model)} ${cap(String(p.grade || '').replace(/-/g, ' '))} ${stockNo} at ${siteName(p.siteId || p.site)} has been in stock ${dd} days${rc ? ` (${rc})` : ''}. ${hd ? `Up to ${money(hd)} can be approved as a ready-now bonus.` : 'There is no bonus headroom on this unit.'}`;
-      return `<div class="sig"><div class="h">${prio(p.movePriority || p.move_priority || p.priority)}<b><a class="mono" href="#/stock?q=${esc(stockNo)}">${esc(stockNo)}</a></b><span>${esc(modelName(p.model || p.modelId))} ${esc(cap(String(p.grade || p.gradeId || '').replace(/-/g, ' ')))}</span><span class="subtle" style="margin-left:auto;font-size:.74rem">${esc(siteName(p.siteId || p.site))}</span></div>
+      const why = p.why || `${modelName(p.model)} ${gradeName(p.grade)} ${stockNo} at ${siteName(p.siteId || p.site)} has been in stock ${dd} days${rc ? ` (${rc})` : ''}. ${hd ? `Up to ${money(hd)} can be approved as a ready-now bonus.` : 'There is no bonus headroom on this unit.'}`;
+      return `<div class="sig"><div class="h">${prio(p.movePriority || p.move_priority || p.priority)}<b><a class="mono" href="#/stock?q=${esc(stockNo)}">${esc(stockNo)}</a></b><span>${esc(modelName(p.model || p.modelId))} ${esc(gradeName(p.grade || p.gradeId))}</span><span class="subtle" style="margin-left:auto;font-size:.74rem">${esc(siteName(p.siteId || p.site))}</span></div>
         <div class="row" style="gap:6px">${age(p.daysInStock ?? p.days_in_stock)}<span class="chip warn">${esc(reasonText(p.reasonCode || p.reason_code || p.reason))}</span>${(p.bonusHeadroom ?? p.incentive_headroom) ? `<span class="chip good">${money(p.bonusHeadroom ?? p.incentive_headroom)} headroom</span>` : ''}</div>
         <details class="why"><summary style="cursor:pointer;color:var(--brand-600);font-weight:600">Why this is being pushed</summary><div style="margin-top:4px">${esc(why)}</div></details></div>`;
     }).join('') : empty({ inline: true, title: 'Nothing to move', body: 'No aged or over-supplied units for this site.' })}
@@ -105,10 +105,10 @@ async function unitDrawer(stockNo, ctx) {
   const v = r.data; const sig = v.signal;
   const ro = state.user?.role === 'salesperson' && !(state.user?.caps || []).includes('deals.write');
   body.innerHTML = `<div class="stack" style="gap:14px">
-    <div><h3 style="font-size:1.05rem">${esc(modelName(v.model))} ${esc(cap(String(v.grade || '').replace(/-/g, ' ')))}</h3><div class="muted" style="font-size:.84rem">${esc(cap(String(v.colour || '').replace(/-/g, ' ')))} · ${esc(siteName(v.siteId))} · ${statusChip(v.status)}</div></div>
+    <div><h3 style="font-size:1.05rem">${esc(modelName(v.model))} ${esc(gradeName(v.grade))}</h3><div class="muted" style="font-size:.84rem">${esc(cap(String(v.colour || '').replace(/-/g, ' ')))} · ${esc(siteName(v.siteId))} · ${statusChip(v.status)}</div></div>
     <dl class="kv"><dt>Stock no</dt><dd class="mono">${esc(v.stockNo)}</dd><dt>VIN</dt><dd class="mono">${esc(v.vin || '—')}</dd><dt>Days in stock</dt><dd>${age(v.daysInStock)}</dd><dt>Arrived</dt><dd>${date(v.arrivedAt)}</dd><dt>List price</dt><dd>${money(v.listPrice)}</dd><dt>Bonus headroom</dt><dd>${v.bonusHeadroom ? money(v.bonusHeadroom) : '—'}</dd><dt>Move priority</dt><dd>${prio(v.movePriority)} ${esc(reasonText(v.reasonCode))}</dd>${(v.packs || []).length ? `<dt>Packs</dt><dd>${v.packs.map(p => `<span class="chip neutral">${esc(p)}</span>`).join(' ')}</dd>` : ''}${v.deal ? `<dt>Deal</dt><dd><a class="mono" href="#/deals/${encodeURIComponent(v.deal.id)}">${esc(v.deal.id)}</a> ${statusChip(v.deal.stage)}</dd>` : ''}</dl>
     ${sig ? `<div class="notice info">${tagDomo()}<div>${esc(modelName(sig.model))}: ${num(sig.daysOfSupply)} days of supply, ${num(sig.unitsInStock)} in stock, target gap ${num(sig.targetGap)}.</div></div>` : ''}
-    ${['on_lot', 'in_transit', 'demo'].includes(v.status) && !ro ? `<div class="row"><button class="btn" id="hold">Hold 48 h</button><button class="btn secondary" id="xfer">Request transfer</button></div>` : ''}
+    ${['on_lot', 'in_transit', 'demo'].includes(v.status) && !ro ? `<div class="row">${v.deal && !["delivered","lost"].includes(v.deal.stage) ? `<span class="chip warn">Attached to ${esc(v.deal.id)}</span>` : `<button class="btn" id="hold">Hold 48 h</button>`}<button class="btn secondary" id="xfer">Request transfer</button></div>` : ''}
   </div>`;
   const hb = body.querySelector('#hold'), xb = body.querySelector('#xfer');
   if (hb) hb.onclick = async () => {

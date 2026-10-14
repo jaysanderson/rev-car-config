@@ -4,3 +4,8 @@
 node_modules/
 dist/
 content/images/raw/
+
+# DMS runtime state (demo edits, hashed access tokens, uploads)
+content/dms/data/_changes.jsonl
+content/dms/data/_tokens.json
+content/dms/uploads/

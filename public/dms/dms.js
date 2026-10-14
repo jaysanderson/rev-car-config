@@ -100,7 +100,7 @@ export function signedIn(token, user) {
   if (user.siteId && !['gm', 'dxm', 'finance'].includes(user.role)) setSite(user.siteId); else setSite('');
 }
 export function logout() { api('/auth/logout', { method: 'POST' }); setSession(null, null); clearCache(); location.hash = '#/login'; }
-setUnauthorisedHandler(() => { if (state.token) { setSession(null, null); toast('Your session ended. Sign in again.'); location.hash = '#/login'; } });
+setUnauthorisedHandler(() => { if (state.token) { setSession(null, null); toast('Your session ended (the server may have restarted). Sign in again.'); const cur = location.hash.replace(/^#\/?/, ''); location.hash = '#/login' + (cur && !cur.startsWith('login') ? '?next=' + encodeURIComponent(cur) : ''); } });
 
 // ---------- band ----------
 const revealBtn = $('#reveal');

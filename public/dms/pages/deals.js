@@ -1,10 +1,10 @@
 import { drawerForm, notInBuild } from '../core.js';
 import { api, state, esc, pick, items, num, money, kmoney, date, dateTime, ago, pagehead, loading, failState, empty, tagArag, ann, statusChip, siteName, modelName, cap, custName, staffMap, bindRetry, spinBtn, toast, citations, prose, icon, LANGS } from '../core.js';
-import { listView, withCustomers } from '../parts.js';
+import { listView, withCustomers, gradeName } from '../parts.js';
 
 export const STAGES = ['quote', 'negotiation', 'finance', 'approval', 'contract', 'delivery', 'delivered', 'lost'];
 const OPEN = STAGES.slice(0, 6);
-const vehLabel = d => d.vehicle ? [modelName(d.vehicle.model), d.vehicle.grade && cap(String(d.vehicle.grade).replace(/-/g, ' '))].filter(Boolean).join(' · ') : d.order ? `${modelName(d.order.modelId)} (factory order${d.order.etaWeeks ? `, ${d.order.etaWeeks} wk` : ''})` : d.stockNo || '—';
+const vehLabel = d => !d.vehicle && d.modelId && !d.order ? [modelName(d.modelId), d.gradeId && gradeName(d.gradeId)].filter(Boolean).join(' · ') + (d.stockNo ? ` · ${d.stockNo}` : '') : d.vehicle ? [modelName(d.vehicle.model), d.vehicle.grade && gradeName(d.vehicle.grade)].filter(Boolean).join(' · ') : d.order ? `${modelName(d.order.modelId)}${d.order.gradeId ? ' ' + gradeName(d.order.gradeId) : ''} · factory order${d.order.etaWeeks ? `, ${d.order.etaWeeks} wk` : ''}` : d.stockNo || '—';
 const daysIn = d => { if (d.daysInStage != null) return d.daysInStage; const at = (d.events || []).reduce((m, e) => (e.at && e.at > m ? e.at : m), d.createdAt || ''); return at ? Math.max(0, Math.floor((Date.now() - new Date(at)) / 864e5)) : null; };
 export const STUCK = { quote: 7, negotiation: 5, finance: 5, approval: 2, contract: 3, delivery: 10 };
 const NEXT = { quote: ['negotiation'], negotiation: ['finance', 'approval'], finance: ['approval'], contract: ['delivery'], delivery: ['delivered'] };
@@ -88,12 +88,14 @@ async function detail(root, ctx, id) {
           <dt>Vehicle</dt><dd class="num">${money(d.vehiclePrice)}</dd>
           ${(d.accessories || []).map(a => `<dt>${esc(a.name)}</dt><dd class="num">${money(a.price)}</dd>`).join('')}
           ${(d.promotions || []).map(p => `<dt>${esc(p.title)}</dt><dd class="num" style="color:var(--accent-fg)">−${money(p.value).replace('$', '$')}</dd>`).join('')}
+          ${d.onRoadCosts ? `<dt>On-road costs</dt><dd class="num">${money(d.onRoadCosts)}</dd>` : ''}
+          ${d.readyNowBonus ? `<dt>Ready-now bonus</dt><dd class="num" style="color:var(--accent-fg)">−${money(d.readyNowBonus)}</dd>` : ''}
           ${d.discount ? `<dt>Discount</dt><dd class="num" style="color:var(--accent-fg)">−${money(d.discount)}</dd>` : ''}
           ${ti ? `<dt>Trade-in allowance</dt><dd class="num">${money(ti.offered)}</dd>` : ''}
           <dt style="font-weight:700;color:var(--text)">Drive-away</dt><dd class="num" style="font-weight:700;font-size:1.05rem">${money(d.driveAway)}</dd>
         </dl></div><div class="cfoot">Gross ${money(d.grossProfit)} · front ${money(d.frontGross)} · back ${money(d.backGross)}</div></section>
         <section class="card"><div class="chead"><h3>Vehicle</h3></div><div class="cbody"><dl class="kv">
-          ${veh ? `<dt>Stock no</dt><dd><a class="mono" href="#/stock?q=${esc(veh.stockNo)}">${esc(veh.stockNo)}</a></dd><dt>VIN</dt><dd class="mono">${esc(veh.vin || '—')}</dd><dt>Model</dt><dd>${esc(modelName(veh.model))} ${esc(cap(String(veh.grade || '').replace(/-/g, ' ')))}</dd><dt>Colour</dt><dd>${esc(cap(String(veh.colour || '—').replace(/-/g, ' ')))}</dd><dt>Status</dt><dd>${statusChip(veh.status)} ${veh.daysInStock != null ? `${veh.daysInStock} days in stock` : ''}</dd>`
+          ${veh ? `<dt>Stock no</dt><dd><a class="mono" href="#/stock?q=${esc(veh.stockNo)}">${esc(veh.stockNo)}</a></dd><dt>VIN</dt><dd class="mono">${esc(veh.vin || '—')}</dd><dt>Model</dt><dd>${esc(modelName(veh.model))} ${esc(gradeName(veh.grade))}</dd><dt>Colour</dt><dd>${esc(cap(String(veh.colour || '—').replace(/-/g, ' ')))}</dd><dt>Status</dt><dd>${statusChip(veh.status)} ${veh.daysInStock != null ? `${veh.daysInStock} days in stock` : ''}</dd>`
             : d.order ? `<dt>Factory order</dt><dd>${esc(modelName(d.order.modelId))} ${esc(d.order.gradeId || '')}</dd><dt>Colour</dt><dd>${esc(d.order.colourId || '—')}</dd><dt>ETA</dt><dd>${d.order.etaWeeks ? d.order.etaWeeks + ' weeks' : '—'}</dd>`
             : `<dt>Stock no</dt><dd class="mono">${esc(d.stockNo || '—')}</dd>`}
           ${d.deliveryDate ? `<dt>Delivery</dt><dd>${date(d.deliveryDate)}</dd>` : ''}
@@ -161,10 +163,11 @@ async function detail(root, ctx, id) {
     const risks = s.risks || [];
     out.innerHTML = `<div class="ai-out">
       <div><h4>Summary</h4><div class="prose">${prose(pick(s, 'summary', 'answer', 'text') || '')}</div></div>
-      ${nba ? `<div><h4>Next best action</h4><div class="nba">${icon('bolt')}<div>${esc(typeof nba === 'string' ? nba : nba.action || nba.text || JSON.stringify(nba))}${nba.why ? `<div style="font-weight:400;font-size:.8rem;margin-top:3px;opacity:.85">${esc(nba.why)}</div>` : ''}</div></div></div>` : ''}
-      ${risks.length ? `<div><h4>Risks</h4><div class="stack" style="gap:6px">${risks.map(k => { const sev = (typeof k === 'object' && (k.severity || k.level)) || 'medium'; return `<div class="risk"><span class="sev chip ${/high/i.test(sev) ? 'bad' : /low/i.test(sev) ? 'neutral' : 'warn'}">${esc(cap(sev))}</span><span>${esc(typeof k === 'string' ? k : k.risk || k.text || k.title)}</span></div>`; }).join('')}</div></div>` : ''}
+      ${nba ? `<div><h4>Next best action</h4><div class="nba">${icon('bolt')}<div>${esc(typeof nba === 'string' ? nba : nba.action || nba.text || JSON.stringify(nba))}${nba.owner || nba.due ? `<div style="font-weight:600;font-size:.78rem;margin-top:4px">${esc([nba.owner, nba.due].filter(Boolean).join(' · '))}</div>` : ''}${nba.why ? `<div style="font-weight:400;font-size:.8rem;margin-top:3px;opacity:.85">${esc(nba.why)}</div>` : ''}</div></div></div>` : ''}
+      ${risks.length ? `<div><h4>Risks</h4><div class="stack" style="gap:6px">${risks.map(k => { const sev = (typeof k === 'object' && (k.severity || k.level)) || 'medium'; return `<div class="risk"><span class="sev chip ${/high/i.test(sev) ? 'bad' : /low/i.test(sev) ? 'neutral' : 'warn'}">${esc(cap(sev))}</span><span>${esc(typeof k === 'string' ? k : k.risk || k.text || k.title)}${k.mitigation ? `<span class="muted" style="display:block;font-size:.78rem">→ ${esc(k.mitigation)}</span>` : ''}</span></div>`; }).join('')}</div></div>` : ''}
+      ${(s.policyRefs || []).length ? `<div><h4>Policy relied on</h4><div class="pills">${s.policyRefs.map(p => `<span class="chip">${esc(p)}</span>`).join('')}</div></div>` : ''}
       ${(s.citations || s.sources || []).length ? `<div><h4>Sources</h4>${citations(s.citations || s.sources)}</div>` : ''}
-      <div class="subtle" style="font-size:.72rem">${esc(LANGS[state.lang] || '')}${s.generatedAt ? ' · ' + dateTime(s.generatedAt) : ''}${s.mode || s.by ? ' · ' + esc(s.mode || s.by) : ''}</div>
+      <div class="subtle" style="font-size:.72rem">${esc(LANGS[state.lang] || '')}${s.generatedAt ? ' · ' + dateTime(s.generatedAt) : ''}${s.generatedBy ? ' · ' + (s.generatedBy === 'arag' ? 'Progress Agentic RAG' : 'deterministic fallback') : ''}${s.ms ? ` · ${(s.ms / 1000).toFixed(1)} s` : ''}</div>
       <div class="json">${esc(JSON.stringify(s, null, 2))}</div>
     </div>`;
   };

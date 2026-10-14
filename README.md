@@ -148,3 +148,41 @@ Runtime secrets are staged on the Fly app. These are `ARAG_*`, `NUCLIA_ACCOUNT`,
 ```sh
 fly deploy                # Dockerfile: node:20-alpine, npm ci --omit=dev, node server/index.mjs on :8080
 ```
+
+## DMS (sales back office)
+
+A second application in the same server. It is a sales-only dealer management system for Harbourline Toyota that shows Progress Agentic RAG and Domo working in the back office. It is API-first: there is an OpenAPI document, a full MCP tool catalogue, and the SPA at `/dms` only talks to the API. Contract: `docs/DMS-SPEC.md`. MCP: `docs/DMS-MCP.md`.
+
+| Path | What |
+| --- | --- |
+| `/dms` | SPA (`public/dms/`, hash routes) |
+| `/dms/api` | REST API, bearer auth (62 operations) |
+| `/dms/api/openapi.json` · `/dms/api/docs` | OpenAPI 3.0 generated from the route table, and an inline HTML reference |
+| `/dms/mcp` | MCP Streamable HTTP (stateless, 54 tools generated from the OpenAPI document); stdio: `scripts/dms-mcp-stdio.mjs` |
+
+**Demo logins** (password `demo1234`): `gm@harbourline.demo` (general manager, all sites) · `sm.par@harbourline.demo` (sales manager, Parramatta) · `sales1@harbourline.demo` (salesperson Josh Pereira, own leads/deals) · `marketing@harbourline.demo` (digital experience) · `finance@harbourline.demo` (business manager, F&I). Personal access tokens (`hdms_…`) are issued by `POST /dms/api/access-tokens` for MCP clients and scripts.
+
+**Routes** (all under `/dms/api`, lists take `q, siteId, status, from, to, sort, page, pageSize` plus any `column=value`, and return `{items,total,page,pageSize}`):
+- system/auth: `GET /health` (public, always 200) · `POST /auth/login` · `GET /auth/me` · `POST /auth/logout` · `GET /auth/users` · `GET/POST /access-tokens` · `DELETE /access-tokens/:id` · `GET /mcp/info`
+- CRM: `GET/POST /customers` · `GET /customers/:id` · `GET/POST /leads` · `GET/PATCH /leads/:id` (customer fields create the customer; `contact` logs a contact) · `GET/POST /test-drives` · `GET/PATCH /test-drives/:id`
+- deals: `GET/POST /deals` · `GET/PATCH /deals/:id` (stage, discount, readyNowBonus ≤ headroom, `event`) · `POST /deals/:id/events` (`approval_requested` → approval, `approved` → contract) · `GET /trade-ins` · `GET /finance-apps`
+- stock: `GET /vehicles` (`aged=1`) · `GET /vehicles/:stockNo` · `POST /vehicles/:stockNo/hold` (48 h) · `POST /vehicles/:stockNo/transfer`
+- marketing: `GET /promotions` (published | unpublished | scheduled | expired) · `POST /promotions/compose` · `POST /promotions/:id/publish|unpublish` · `GET /campaigns`
+- documents: `GET/POST /documents` (base64 JSON ≤ 8 MB) · `GET /documents/samples` · `GET /documents/:id` · `GET /documents/:id/file` · `POST /documents/:id/process` · `POST /documents/:id/verify`
+- KPIs and Domo: `GET /kpi/overview|series|leaderboard` · `GET /domo/datasets` · `GET /domo/export/:dataset.csv` (also `?token=`) · `GET /domo/signals` · `POST /domo/recompute-signals`
+- DXM: `GET /dxm/overview` · `GET /dxm/handovers`
+- ARAG: `POST /ask` · `POST /agent/query` · `POST /deals/:id/summary` · `POST /leads/:id/followup` · `GET /search` · `GET /arag/status`
+
+**Files** (`server/dms/`): `index.mjs` (route table → router + OpenAPI) · `db.mjs` (loads `content/dms/data/*.json`, indexes, list/get/insert/patch, `_changes.jsonl` write-through) · `auth.mjs` (users, session tokens, PATs, permission matrix, row scoping) · `kpi.mjs` · `domo.mjs` (catalogue, streamed CSV, `dealer_signals` recompute) · `derive.mjs` (derived datasets, data team) · `dxm.mjs` (configurator bridge: `leadFromBooking`, reconcile) · `ops.mjs` (test drives, quotes, bonus, approvals, holds, transfers) · `ai.mjs` (ARAG features) · `kb.mjs` (file upload / processing / facet calls) · `documents.mjs` · `openapi.mjs` · `mcp-core.mjs` + `mcp.mjs` (MCP). Tests: `node tests/dms-smoke.mjs` (`--quick` skips the slow ARAG checks).
+
+**Roles:** gm can do everything. sales_manager is limited to their own site and cannot recompute Domo signals. salesperson is limited to their own site and their own leads, deals and test drives, can read stock and promotions, and cannot publish or transfer. dxm covers DXM, promotions (including publish), campaigns, documents, read access to all leads, and the assistant. finance covers deals, finance applications, trade-ins, documents and the assistant. Denials return 403, and rows outside a role's scope return 404.
+
+**ARAG paths** (every call is server-side with the KB service token; nothing reaches the browser):
+- `/ask` uses `/ask` filtered to label `topic/manual` or `topic/policy`, always excluding `topic/document` (resources from `content/dms-kb/`).
+- `/agent/query` is the live-ERP agent: a **two-step `/ask` loop in the server**. Step 1 is `answer_json_schema` → a plan of ≤ 4 calls to `erp.search(table, filters, limit)`, `erp.kpi(name, params)` and `erp.get(table, id)`, given the schema summary. The server runs those calls against `db.mjs` with the caller's scoping. Step 2 is `/ask` with the results as `extra_context` → `{answer, evidence[{table,id,why,row}], followups[]}`. Evidence is validated against the rows actually returned. If the plan step fails, a deterministic keyword planner takes over. No KB context agent calls back into the API.
+- `/deals/:id/summary` and `/leads/:id/followup` are `/ask` calls with the record as `extra_context` and the policy/manual scope. The follow-up only cites promotions from the list it is given, and unknown ids are dropped.
+- `/documents/:id/process` uploads the file as a KB resource labelled `topic/document`, waits for processing (hard limit 90 s; after that it returns 504 `{status:"timeout", retryAfterSeconds}`), then runs `/ask` with `filter_expression {prop:"resource", id}` + `rag_strategies:[full_resource]` and a per-kind `answer_json_schema` (`{value, confidence}` per field). Confidence is checked against the extracted text, and ERP cross-checks produce `verifyFields`.
+- `/search` combines `/find` over manual, policy and document with an ERP text search. `/arag/status` returns counts by topic label and the KB MCP URL `https://<zone>.rag.progress.cloud/api/v1/kb/<kbid>/mcp`.
+- `lang` (ISO code) is accepted by `/ask`, `/agent/query`, `/deals/:id/summary` and `/leads/:id/followup`.
+
+**Write-through state:** demo edits go to `content/dms/data/_changes.jsonl` and PATs to `_tokens.json`. Set `DMS_CHANGES_DIR` to move them. If the directory is not writable, the server falls back to `<tmp>/harbourline-dms`. Uploads go to `content/dms/uploads/` (`DMS_UPLOAD_DIR`). At startup the server reconciles configurator bookings into leads and recomputes `content/domo/dealer_signals.json` from the DMS tables. With the seed as generated the recompute reproduces the file exactly, so nothing is written. Optional env: `DMS_TODAY`, `DMS_AGENT_PLAN_MODEL`, `DMS_AGENT_ANSWER_MODEL`.

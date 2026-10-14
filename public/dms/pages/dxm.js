@@ -51,7 +51,7 @@ export default async function dxm(root, ctx) {
       { label: 'Salesperson', render: h => esc(staff[h.staffId]?.name || h.staffId || '—') + `<span class="cell-sub">${esc(siteName(h.siteId))}</span>` },
       { label: 'Channel', render: h => h.channel === 'configurator' ? '<span class="chip info">Configurator</span>' : esc(cap(h.channel || '—')) },
       { label: 'Status', render: h => statusChip(h.status) },
-      { label: '', render: h => `<button class="btn ghost sm" data-hv="${esc(h.id)}">View sheet</button>` },
+      { label: '', render: h => `<button class="btn ghost sm" data-hv="${esc(h.id)}">View handover</button>` },
     ], handovers.slice(0, 15), { compact: true }) : empty({ inline: true, title: 'No handover sheets yet' })}
   </div></section>
   <section class="card"><div class="chead"><h3>Offers published to the configurator</h3><span class="sub">and how often they’re used in deals</span><div class="r"><a class="btn ghost sm" href="#/promotions">Manage promotions</a>${ann('dxm.overview.promotionExposure')}</div></div><div class="cbody">

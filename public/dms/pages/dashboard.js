@@ -35,16 +35,16 @@ export default async function dashboard(root, ctx) {
   const att = ratio(t.unitsAttainment);
   const prev = o.previous || {};
   const delta = (a, b) => b ? Math.round(((a - b) / b) * 100) : null;
-  const d1 = delta(o.unitsDelivered, prev.unitsDelivered);
+  const d1 = delta(o.monthToDate ? (t.projectedUnits ?? o.unitsDelivered) : o.unitsDelivered, prev.unitsDelivered);
   const aged = o.agedStockCount ?? 0;
   kp.innerHTML = `<div class="statstrip" data-src="GET /kpi/overview">
     <a href="#/deals?stage=delivered"><div class="label">Units delivered</div><div class="value">${num(o.unitsDelivered)}<small>/ ${num(t.units)}</small></div><div class="meter ${att >= 1 ? 'good' : att >= .7 ? '' : 'warn'}"><i style="width:${Math.min(100, (att || 0) * 100)}%"></i></div><div class="sub">${att != null ? Math.round(att * 100) + '% target attainment' : 'no target set'}${t.projectedUnits && o.monthToDate ? ` · pace ${num(t.projectedUnits)}` : ''}</div></a>
     <div><div class="label">Gross</div><div class="value">${kmoney(o.gross)}</div><div class="sub">front ${kmoney(o.frontGross)} · back ${kmoney(o.backGross)}</div></div>
-    <div><div class="label">Avg gross / unit</div><div class="value">${money(o.avgGrossPerUnit)}</div><div class="sub">${d1 != null ? `<span class="delta ${d1 >= 0 ? 'up' : 'down'}">${d1 >= 0 ? '▲' : '▼'} ${Math.abs(d1)}%</span> units vs ${esc(monthLabel(prev.month || addMonths(month, -1), true))}` : ''}</div></div>
+    <div><div class="label">Avg gross / unit</div><div class="value">${o.unitsDelivered ? money(o.avgGrossPerUnit) : '—'}</div><div class="sub">${d1 != null ? `<span class="delta ${d1 >= 0 ? 'up' : 'down'}">${d1 >= 0 ? '▲' : '▼'} ${Math.abs(d1)}%</span> ${o.monthToDate ? 'pace' : 'units'} vs ${esc(monthLabel(prev.month || addMonths(month, -1), true))}` : ''}</div></div>
     <a href="#/leads"><div class="label">Leads</div><div class="value">${num(o.leads)}</div><div class="sub">all channels</div></a>
     <div><div class="label">Conversion</div><div class="value">${pct(ratio(o.conversion), 1)}</div><div class="sub">units ÷ leads</div></div>
     <a href="#/test-drives"><div class="label">Test-drive rate</div><div class="value">${pct(ratio(o.testDriveRate))}</div><div class="sub">${num(o.testDrives)} drives</div></a>
-    <div><div class="label">Days to close</div><div class="value">${num(o.daysToClose, 1)}</div><div class="sub">lead → delivery</div></div>
+    <div><div class="label">Days to close</div><div class="value">${o.unitsDelivered ? num(o.daysToClose, 1) : '—'}</div><div class="sub">lead → delivery</div></div>
     <a href="#/deals"><div class="label">Open pipeline</div><div class="value">${num(o.openDeals)}</div><div class="sub">${kmoney(o.pipelineValue)} drive-away</div></a>
     <a href="#/stock?aged=1"><div class="label">Aged stock</div><div class="value" style="${aged ? 'color:var(--danger-fg)' : ''}">${num(aged)}</div><div class="sub">of ${num(o.onLotCount)} on lot ${tagDomo()}</div></a>
   </div>`;
@@ -56,7 +56,7 @@ export default async function dashboard(root, ctx) {
     api('/kpi/series', { query: { metric: 'units', by: 'month', siteId: site, from: from12 + '-01', to: end } }),
     api('/sites'),
     api('/kpi/leaderboard', { query: { siteId: site, month } }),
-    api('/vehicles', { query: { siteId: site, status: 'on_lot', pageSize: 500 } }),
+    api('/vehicles', { query: { siteId: site, status: 'on_lot,demo', pageSize: 500 } }),
     api('/kpi/series', { query: { metric: 'leads', by: 'month', siteId: site, from: addMonths(month, -2) + '-01', to: end } }),
     api('/kpi/series', { query: { metric: 'test_drives', by: 'month', siteId: site, from: addMonths(month, -2) + '-01', to: end } }),
     api('/deals', { query: { siteId: site, from: addMonths(month, -2) + '-01', to: end, pageSize: 1 } }),
@@ -68,17 +68,20 @@ export default async function dashboard(root, ctx) {
   if (ser.ok) {
     const siteRows = items(sites.data);
     const tgtFor = m => siteRows.filter(s => !site || s.id === site).reduce((n, s) => n + (Number(s.salesTarget?.[m]) || 0), 0);
-    const pts = (ser.data?.points || items(ser.data)).map(p => ({ label: monthLabel(p.period), short: monthLabel(p.period, true), value: p.value, target: tgtFor(p.period) || (p.period === month ? t.units : 0) }));
+    const own = state.user?.role === 'salesperson';
+    const byP = Object.fromEntries((ser.data?.points || items(ser.data)).map(p => [p.period, p.value]));
+    const pts = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map(m => ({ label: monthLabel(m), short: monthLabel(m, true), value: byP[m] || 0, target: own ? 0 : (tgtFor(m) || (m === month ? t.units : 0)) }));
     const hit = pts.filter(p => p.target && p.value >= p.target).length;
-    c1.outerHTML = domoCard({ id: 'c1', title: 'Units delivered vs target', dataset: 'sales_daily', ask: `Why is ${site ? siteName(site) : 'the group'} ${att != null && att < 1 ? 'below' : 'tracking against'} target in ${monthLabel(month)}?`, endpoint: 'GET /kpi/series?metric=units', body: pts.length ? legend([['var(--c-series)', 'Units delivered'], ['var(--c-target)', 'Target', true]]) + unitsVsTarget(pts) : empty({ inline: true, title: 'No deliveries in range' }), foot: pts.length ? `Target met in ${hit} of ${pts.filter(p => p.target).length} months. Faded bars missed target. June (EOFY) and December peak.` : '' });
+    c1.outerHTML = domoCard({ id: 'c1', title: 'Units delivered vs target', dataset: 'sales_daily', ask: `Why is ${site ? siteName(site) : 'the group'} ${att != null && att < 1 ? 'below' : 'tracking against'} target in ${monthLabel(month)}?`, endpoint: 'GET /kpi/series?metric=units', body: pts.some(p => p.value) ? (own ? '' : legend([['var(--c-series)', 'Units delivered'], ['var(--c-target)', 'Target', true]])) + unitsVsTarget(pts) : empty({ inline: true, title: 'No deliveries in range' }), foot: own ? 'Your delivered units by month. Targets are set per site, so they are not drawn here.' : `Target met in ${hit} of ${pts.filter(p => p.target).length} months. Faded bars missed target. June (EOFY) and December peak.` });
   } else c1.outerHTML = `<section class="card" id="c1">${failState(ser, { what: 'the units series', inline: true })}</section>`;
 
   // 2 gross by site
   const c2 = root.querySelector('#c2');
-  const gs = Object.keys(SITES).map((s, i) => ({ s, r: siteOv[i] })).filter(x => x.r.ok);
+  const scoped = ['salesperson', 'sales_manager'].includes(state.user?.role) && state.user?.siteId;
+  const gs = Object.keys(SITES).map((s, i) => ({ s, r: siteOv[i] })).filter(x => x.r.ok && (!scoped || x.s === state.user.siteId));
   if (gs.length) {
     const rows = gs.map(({ s, r }) => ({ label: SITES[s], value: r.data.gross || 0, units: r.data.unitsDelivered, avg: r.data.avgGrossPerUnit, target: r.data.target?.gross || 0, sel: s === site }));
-    c2.outerHTML = domoCard({ id: 'c2', title: 'Gross profit by site', dataset: 'deals', ask: `Which site has the lowest average gross per unit in ${monthLabel(month)} and why?`, endpoint: 'GET /kpi/overview?siteId=…', body: (rows.some(r => r.target) ? legend([['var(--c-series)', 'Gross'], ['var(--c-target)', 'Gross target', true]]) : '') + hbars(rows, { fmt: kmoney, labelW: 96, color: d => site && !d.sel ? 'var(--c-series-2)' : 'var(--c-series)', tipFn: d => `<b>${esc(d.label)}</b><br>${money(d.value)} gross<br><span class="k">units</span> ${num(d.units)} · <span class="k">avg</span> ${money(d.avg)}${d.target ? `<br><span class="k">target</span> ${money(d.target)}` : ''}` }), foot: `${monthLabel(month)}. Front + back gross on delivered deals.` });
+    c2.outerHTML = domoCard({ id: 'c2', title: 'Gross profit by site', dataset: 'deals', ask: `Which site has the lowest average gross per unit in ${monthLabel(month)} and why?`, endpoint: 'GET /kpi/overview?siteId=…', body: (rows.some(r => r.target) ? legend([['var(--c-series)', 'Gross'], ['var(--c-target)', 'Gross target', true]]) : '') + hbars(rows, { fmt: kmoney, labelW: 96, color: d => site && !d.sel ? 'var(--c-series-2)' : 'var(--c-series)', tipFn: d => `<b>${esc(d.label)}</b><br>${money(d.value)} gross<br><span class="k">units</span> ${num(d.units)} · <span class="k">avg</span> ${money(d.avg)}${d.target ? `<br><span class="k">target</span> ${money(d.target)}` : ''}` }) + `<div class="datatable compact" style="margin-top:12px;box-shadow:none"><div class="scroll"><table><thead><tr><th>Site</th><th class="num">Units</th><th class="num">Avg gross</th><th class="num">Front</th><th class="num">Back</th></tr></thead><tbody>${gs.map(({ s: sid, r }) => `<tr><td>${esc(SITES[sid])}</td><td class="num">${num(r.data.unitsDelivered)}</td><td class="num">${money(r.data.avgGrossPerUnit)}</td><td class="num">${kmoney(r.data.frontGross)}</td><td class="num">${kmoney(r.data.backGross)}</td></tr>`).join('')}</tbody></table></div></div>`, foot: `${monthLabel(month)}${month === now ? ' to date' : ''}. Front + back gross on delivered deals; ticks are the month’s gross target.` });
   } else c2.outerHTML = `<section class="card" id="c2">${failState(siteOv[0] || { status: 503 }, { what: 'gross by site', inline: true })}</section>`;
 
   const sumPts = r => (r.data?.points || []).reduce((n, p) => n + (p.value || 0), 0);
@@ -103,14 +106,14 @@ export default async function dashboard(root, ctx) {
     const vs = items(veh.data);
     const b = AGE_BUCKETS.map(x => ({ ...x, value: 0 }));
     vs.forEach(v => { const d = v.daysInStock || 0; (b.find(x => d <= x.max) || b[4]).value++; });
-    c4.outerHTML = domoCard({ id: 'c4', title: 'Stock ageing', dataset: 'stock_ageing_daily', ask: `How many on-lot units are over 60 days old${site ? ' at ' + siteName(site) : ''}, and which models are they?`, endpoint: 'GET /vehicles?status=on_lot', body: vs.length ? histogram(b) : empty({ inline: true, title: 'No units on the lot' }), foot: `${num(vs.length)} units on the lot. Policy: review at 60 days, move at 90. <a href="#/stock">Open stock</a>` });
+    c4.outerHTML = domoCard({ id: 'c4', title: 'Stock ageing', dataset: 'stock_ageing_daily', ask: `How many on-lot units are over 60 days old${site ? ' at ' + siteName(site) : ''}, and which models are they?`, endpoint: 'GET /vehicles?status=on_lot,demo', body: vs.length ? histogram(b) : empty({ inline: true, title: 'No units on the lot' }), foot: `${num(vs.length)} units on the lot (incl. demonstrators). 60–89 days: eligible for a ready-now bonus. 90+: move priority. <a href="#/stock?aged=1">Open aged stock</a>` });
   } else c4.outerHTML = `<section class="card" id="c4">${failState(veh, { what: 'stock', inline: true })}</section>`;
 
   // 5 days of supply
   const c5 = root.querySelector('#c5');
   const dos = (o.daysOfSupply || []).filter(d => d.onLot || d.sold90d);
-  const dsColor = d => d.value > 90 ? 'var(--c-age-4)' : d.value > 60 ? 'var(--c-age-2)' : 'var(--c-series)';
-  c5.outerHTML = domoCard({ id: 'c5', title: 'Days of supply by model', dataset: 'dealer_signals', ask: 'Which models have more than 60 days of supply and how many units are on the lot?', endpoint: 'GET /kpi/overview → daysOfSupply', body: dos.length ? legend([['var(--c-series)', '≤ 60 days'], ['var(--c-age-2)', '61–90'], ['var(--c-age-4)', '> 90']]) + hbars(dos.slice(0, 12).map(d => ({ label: modelName(d.modelId), value: Math.min(d.daysOfSupply, 365), raw: d })), { labelW: 130, rowH: 26, ref: 45, refLabel: '45-day goal', color: dsColor, fmt: v => v >= 365 ? '365+' : num(v), tipFn: d => `<b>${esc(d.label)}</b><br>${d.raw.daysOfSupply >= 999 ? 'no sales in 90 days' : num(d.raw.daysOfSupply) + ' days of supply'}<br><span class="k">on lot</span> ${d.raw.onLot} · <span class="k">sold 90d</span> ${d.raw.sold90d}<br><span class="k">avg age</span> ${d.raw.avgDaysInStock} days` }) : empty({ inline: true, title: 'No stock to measure' }), foot: 'On-lot units ÷ average daily deliveries (trailing 90 days).' });
+  const dsColor = d => d.value > 60 ? 'var(--c-age-4)' : d.value < 30 ? 'var(--c-age-2)' : 'var(--c-series)';
+  c5.outerHTML = domoCard({ id: 'c5', title: 'Days of supply by model', dataset: 'dealer_signals', ask: 'Which models have more than 60 days of supply and how many units are on the lot?', endpoint: 'GET /kpi/overview → daysOfSupply', body: dos.length ? legend([['var(--c-age-2)', 'Under 30 days · tight'], ['var(--c-series)', '30–60'], ['var(--c-age-4)', 'Over 60 · long']]) + hbars(dos.slice(0, 12).map(d => ({ label: modelName(d.modelId), value: Math.min(d.daysOfSupply, 365), raw: d })), { labelW: 130, rowH: 26, ref: 60, refLabel: '60 days', color: dsColor, fmt: v => v >= 365 ? '365+' : num(v), tipFn: d => `<b>${esc(d.label)}</b><br>${d.raw.daysOfSupply >= 999 ? 'no sales in 90 days' : num(d.raw.daysOfSupply) + ' days of supply'}<br><span class="k">on lot</span> ${d.raw.onLot} · <span class="k">sold 90d</span> ${d.raw.sold90d}<br><span class="k">avg age</span> ${d.raw.avgDaysInStock} days` }) : empty({ inline: true, title: 'No stock to measure' }), foot: 'Units in stock ÷ average daily sales over 90 days. Under 30: protect gross, no ready-now bonuses. Over 60: Domo flags the model (days_of_supply).' });
 
   // 6 leaderboard
   const c6 = root.querySelector('#c6');
