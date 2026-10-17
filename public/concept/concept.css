@@ -168,11 +168,11 @@ body.demo .pin{display:inline-flex}
 .brand b{font-family:var(--display);font-size:1.05rem;letter-spacing:-.01em;display:block;line-height:1.1}
 .brand span{font-size:.72rem;color:var(--muted);display:block}
 .nav{display:flex;gap:2px;margin-left:8px}
-.nav a{padding:8px 12px;border-radius:999px;font-size:.9rem;font-weight:500;color:var(--ink-2);text-decoration:none}
+.nav a{padding:8px 12px;border-radius:999px;font-size:.9rem;font-weight:500;color:var(--ink-2);text-decoration:none;white-space:nowrap}
 .nav a:hover{background:var(--canvas-2)} .nav a.on{background:var(--ink);color:var(--canvas)}
 .head .tools{margin-left:auto;display:flex;align-items:center;gap:8px}
 .lang{display:inline-flex;gap:2px;padding:3px;border-radius:999px;border:1px solid var(--line);background:var(--paper)}
-.lang button{padding:4px 9px;border-radius:999px;font-size:.78rem;font-weight:600;color:var(--muted)}
+.lang button{padding:4px 9px;border-radius:999px;font-size:.78rem;font-weight:600;color:var(--muted);white-space:nowrap}
 .lang button.on{background:var(--ink);color:var(--canvas)}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;letter-spacing:.06em;padding:4px 9px;border-radius:999px;background:var(--green-soft);color:var(--green)}
 .live.off{background:var(--amber-soft);color:var(--amber)}
