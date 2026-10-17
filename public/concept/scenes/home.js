@@ -5,6 +5,19 @@
   const CSS = `
   .hm-hero{position:relative;overflow:hidden;padding:clamp(48px,9vw,120px) 0 clamp(36px,6vw,72px);background:radial-gradient(1200px 600px at 20% -10%,color-mix(in srgb,var(--red) 7%,transparent),transparent 60%),radial-gradient(900px 500px at 90% 10%,color-mix(in srgb,var(--blue) 8%,transparent),transparent 60%),var(--canvas)}
   .hm-hero .kick{margin-bottom:14px}
+  .hm-hero-grid{display:grid;gap:40px;align-items:center;grid-template-columns:minmax(0,1fr)}
+  .hm-hero-visual{display:none}
+  @media (min-width:1100px){.hm-hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}.hm-hero-visual{display:block}}
+  .hm-hero-car{position:relative;display:block;border-radius:var(--r-xl);overflow:hidden;aspect-ratio:4/3;background:var(--canvas-2);box-shadow:var(--shadow-lg);text-decoration:none;color:inherit}
+  .hm-hero-car img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+  .hm-hero-car:hover img{transform:scale(1.03)}
+  .hm-hero-credit{position:absolute;right:12px;top:10px;font-size:.62rem;color:#fff;opacity:.8;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+  .hm-hero-build{position:absolute;left:16px;right:16px;bottom:16px;padding:14px 16px;display:grid;gap:4px;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(10px)}
+  .hm-hero-build b{font-family:var(--display);font-size:1.1rem;letter-spacing:-.01em}
+  .hm-hero-build .num{font-size:.9rem;color:var(--ink-2)}
+  .hm-hero-stock{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .hm-hero-build .go{margin-top:6px;font-weight:600;color:var(--red);display:inline-flex;gap:6px;align-items:center}
+  .hm-hero-noimg{width:100%;height:100%;background:linear-gradient(135deg,var(--canvas-2),var(--hair))}
   .hm-hero h1{max-width:16ch;font-size:clamp(2.3rem,6vw,4.4rem);font-weight:800;letter-spacing:-.03em;line-height:1.02}
   .hm-hero .lede{margin-top:16px;max-width:56ch;font-size:clamp(1rem,1.6vw,1.2rem);color:var(--ink-2)}
   .hm-ask{margin-top:28px;max-width:760px}
@@ -75,12 +88,32 @@
       door('#/finder', '◎', t('home.door.finder', 'Find my car'), t('home.door.finder.sub', 'Five questions. We rank the cars we actually have, new and pre-owned, with the reasons.'), 'primary'),
       door('#/browse', '▦', t('home.door.browse', 'Browse what is here'), t('home.door.browse.sub', 'Every new model and every pre-owned car across four sites, searchable in plain words.')),
       door(`#/car/m:${HL.state.build.modelId || 'rav4'}`, '✦', t('home.door.build', 'Build new'), t('home.door.build.sub', 'Grades, colours and packs with live availability and a drive-away price.')));
-    const sec = el('section', { class: 'hm-hero' }, el('div', { class: 'wrap' },
+    const copy = el('div', { class: 'hm-hero-copy' },
       el('div', { class: 'kick', text: t('home.kick', 'Harbourline Toyota · new, pre-owned and ownership') }),
       el('h1', { text: t('home.h1', 'Tell us what you need. We will find the car and show our working.') }),
       el('p', { class: 'lede', text: t('home.lede', 'One place for the whole range and every pre-owned car on our four lots. Every answer cites its source, every offer says why it exists, and nothing needs an account.') }),
-      ask, doors));
-    sec._stop = () => clearInterval(timer);
+      ask);
+    const visual = el('div', { class: 'hm-hero-visual' });
+    const fillVisual = () => {
+      const b = HL.state.build || {}; const m = HL.model(b.modelId) || (HL.data?.catalog?.models || [])[0]; if (!m) return;
+      const g = HL.grade(m.id, b.gradeId) || m.grades?.[0]; const price = HL.priceOf({ ...b, modelId: m.id, gradeId: g?.id }); const src = HL.img(m.id, 'hero');
+      const here = HL.unitsOf(m.id).filter((u) => u.status === 'on_lot').length;
+      visual.innerHTML = '';
+      visual.appendChild(el('a', { class: 'hm-hero-car', href: `#/car/m:${m.id}` },
+        src ? el('img', { src, alt: `Toyota ${m.name}`, onError: (e) => { e.target.remove(); } }) : el('div', { class: 'hm-hero-noimg' }),
+        el('span', { class: 'hm-hero-credit', text: HL.credit(m.id) }),
+        el('div', { class: 'hm-hero-build card' },
+          el('div', { class: 'kick', text: b.modelId ? t('home.hero.build', 'Your build so far') : t('home.hero.start', 'Start with') }),
+          el('b', { text: `Toyota ${m.name} ${g ? g.name : ''}`.trim() }),
+          el('span', { class: 'num' }, price ? `${HL.money(price.total)} ${t('home.hero.driveaway', 'drive-away est.')}` : ''),
+          el('span', { class: 'hm-hero-stock' }, here ? HL.ui.chip(t('card.onlot', '{n} on the lot', { n: here }), 'good') : HL.ui.chip(t('home.hero.order', 'Factory order'), 'blue'), HL.ui.chip(t('home.hero.live', 'Live · Domo stock by site'), 'domo')),
+          el('span', { class: 'go' }, t('home.hero.continue', 'Continue'), el('span', { class: 'arrow' }, '→')))));
+    };
+    fillVisual(); const offV = HL.bus.on('data', fillVisual); const offS = HL.bus.on('state', fillVisual);
+    HL.spot(visual, 'product', 'Live availability by site (Domo)', 'domo');
+    const sec = el('section', { class: 'hm-hero' }, el('div', { class: 'wrap' }, el('div', { class: 'hm-hero-grid' }, copy, visual), doors));
+    const stop0 = () => { offV(); offS(); };
+    sec._stop = () => { clearInterval(timer); stop0(); };
     return sec;
   }
   function door(href, icon, title, sub, cls) { return el('a', { class: `hm-door ${cls || ''}`, href }, el('span', { class: 'ic', 'aria-hidden': 'true', text: icon }), el('h3', { text: title }), el('p', { text: sub }), el('span', { class: 'go' }, t('home.door.go', 'Open'), el('span', { class: 'arrow' }, '→'))); }

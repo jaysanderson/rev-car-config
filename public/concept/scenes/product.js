@@ -10,7 +10,7 @@
 .pd-hero{position:relative;border-radius:var(--r-xl);overflow:hidden;background:var(--canvas-2);aspect-ratio:16/8;max-height:560px}
 .pd-hero img{width:100%;height:100%;object-fit:cover}
 .pd-hero .pd-credit{position:absolute;left:14px;bottom:10px;font-size:.68rem;color:#fff;opacity:.8;text-shadow:0 1px 2px rgba(0,0,0,.7)}
-.pd-hero .pd-badges{position:absolute;top:14px;left:14px;display:flex;gap:6px;flex-wrap:wrap}
+.pd-hero .pd-badges{position:absolute;top:14px;left:14px;display:flex;gap:6px;flex-wrap:wrap}.pd-hero .pd-badges .chip{background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(6px)}.pd-hero .pd-badges .chip.good{color:var(--green)}.pd-hero .pd-badges .chip.blue{color:var(--blue)}.pd-hero .pd-badges .chip.outline{color:var(--ink-2);border-color:transparent}
 .pd-hero .pd-nophoto{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
 .pd-dot{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--mock);color:#1a1a1a;font:700 .74rem var(--mono);display:grid;place-items:center;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer;transform:translate(-50%,-50%)}
 .pd-dot:hover,.pd-dot.on{background:#fff}

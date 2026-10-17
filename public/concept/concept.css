@@ -123,7 +123,7 @@ img{max-width:100%;display:block}
 @media (max-width:640px){.sheet{left:0;right:0;top:auto;bottom:0;transform:translateY(20px);width:100%;max-height:92vh;border-radius:var(--r-xl) var(--r-xl) 0 0}.sheet.open{transform:none}}
 
 /* drawers: assistant (right) and powers (right, wider) */
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(460px,100vw);background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow-lg);z-index:85;transform:translateX(104%);transition:transform .3s var(--ease);display:flex;flex-direction:column}
+.drawer{position:fixed;top:var(--band-h);right:0;bottom:0;width:min(460px,100vw);background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow-lg);z-index:85;transform:translateX(104%);transition:transform .3s var(--ease);display:flex;flex-direction:column}
 .drawer.open{transform:none}
 .drawer.wide{width:min(720px,100vw)}
 .drawer .dh{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--hair);flex:none}
@@ -166,7 +166,8 @@ body.demo .pin{display:inline-flex}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
 .brand .mark{width:34px;height:34px;border-radius:9px;background:var(--ink);color:var(--canvas);display:grid;place-items:center;font:800 .8rem var(--display);letter-spacing:.02em}
 .brand b{font-family:var(--display);font-size:1.05rem;letter-spacing:-.01em;display:block;line-height:1.1}
-.brand span{font-size:.72rem;color:var(--muted);display:block}
+.brand span{font-size:.72rem;color:var(--muted);display:block;white-space:nowrap}
+@media (max-width:1300px){.brand span{display:none}}
 .nav{display:flex;gap:2px;margin-left:8px}
 .nav a{padding:8px 12px;border-radius:999px;font-size:.9rem;font-weight:500;color:var(--ink-2);text-decoration:none;white-space:nowrap}
 .nav a:hover{background:var(--canvas-2)} .nav a.on{background:var(--ink);color:var(--canvas)}
