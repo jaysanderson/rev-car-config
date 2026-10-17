@@ -576,6 +576,7 @@ const paths = {
     const after = await call('GET', '/api/used/questions', null, 5000, SIDH); must(!after.json.byStock[usedCar.stockNo], 'questions survived forget');
     return `${r.json.rows.length} rows (${r.json.rows.map((x) => x.id).join(', ')}), report ok, forget ok`;
   });
+  await check('GET /concept/ serves Harbourline One', async () => { const r = await call('GET', '/concept/'); must(r.status === 200 && /HL\.start\(\)/.test(r.text), `status ${r.status}`); const a = await call('GET', '/concept/app.js'); must(a.status === 200 && /window\.HL/.test(a.text), 'app.js'); const s2 = await call('GET', '/concept/data/snapshot.json'); must(s2.status === 200 && s2.json && s2.json.catalog, 'snapshot'); return `${(r.text.length / 1024).toFixed(0)} KB shell, snapshot ${(s2.text.length / 1024).toFixed(0)} KB`; });
   await check('GET /used/ serves the pre-owned page', async () => { const r = await call('GET', '/used/'); must(r.status === 200 && /<html/i.test(r.text), `status ${r.status}`); return `${(r.text.length / 1024).toFixed(0)} KB`; });
 
   await check('GET / serves index.html', async () => { const r = await call('GET', '/'); must(r.status === 200 && /<html/i.test(r.text), `status ${r.status}`); return `${(r.text.length / 1024).toFixed(0)} KB`; });

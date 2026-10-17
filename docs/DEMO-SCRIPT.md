@@ -180,3 +180,15 @@ Added 17 Oct 2026. Spec: `docs/USED-SPEC.md`. Platform framing: `docs/PLATFORM.m
 - Photos are library images of the model with a credit; the car's colour in the record matches the photo where we could. Say "library photo" if asked.
 - PPSR, inspections and service histories are synthetic. Do not read a PPSR certificate number aloud as real.
 - Comments generation runs offline; if stock was re-seeded without re-running the comments script, every card falls back to scripted text.
+
+
+## Harbourline One (concept experience, `/concept/`)
+
+Use this when the audience wants the whole picture rather than one surface. Open **Demo mode** from the band first: every feature powered by the knowledge layer or Domo gets a numbered pin, and each pin opens its card in **What powers this** with a Demonstrate button that fires the real call.
+
+1. **Front door, any language.** Type "有没有七座的混合动力车？" in the big input. The assistant answers in Chinese with citations from the used listings. Say: one English corpus, every language.
+2. **For you.** Point at "Picked from your visit": rows built from what this device viewed and asked, with the retrieval query shown. Click Forget me to show it is session memory, not a profile.
+3. **Rich search.** Browse with "something to tow a caravan": new and pre-owned interleaved, "semantic match · ARAG /find" in the header, compare three cars in the tray.
+4. **Product view.** Open the 2024 HiLux Rogue: agent-written comments "from this car's own resource", provenance, market position from Domo, price with receipts, Book a drive to the three salesperson questions and the handover preview.
+5. **Find my car.** Five branching questions; results mix new grades with a Domo nudge ("why Harbourline can make this easy now") and used units with fit.
+6. **Value my car and Own.** Both labelled MOCK where no integration exists; "Ask your car" is live from the knowledge box. Finish on the What-powers-this summary strip: resources in the knowledge box, sessions, asks, bookings and enquiries from the report datasets.

@@ -49,6 +49,16 @@ app.use((req, res, next) => {
 const jsonSmall = express.json({ limit: '2kb' });
 const jsonLarge = express.json({ limit: '64kb' });
 app.use('/api', (req, res, next) => (req.path === '/events' ? jsonSmall : jsonLarge)(req, res, next));
+// CORS: the /concept/ page is also published as a claude.ai artifact and calls this API cross-origin.
+const CORS_RE = /^https:\/\/([a-z0-9-]+\.)*(claude\.ai|anthropic\.com)$/i;
+app.use(['/api', '/dms/api'], (req, res, next) => {
+  const origin = req.get('origin');
+  if (origin && CORS_RE.test(origin)) {
+    res.set({ 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', 'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS', 'Access-Control-Allow-Headers': 'content-type, x-sid, x-prefetch, authorization', 'Access-Control-Max-Age': '600' });
+    if (req.method === 'OPTIONS') return res.status(204).end();
+  }
+  next();
+});
 app.use('/api', (req, res, next) => {
   res.set('Cache-Control', 'no-store');
   // Hard per-request ceiling so a slow upstream never hangs a client.

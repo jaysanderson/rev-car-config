@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Harbourline One</title>
+<meta name="description" content="Concept experience: one dealer knowledge layer (Progress Agentic RAG) with Domo intelligence powering new, used and ownership. Prototype for Revolution Software; demo data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="concept.css">
+<style>body{background:var(--canvas)}</style>
+</head>
+<body>
+<!-- Progress band: prototype attribution, powers drawer, demo mode -->
+<div class="band" role="banner">
+  <span class="wm" aria-label="Progress Agentic RAG"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M20 2 36 11v18L20 38 4 29V11z" stroke="#5CE500" stroke-width="3"/><path d="M20 12v16M13 16l7-4 7 4" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>Progress <span style="font-weight:500;opacity:.85">Agentic RAG</span> · Domo</span>
+  <span class="proto">Concept<span> · prepared for Revolution Software · demo data, not a production system</span></span>
+  <span class="sp"></span>
+  <a class="hide-sm" href="/" title="New-car configurator">Configurator</a>
+  <a class="hide-sm" href="/used/" title="Pre-owned">Pre-owned</a>
+  <a class="hide-sm" href="/dms/" title="Dealer back office">Back office</a>
+  <button id="demoMode" title="Highlight every feature powered by Agentic RAG or Domo" aria-pressed="false">Demo mode</button>
+  <button id="openPowers" aria-controls="powers" aria-expanded="false">What powers this</button>
+</div>
+
+<!-- Harbourline header -->
+<header class="head">
+  <div class="wrap">
+    <a class="brand" href="#/" aria-label="Harbourline Toyota, home"><span class="mark">HL</span><span><b>Harbourline Toyota</b><span data-t="head.sub">Parramatta · Hornsby · Penrith · Liverpool</span></span></a>
+    <nav class="nav" id="nav" aria-label="Primary">
+      <a href="#/" data-nav="home" data-t="nav.home">Home</a>
+      <a href="#/browse" data-nav="browse" data-t="nav.browse">Browse</a>
+      <a href="#/finder" data-nav="finder" data-t="nav.finder">Find my car</a>
+      <a href="#/value" data-nav="value" data-t="nav.value">Value my car</a>
+      <a href="#/own" data-nav="own" data-t="nav.own">Own</a>
+    </nav>
+    <div class="tools">
+      <span class="live hide-md" id="liveBadge" title="API status"><i></i><span>…</span></span>
+      <div class="lang" id="langSwitch" role="group" aria-label="Language"></div>
+      <button class="btn ghost sm icon" id="themeBtn" title="Light / dark" aria-label="Toggle theme">◐</button>
+      <button class="btn secondary sm" id="menuBtn" aria-label="Menu" style="display:none">☰</button>
+    </div>
+  </div>
+</header>
+
+<main id="scene" class="scene" aria-live="polite"></main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="cols">
+      <div><b style="color:var(--ink)">Harbourline Toyota</b><br><span data-t="foot.fictional">A fictional Sydney dealer group used to demonstrate the platform.</span></div>
+      <div><span data-t="foot.prices">Prices are illustrative. New-car prices are drive-away estimates for NSW; pre-owned prices exclude government charges.</span></div>
+      <div><span data-t="foot.photos">Vehicle photos are library images of each model from Wikimedia Commons, credited on the image.</span></div>
+      <div><span data-t="foot.privacy">No account. The page remembers your session on this device only; use "Forget me" at any time.</span> · <a href="#" id="forgetLink" data-t="foot.forget">Forget me</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- assistant -->
+<button class="fab" id="fab" aria-controls="assistant" aria-expanded="false"><span class="av">HL</span><span data-t="fab.label">Ask anything, in any language</span></button>
+<aside class="drawer" id="assistant" aria-label="Assistant" aria-hidden="true"></aside>
+
+<!-- what powers this -->
+<aside class="drawer wide" id="powers" aria-label="What powers this" aria-hidden="true"></aside>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-hidden="true"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="app.js"></script>
+<script src="i18n.js"></script>
+<script src="powers.js"></script>
+<script src="assistant.js"></script>
+<script src="scenes/home.js"></script>
+<script src="scenes/browse.js"></script>
+<script src="scenes/product.js"></script>
+<script src="scenes/finder.js"></script>
+<script src="scenes/value.js"></script>
+<script src="scenes/own.js"></script>
+<script>HL.start();</script>
+</body>
+</html>
