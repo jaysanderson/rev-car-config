@@ -1,0 +1,132 @@
+[
+  {
+    "id": "W-SEED01",
+    "sid": "s-seedaa02",
+    "stockNo": "U-33002",
+    "criteria": null,
+    "createdAt": "2026-10-16T16:46:32.868Z"
+  },
+  {
+    "id": "W-SEED02",
+    "sid": "s-seedaa04",
+    "stockNo": "U-33002",
+    "criteria": null,
+    "createdAt": "2026-10-16T09:46:32.868Z"
+  },
+  {
+    "id": "W-SEED03",
+    "sid": "s-seedaa06",
+    "stockNo": "U-33002",
+    "criteria": null,
+    "createdAt": "2026-10-16T02:46:32.868Z"
+  },
+  {
+    "id": "W-SEED04",
+    "sid": "s-seedaa05",
+    "stockNo": "U-33060",
+    "criteria": null,
+    "createdAt": "2026-10-15T19:46:32.868Z"
+  },
+  {
+    "id": "W-SEED05",
+    "sid": "s-seedaa01",
+    "stockNo": "U-33060",
+    "criteria": null,
+    "createdAt": "2026-10-15T12:46:32.868Z"
+  },
+  {
+    "id": "W-SEED06",
+    "sid": "s-seedaa03",
+    "stockNo": "U-33060",
+    "criteria": null,
+    "createdAt": "2026-10-15T05:46:32.868Z"
+  },
+  {
+    "id": "W-SEED07",
+    "sid": "s-seedaa05",
+    "stockNo": "U-33060",
+    "criteria": null,
+    "createdAt": "2026-10-14T22:46:32.868Z"
+  },
+  {
+    "id": "W-SEED08",
+    "sid": "s-seedaa03",
+    "stockNo": "U-33050",
+    "criteria": null,
+    "createdAt": "2026-10-14T15:46:32.868Z"
+  },
+  {
+    "id": "W-SEED09",
+    "sid": "s-seedaa05",
+    "stockNo": "U-33050",
+    "criteria": null,
+    "createdAt": "2026-10-14T08:46:32.868Z"
+  },
+  {
+    "id": "W-SEED10",
+    "sid": "s-seedaa05",
+    "stockNo": "U-33025",
+    "criteria": null,
+    "createdAt": "2026-10-14T01:46:32.868Z"
+  },
+  {
+    "id": "W-SEED11",
+    "sid": "s-seedaa01",
+    "stockNo": "U-33025",
+    "criteria": null,
+    "createdAt": "2026-10-13T18:46:32.868Z"
+  },
+  {
+    "id": "W-SEED12",
+    "sid": "s-seedaa01",
+    "stockNo": "U-33085",
+    "criteria": null,
+    "createdAt": "2026-10-13T11:46:32.868Z"
+  },
+  {
+    "id": "W-SEED13",
+    "sid": "s-seedaa03",
+    "stockNo": "U-33085",
+    "criteria": null,
+    "createdAt": "2026-10-13T04:46:32.868Z"
+  },
+  {
+    "id": "W-SEED14",
+    "sid": "s-seedaa05",
+    "stockNo": "U-33085",
+    "criteria": null,
+    "createdAt": "2026-10-12T21:46:32.868Z"
+  },
+  {
+    "id": "W-SEED15",
+    "sid": "s-seedaa04",
+    "stockNo": "U-33006",
+    "criteria": null,
+    "createdAt": "2026-10-12T14:46:32.868Z"
+  },
+  {
+    "id": "W-SEED16",
+    "sid": "s-seedaa05",
+    "stockNo": "U-33057",
+    "criteria": null,
+    "createdAt": "2026-10-12T07:46:32.868Z"
+  },
+  {
+    "id": "W-SEED17",
+    "sid": "s-seedaa01",
+    "stockNo": "U-33057",
+    "criteria": null,
+    "createdAt": "2026-10-12T00:46:32.868Z"
+  },
+  {
+    "id": "W-SEED99",
+    "sid": "s-seedaa02",
+    "stockNo": null,
+    "criteria": {
+      "model": "RAV4",
+      "fuel": "Hybrid",
+      "priceMax": 45000
+    },
+    "createdAt": "2026-10-16T02:46:32.868Z"
+  }
+]

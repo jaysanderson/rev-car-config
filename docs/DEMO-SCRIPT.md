@@ -128,3 +128,55 @@ Audience: DMS vendor stakeholders and dealer principals. Presenter speaks in fir
 - "Stock refreshed 6 min ago" in the grade answer is hardcoded. The Domo files say refreshed at 06:00 on 13 Oct.
 - The HOW drawer's data contracts (e.g. next_slot_month, weeks_low, vin, site_id) do not match the stand-in field names (eta_weeks_min, id, site). Avoid reading them aloud as exact schemas.
 - The "2 here" example in the brief does not occur in this stock set. Counts of 1 are typical; do not promise a 2.
+
+## Used surface (/used): six beats, about 6 minutes
+
+Added 17 Oct 2026. Spec: `docs/USED-SPEC.md`. Platform framing: `docs/PLATFORM.md`. Open `/used/` in one tab and `/dms/#/leads` (logged in as `sm.par@harbourline.demo`) in another before you start. Check the LIVE badge; if it reads OFFLINE, the listing and VDP still render from inlined data but beats 1, 3, 4 and 5 lose their agent parts.
+
+### Beat U1: Listing and semantic sort (0:00-1:00)
+
+- Click: the search box in the filter rail; type "something that tows a caravan and seats seven"; leave sort on Most Relevant.
+- Say: "This is the page every dealer has: filters, sort, a Certified toggle, a price excluding government charges. The difference is the order. Most Relevant is not a keyword match; the query runs against the knowledge box, where every car on this page is a resource with its own text, metadata and photo."
+- Under the hood: `GET /api/used?q=…&sort=relevant` runs ARAG `/find` over the `topic/used` resources, then applies the structured filters on top. The result count shows the query time.
+- If it goes wrong: clear the query; the list falls back to recency order and the count still shows.
+
+### Beat U2: Agent-written comments on a car (1:00-2:00)
+
+- Click: View Details on the Kluger (or any Certified car). Scroll to the comments block and the provenance panel.
+- Say: "Nobody at the dealership typed these comments. The agent wrote them from this car's own record: the inspection, the service history, the PPSR check, the warranty. It is only allowed to say what is in the record, the server checks that, and it has to include the honest notes, which is why you can see the stone chips."
+- Under the hood: `scripts/used-comments.mjs` ran `/ask` with `answer_json_schema` filtered to the unit's resource; the result was validated against the record and cached in `content/used/comments.generated.json`. The trace line under the comments names the sources.
+- If it goes wrong: a car without a generated set shows the scripted version, labelled as such.
+
+### Beat U3: Ask, leave, come back (2:00-3:00)
+
+- Click: in the assistant pane on the same VDP, ask "has it had its 60,000 km service?" then "what tyres are on it?". Click back to the listing.
+- Say: "Two questions, both answered from the car's provenance text with a citation. Now look at the card on the listing: it says I asked two questions about this car. Open it again and the questions are waiting, so I never start from scratch, and the agent carries them as context when I ask about the next car."
+- Under the hood: `POST /api/used/:stockNo/ask` with the `x-sid` header stores the Q&A in `used_sessions.jsonl`; `GET /api/used/questions` feeds the card markers; the VDP shows "Your questions about this car".
+- If it goes wrong: the marker depends on the session id in `sessionStorage`; stay in the same tab.
+
+### Beat U4: Find what's right for me (3:00-4:00)
+
+- Click: "Find what's right for me". Answer: under $45k, family, SUV, safety and running costs, this month.
+- Say: "Same idea as the new-car finder, but the answers are real cars on real lots, ranked, with reasons the agent wrote and a watch-out for each. If fewer than three fit, it offers to watch the search and tell you when one arrives."
+- Under the hood: `POST /api/used/match` is a scripted five-step interview; ranking is server-side over the stock file and the "why" lines come from `/ask`, scripted when the agent is unavailable.
+- If it goes wrong: the scripted reasons still render; say so.
+
+### Beat U5: For you, built from the journey (4:00-5:00)
+
+- Click: return to the listing and scroll to the "For you" rows. Open the "What this page knows about you" strip.
+- Say: "No login, no profile. The rows come from what I did in this session: the car I viewed, the questions I asked, the finder answers. Each row is a natural-language query over the car resources, and the strip shows exactly what it used. The forget button clears it."
+- Under the hood: `GET /api/used/foryou` turns the session journey into `/find` queries; `DELETE /api/used/session` forgets it.
+- If it goes wrong: a brand-new session has no rows; do beats U2 to U4 first.
+
+### Beat U6: Enquiry lands in the back office (5:00-6:00)
+
+- Click: on the VDP, Reserve Now $1,000; fill the form; submit. Switch to the DMS tab and refresh the leads list.
+- Say: "No payment is taken in the prototype; the reserve is a 48-hour hold. What matters is where it lands: a lead in Revolution's back office with the car, the channel and everything the visitor asked, so the salesperson calls back already knowing the conversation."
+- Under the hood: `POST /api/used/:stockNo/enquiry` creates a DMS lead (channel `web-form`, source `harbourline.com.au/used`) and a hold on the unit; the lead carries the session's questions.
+- If it goes wrong: the lead list filters by site; pick the unit's site or log in as `gm@harbourline.demo`.
+
+### Used-surface hazards
+
+- Photos are library images of the model with a credit; the car's colour in the record matches the photo where we could. Say "library photo" if asked.
+- PPSR, inspections and service histories are synthetic. Do not read a PPSR certificate number aloud as real.
+- Comments generation runs offline; if stock was re-seeded without re-running the comments script, every card falls back to scripted text.

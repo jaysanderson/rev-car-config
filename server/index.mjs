@@ -21,6 +21,7 @@ import { priorities, promotionsFor, rankOffers } from './dealer.mjs';
 import { explainPromotions, refreshPromotions } from './promotions.mjs';
 import * as testdrive from './testdrive.mjs';
 import * as events from './events.mjs';
+import usedRouter from './used.mjs';
 import dmsRouter, { mcpPost as dmsMcpPost, mcpGet as dmsMcpGet } from './dms/index.mjs';
 
 const PORT = Number(process.env.PORT || 8080);
@@ -73,7 +74,9 @@ function limiter({ capacity, perMin }) {
 const rateLimit = limiter({ capacity: Number(process.env.RATE_BURST || 30), perMin: Number(process.env.RATE_PER_MIN || 20) });
 // First-party events are cheap but must not be a write amplifier: own, larger bucket.
 const eventsLimit = limiter({ capacity: Number(process.env.EVENTS_BURST || 120), perMin: Number(process.env.EVENTS_PER_MIN || 90) });
-app.use(['/api/ask', '/api/finder/next', '/api/foryou', '/api/find', '/api/testdrive/book', '/api/testdrive/answers', '/api/testdrive/handover', '/api/promotions/refresh'], rateLimit);
+app.use(['/api/ask', '/api/finder/next', '/api/foryou', '/api/find', '/api/testdrive/book', '/api/testdrive/answers', '/api/testdrive/handover', '/api/promotions/refresh', '/api/used/ask', '/api/used/match', '/api/used/foryou', '/api/used/comments/refresh', '/api/used/watch'], rateLimit);
+app.use('/api/used/:stockNo/ask', rateLimit);
+app.use('/api/used/:stockNo/enquiry', rateLimit);
 app.post('/api/events', eventsLimit);
 
 const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((e) => {
@@ -237,6 +240,7 @@ app.get('/api/find', wrap(async (req, res) => {
 }));
 
 app.use('/api/images', imagesRouter);
+app.use('/api/used', usedRouter); // Harbourline Used (server/used.mjs)
 // ── Harbourline DMS (sales back office): API at /dms/api, SPA at /dms (server/dms/) ──
 app.use('/dms/api', dmsRouter);
 app.post('/dms/mcp', express.json({ limit: '1mb' }), dmsMcpPost); // MCP Streamable HTTP (stateless)

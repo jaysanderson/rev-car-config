@@ -15,6 +15,7 @@ export const leadRef = l => {
 };
 export const interestLabel = i => {
   if (!i) return '—';
+  if (i.used) return `Used · ${i.year || ''} ${i.make || ''} ${i.model || ''} ${i.grade || ''}`.replace(/\s+/g, ' ').trim() + (i.kind ? ` (${i.kind})` : '');
   const parts = [modelName(i.modelId || i.model)];
   if (i.gradeId || i.grade) parts.push(gradeName(i.gradeId || i.grade));
   return parts.filter(Boolean).join(' · ');

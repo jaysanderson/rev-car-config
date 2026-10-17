@@ -111,7 +111,7 @@ function questionsOk(qs) {
   });
   must(new Set(qs.map((q) => q.id)).size === 3, 'duplicate question ids');
 }
-const traceOk = (tr, where) => { must(Array.isArray(tr), `${where}: trace not an array`); tr.forEach((t, i) => must(['kb', 'domo'].includes(t.kind) && isStr(t.label), `${where}: trace[${i}] bad {kind,label}`)); };
+const traceOk = (tr, where) => { must(Array.isArray(tr), `${where}: trace not an array`); tr.forEach((t, i) => must(['kb', 'domo', 'dms', 'memory'].includes(t.kind) && isStr(t.label), `${where}: trace[${i}] bad {kind,label}`)); };
 
 async function call(method, path, body, timeoutMs = 90000, headers = {}) {
   const t0 = Date.now();
@@ -483,6 +483,101 @@ const paths = {
     });
   }
   await check('GET /api/find?q= (empty) → no 5xx', async () => { const r = await call('GET', '/api/find?q='); must(r.status < 500, `status ${r.status}`); return `status ${r.status}`; });
+  // ── Harbourline Used (/api/used) ──────────────────────────────────────────
+  const USED = existsSync(join(ROOT, 'content/used/stock.json')) ? JSON.parse(readFileSync(join(ROOT, 'content/used/stock.json'), 'utf8')).rows : [];
+  const USED_IDS = new Set(USED.map((u) => u.stockNo));
+  const cardOk = (c, where) => { for (const k of ['stockNo', 'title', 'make', 'model', 'fuel', 'drive', 'transmission', 'siteName', 'status']) must(isStr(c[k]), `${where}.${k}`); must(USED_IDS.has(c.stockNo), `${where}: unknown stockNo ${c.stockNo}`); must(isNum(c.price) && isNum(c.km) && isNum(c.year), `${where} numbers`); must(typeof c.certified === 'boolean', `${where}.certified`); must(isNum(c.youAsked) && isNum(c.watchers), `${where}.youAsked/watchers`); };
+  let usedCar = null;
+  await check('GET /api/used (listing, facets, certified filter)', async () => {
+    const r = await call('GET', '/api/used'); must(r.status === 200, `status ${r.status}`);
+    must(r.json.total === USED.filter((u) => u.status !== 'sold').length, `total ${r.json.total}`); must(Array.isArray(r.json.items) && r.json.items.length >= 30, 'items'); r.json.items.forEach((c, i) => cardOk(c, `item ${i}`));
+    for (const f of ['make', 'model', 'body', 'fuel', 'site']) must(Array.isArray(r.json.facets[f]) && r.json.facets[f].every((x) => isStr(String(x.value)) && isNum(x.count)), `facet ${f}`);
+    must(isNum(r.json.tookMs) && isStr(r.json.priceNote), 'tookMs/priceNote');
+    const c = await call('GET', '/api/used?certified=1&sort=price-asc&body=suv-mid'); must(c.json.items.every((x) => x.certified && x.body === 'suv-mid'), 'certified/body filter'); must(c.json.items.every((x, i, a) => i === 0 || a[i - 1].price <= x.price), 'price-asc');
+    usedCar = r.json.items.find((x) => x.status === 'on_lot' && x.make === 'Toyota');
+    record('GET /api/used', null, { ...r.json, items: r.json.items.slice(0, 2) });
+    return `${r.json.total} units, ${r.json.tookMs} ms, ${c.json.total} certified mid SUVs`;
+  });
+  await check('GET /api/used?q=… (semantic or keyword relevance)', async () => {
+    const r = await call('GET', '/api/used?q=' + encodeURIComponent('something to tow a caravan with low kilometres'), null, 30000); must(r.status === 200, `status ${r.status}`);
+    must(r.json.total >= 1, 'no results'); r.json.items.forEach((c, i) => cardOk(c, `item ${i}`)); must(typeof r.json.semantic === 'boolean', 'semantic flag');
+    must(r.json.items.slice(0, 3).some((c) => /HiLux|Prado|LandCruiser|Fortuner|Kluger|Ranger/.test(c.title)), `top 3 not tow-capable: ${r.json.items.slice(0, 3).map((c) => c.title).join(', ')}`);
+    return `${r.json.total} hits, semantic=${r.json.semantic}, ${r.ms} ms`;
+  });
+  await check('GET /api/used/:stockNo (VDP: comments, market, provenance, similar)', async () => {
+    const r = await call('GET', `/api/used/${usedCar.stockNo}`, null, 15000, SIDH); must(r.status === 200, `status ${r.status}`);
+    const j = r.json; must(j.unit && j.unit.stockNo === usedCar.stockNo && Array.isArray(j.unit.serviceHistory) && j.unit.inspection && j.unit.ppsr && j.unit.warranty, 'unit provenance');
+    must(j.comments && isStr(j.comments.headline) && isStr(j.comments.body) && Array.isArray(j.comments.highlights) && ['agent', 'scripted'].includes(j.comments.by), 'comments');
+    must(!/\b(immaculate|perfect|accident[- ]free)\b/i.test(j.comments.body), 'comments contain puffery');
+    must(j.market === null || (isNum(j.market.median) && ['below', 'at', 'above'].includes(j.market.position)), 'market');
+    must(Array.isArray(j.similar) && j.similar.length >= 2, 'similar'); j.similar.forEach((c, i) => cardOk(c, `similar ${i}`));
+    must(Array.isArray(j.yourQuestions) && isNum(j.watchers), 'yourQuestions/watchers'); traceOk(j.trace, 'vdp');
+    const nf = await call('GET', '/api/used/U-00000'); must(nf.status === 404, `unknown ${nf.status}`);
+    record(`GET /api/used/${usedCar.stockNo}`, null, { ...j, unit: { ...j.unit, serviceHistory: j.unit.serviceHistory.slice(0, 2), features: j.unit.features.slice(0, 3) }, similar: j.similar.slice(0, 1) });
+    return `comments by ${j.comments.by}, market ${j.market?.position || 'n/a'}, ${j.similar.length} similar`;
+  });
+  await check('POST /api/used/:stockNo/ask → answer + session memory', async () => {
+    const r = await call('POST', `/api/used/${usedCar.stockNo}/ask`, { question: 'How many services has it had and when is the next one due?' }, 60000, SIDH); must(r.status === 200, `status ${r.status}`);
+    must(isStr(r.json.answer) && r.json.answer.length > 30, 'answer'); traceOk(r.json.trace, 'ask'); must(Array.isArray(r.json.citations) && Array.isArray(r.json.actions), 'citations/actions');
+    must(/service|due/i.test(r.json.answer), `answer off-topic: ${r.json.answer.slice(0, 80)}`);
+    must(Array.isArray(r.json.yourQuestions) && r.json.yourQuestions.length >= 1 && r.json.yourQuestions[0].q.startsWith('How many'), 'yourQuestions not recorded');
+    const q = await call('GET', '/api/used/questions', null, 5000, SIDH); must(q.json.byStock[usedCar.stockNo] >= 1, 'questions count marker');
+    const l = await call('GET', '/api/used', null, 10000, SIDH); must(l.json.items.find((c) => c.stockNo === usedCar.stockNo).youAsked >= 1, 'card marker youAsked');
+    const anon = await call('GET', `/api/used/${usedCar.stockNo}/questions`); must(anon.json.questions.length === 0, 'questions leaked to a session without sid');
+    const bad = await call('POST', `/api/used/${usedCar.stockNo}/ask`, {}); must(bad.status === 400, `empty question ${bad.status}`);
+    record(`POST /api/used/${usedCar.stockNo}/ask`, { question: 'How many services has it had and when is the next one due?' }, r.json);
+    return `${r.json.by || 'agent'}, ${r.json.citations.length} citations, ${r.ms} ms`;
+  });
+  await check('POST /api/used/ask (general, over the range)', async () => {
+    const r = await call('POST', '/api/used/ask', { question: 'Which of your used cars seat seven and are hybrid?' }, 60000, SIDH); must(r.status === 200, `status ${r.status}`);
+    must(isStr(r.json.answer) && /Kluger/i.test(r.json.answer), `expected the Kluger: ${r.json.answer.slice(0, 120)}`); traceOk(r.json.trace, 'ask');
+    return `${r.ms} ms`;
+  });
+  await check('POST /api/used/match (5 steps, branching, ranked results)', async () => {
+    let answers = []; let step = 0; let j;
+    const pickFor = { budget: '45-65k', use: 'work', towing: 'heavy', priorities: 'certified', when: 'this-month' };
+    for (;;) {
+      const r = await call('POST', '/api/used/match', { answers, lang: 'none' }, 30000, SIDH); must(r.status === 200, `status ${r.status}`); j = r.json;
+      if (j.done) break;
+      must(j.step === ++step && j.total === 5 && j.question && isStr(j.question.id) && isStr(j.question.text) && Array.isArray(j.question.options) && j.question.options.length >= 2, `step ${step} shape`);
+      must(!answers.some((a) => a.id === j.question.id), `question ${j.question.id} repeated`);
+      if (step === 3) must(j.question.id === 'towing', `work use should branch to towing, got ${j.question.id}`);
+      answers.push({ id: j.question.id, value: pickFor[j.question.id] || j.question.options[0].id });
+      must(step <= 5, 'too many steps');
+    }
+    must(step === 5, `finished after ${step} steps`); must(isStr(j.summary) && Array.isArray(j.results) && j.results.length >= 1, 'results');
+    j.results.forEach((x, i) => { must(isNum(x.fit) && x.fit > 0 && x.fit <= 98 && Array.isArray(x.why) && Array.isArray(x.watch), `result ${i} shape`); cardOk(x.card, `result ${i}.card`); must(x.card.price <= 65000 * 1.08, `result ${i} over budget`); });
+    must(j.results.every((x, i, a) => i === 0 || a[i - 1].fit >= x.fit), 'not sorted by fit'); traceOk(j.trace, 'match');
+    record('POST /api/used/match', { answers }, { ...j, results: j.results.slice(0, 2) });
+    return `${j.results.length} results, top ${j.results[0].card.title} ${j.results[0].fit}%`;
+  });
+  await check('POST /api/used/:stockNo/enquiry (reserve → DMS lead + 48 h hold)', async () => {
+    const r = await call('POST', `/api/used/${usedCar.stockNo}/enquiry`, { kind: 'reserve', name: 'Smoke Test', phone: '0400 000 000' }, 15000, SIDH); must(r.status === 201, `status ${r.status} ${JSON.stringify(r.json).slice(0, 120)}`);
+    must(r.json.ok && /^UE-[A-Z0-9]{5}$/.test(r.json.ref) && r.json.hold && isStr(r.json.hold.until) && isStr(r.json.message), 'reserve shape');
+    must(r.json.leadId === null || /^L-\d+$/.test(r.json.leadId), `leadId ${r.json.leadId}`);
+    const v = await call('GET', `/api/used/${usedCar.stockNo}`); must(v.json.unit.status === 'held', `status after reserve: ${v.json.unit.status}`);
+    const again = await call('POST', `/api/used/${usedCar.stockNo}/enquiry`, { kind: 'reserve', name: 'Second Person', email: 'x@example.com' }); must(again.status === 409, `second reserve ${again.status}`);
+    const bad = await call('POST', `/api/used/${usedCar.stockNo}/enquiry`, { kind: 'enquire', name: 'No Contact' }); must(bad.status === 400, `missing contact ${bad.status}`);
+    record(`POST /api/used/${usedCar.stockNo}/enquiry`, { kind: 'reserve', name: 'Smoke Test', phone: '0400 000 000' }, r.json);
+    return `${r.json.ref} → lead ${r.json.leadId || 'n/a'}, held until ${r.json.hold.until.slice(0, 16)}`;
+  });
+  await check('POST /api/used/watch + GET /api/used/foryou (journey rows)', async () => {
+    const w = await call('POST', '/api/used/watch', { criteria: { model: 'RAV4', fuel: 'Hybrid', priceMax: 46000 } }, 10000, SIDH); must(w.status === 200 && w.json.ok && isNum(w.json.matchesNow), `watch ${w.status}`);
+    const nos = await call('POST', '/api/used/watch', { criteria: { model: 'RAV4' } }); must(nos.status === 400, `watch without sid ${nos.status}`);
+    const ev = await call('POST', '/api/events', { type: 'used_view', data: { stockNo: usedCar.stockNo } }, 10000, SIDH); must(ev.status < 300, `used_view event ${ev.status}`);
+    const r = await call('GET', '/api/used/foryou', null, 60000, SIDH); must(r.status === 200, `status ${r.status}`);
+    must(r.json.journey && r.json.journey.asked.length >= 1 && r.json.journey.watches.length >= 1, 'journey missing asked/watches');
+    must(Array.isArray(r.json.rows) && r.json.rows.length >= 2, `rows ${r.json.rows?.length}`);
+    r.json.rows.forEach((row, i) => { must(isStr(row.id) && isStr(row.title) && isStr(row.why) && Array.isArray(row.items) && row.items.length >= 1, `row ${i} shape`); row.items.forEach((c, j) => cardOk(c, `row ${i} item ${j}`)); });
+    const ids = r.json.rows.flatMap((x) => x.items.map((c) => c.stockNo)); must(new Set(ids).size === ids.length, 'a car appears in two rows');
+    const rep = await call('GET', '/api/used/report?days=1'); must(rep.status === 200 && rep.json.asks >= 1 && rep.json.enquiries.reserve >= 1 && rep.json.watches >= 1, `report ${JSON.stringify(rep.json).slice(0, 160)}`);
+    record('GET /api/used/foryou', null, { ...r.json, rows: r.json.rows.map((x) => ({ ...x, items: x.items.slice(0, 2) })) });
+    const forget = await call('DELETE', '/api/used/session', null, 10000, SIDH); must(forget.status === 200, `forget ${forget.status}`);
+    const after = await call('GET', '/api/used/questions', null, 5000, SIDH); must(!after.json.byStock[usedCar.stockNo], 'questions survived forget');
+    return `${r.json.rows.length} rows (${r.json.rows.map((x) => x.id).join(', ')}), report ok, forget ok`;
+  });
+  await check('GET /used/ serves the pre-owned page', async () => { const r = await call('GET', '/used/'); must(r.status === 200 && /<html/i.test(r.text), `status ${r.status}`); return `${(r.text.length / 1024).toFixed(0)} KB`; });
+
   await check('GET / serves index.html', async () => { const r = await call('GET', '/'); must(r.status === 200 && /<html/i.test(r.text), `status ${r.status}`); return `${(r.text.length / 1024).toFixed(0)} KB`; });
   await check('GET /api/nope → 404 JSON', async () => { const r = await call('GET', '/api/nope'); must(r.status === 404, `status ${r.status}`); return r.ctype.split(';')[0]; });
   await check('GET /.env not served', async () => { const r = await call('GET', '/.env'); must(r.status === 404 || !/=/.test(r.text) || /<html/i.test(r.text), `status ${r.status}`); return `status ${r.status}`; });

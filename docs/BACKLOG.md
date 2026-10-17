@@ -104,3 +104,20 @@ Pass by an Opus sub-agent over `catalog.json`, all `content/kb/*.md` and `conten
 3. **Content scope (CQ-01, CQ-27).** Do the 15 configurator models stay fixed, or do we add confirmed new variants (HiLux Rugged X, RAV4 XSE/PHEV, bZ4X Touring)? The recommendation is to replace the HiLux GR Sport with Rugged X and keep the rest as KB-only.
 4. **Finder fidelity (BL-P0-02).** Choose between a fully agent-generated next question (latency, variability) and agent-selected-from-a-bank with agent-written notes (recommended for demos).
 5. **Fact sign-off owner (CQ-07 to CQ-11, CQ-28).** Who verifies Toyota facts before a customer demo? The recommendation is one owner and an "as of" date shown in the drawer.
+
+## Used surface (added 17 Oct 2026)
+
+Deferred from `docs/USED-SPEC.md` (out of scope for the first iteration) plus items from `docs/PLATFORM.md`. Owners as above; US = `src/used.html`, BE = `server/used.mjs` and scripts.
+
+| ID | Pri | Area | What is missing | Suggested fix | Owner |
+|---|---|---|---|---|---|
+| BL-U-01 | P1 | Payments | "Reserve Now $1,000" creates a 48 h hold only; no deposit is taken | Integrate Toyota's existing holding-deposit rail or a PSP in test mode; keep the hold as the fallback | BE |
+| BL-U-02 | P1 | Imagery | Library photo of the model per car, with credit; cars without a library photo show "photos being taken" | Per-unit photo set from a PDI capture workflow; imperfection call-outs from the inspection items (Carvana bar) | CR + US |
+| BL-U-03 | P1 | Provenance | PPSR, inspection and service history are synthetic | Real PPSR API; service history from the DMS workshop tables once they exist | BE |
+| BL-U-04 | P1 | i18n | Listing, VDP, finder and enquiry chrome are English; only the assistant answers in the visitor's language | Reuse the configurator's language switch and add an i18n bundle for the page chrome (see BL-P1-05) | US |
+| BL-U-05 | P2 | Video | The unit record and the KB resource have a `video` slot; nothing is attached | Attach walkaround videos as link fields so transcripts are retrievable; show the video on the VDP | BE + CR |
+| BL-U-06 | P2 | DMS | Used stock has no DMS screens; enquiries appear as leads only | Add a `used_vehicles` table to `server/dms/db.mjs`, routes, OpenAPI and MCP tools; hold and price-change actions | BE |
+| BL-U-07 | P2 | Syndication | Agent comments live only on our site | Push comments, facts and photos to Carsales (Autogate/Nexgate) from the unit resource so facts never disagree; human approval on first publication | BE |
+| BL-U-08 | P2 | Privacy | Session questions are free text kept 30 days against a session id | Privacy notice on the page, retention job, keep out of Domo exports (already by design), forget endpoint surfaced in the UI | BE + US |
+| BL-U-09 | P2 | Pricing | Market position uses a Domo stand-in dataset | RedBook or carsales valuation feed; show the sample size and date | BE |
+| BL-U-10 | P2 | Finance | Finance Enquiry is a lead only | Payment calculator and Toyota Access explainer on the VDP (Iteration 2 in `docs/PLATFORM.md`) | US + BE |

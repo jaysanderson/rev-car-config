@@ -25,9 +25,12 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import { modelById, gradeOf, colourById, interiorById, packById } from './data.mjs';
 import { dealerPath, appendDealerLines } from './state.mjs';
 import { VOCAB } from './finder-fallback.mjs';
+import { unitById as usedUnitById } from './used-data.mjs';
 
-export const TYPES = ['finder_answer', 'finder_result', 'build_change', 'offer_view', 'offer_click', 'ask', 'booking', 'booking_answer'];
-export const SERVER_ONLY = new Set(['ask', 'booking', 'booking_answer']);
+export const TYPES = ['finder_answer', 'finder_result', 'build_change', 'offer_view', 'offer_click', 'ask', 'booking', 'booking_answer', 'used_view', 'used_ask', 'used_enquiry', 'used_watch', 'used_match_result'];
+export const SERVER_ONLY = new Set(['ask', 'booking', 'booking_answer', 'used_ask', 'used_enquiry', 'used_watch', 'used_match_result']);
+const USED_RE = /^U-\d{5}$/;
+const usedOk = (v) => (typeof v === 'string' && USED_RE.test(v.toUpperCase()) && usedUnitById(v) ? v.toUpperCase() : null);
 const LANGS = new Set(['en', 'es', 'zh', 'ar', 'hi', 'vi', 'ko', 'ja', 'it', 'el', 'fr', 'de', 'pt', 'tl', 'id']);
 const SID_RE = /^[A-Za-z0-9_-]{8,64}$/;
 const SLUG_RE = /^[a-z0-9][a-z0-9:-]{0,39}$/;
@@ -69,6 +72,28 @@ export function validateEvent(type, d, s) {
     case 'offer_view': case 'offer_click': {
       const unitId = unitOk(d.unitId); if (!unitId) return { error: 'data.unitId must be a stock unit id' };
       return { data: { unitId } };
+    }
+    case 'used_view': {
+      const stockNo = usedOk(d.stockNo); if (!stockNo) return { error: 'data.stockNo must be a used stock number' };
+      return { data: { stockNo } };
+    }
+    case 'used_ask': {
+      const n = Number(d.questionLength);
+      if (!Number.isInteger(n) || n < 0 || n > 5000) return { error: 'data.questionLength must be an integer' };
+      return { data: { stockNo: usedOk(d.stockNo), questionLength: n, lang: LANGS.has(d.lang) ? d.lang : 'en' } };
+    }
+    case 'used_enquiry': {
+      const stockNo = usedOk(d.stockNo); if (!stockNo) return { error: 'data.stockNo must be a used stock number' };
+      if (!['enquire', 'finance', 'reserve'].includes(d.kind)) return { error: 'data.kind must be enquire, finance or reserve' };
+      return { data: { stockNo, kind: d.kind } };
+    }
+    case 'used_watch': {
+      return { data: { stockNo: usedOk(d.stockNo), criteria: slug(d.criteria) } };
+    }
+    case 'used_match_result': {
+      const recommended = [...new Set((Array.isArray(d.recommended) ? d.recommended : []).map(usedOk).filter(Boolean))].slice(0, 5);
+      if (!recommended.length) return { error: 'data.recommended must list used stock numbers' };
+      return { data: { recommended } };
     }
     case 'ask': {
       const n = Number(d.questionLength);

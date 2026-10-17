@@ -36,4 +36,24 @@ fs.writeFileSync(path.join(root, 'public', 'index.html'), head + body.replace('<
 // artifact flavour: no doctype/head wrapper, data inlined
 fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(root, 'dist', 'artifact.html'), page.replace('<script>\n(function(){', inlineOf(dataArtifact) + '<script>\n(function(){'));
+// ── Harbourline Used (src/used.html → public/used/index.html) ─────────────────
+// Inlines window.__USED__ = { stock, sites, imageBase, credits, priceNote } so the
+// listing and vehicle pages render without the API; missing inputs are tolerated.
+{
+  const usedSrc = path.join(root, 'src', 'used.html');
+  if (fs.existsSync(usedSrc)) {
+    const usedPage = fs.readFileSync(usedSrc, 'utf8');
+    const usedStock = readJson(path.join(root, 'content', 'used', 'stock.json'));
+    const sitesRaw = readJson(path.join(root, 'content', 'dms', 'data', 'sites.json'));
+    const sitesRows = Array.isArray(sitesRaw) ? sitesRaw : (sitesRaw && (sitesRaw.rows || sitesRaw.sites)) || [];
+    const sites = sitesRows.map(({ id, name, address, phone, distanceKm, transferRun }) => ({ id, name, address, phone, distanceKm, transferRun }));
+    const usedData = { stock: usedStock, sites, imageBase: '/api/images', credits, priceNote: usedStock?.priceNote || null };
+    const usedHead = head;
+    const usedBody = usedPage.replace(/^<header class="band">/m, '</head>\n<body>\n<header class="band">');
+    fs.mkdirSync(path.join(root, 'public', 'used'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'public', 'used', 'index.html'), usedHead + usedBody.replace('<script>\n(function(){', `<script>window.__USED__=${JSON.stringify(usedData).replace(/<\//g, '<\\/')};</script>\n` + '<script>\n(function(){') + '\n</body>\n</html>\n');
+    const n = usedStock ? (usedStock.rows || usedStock).length : 0;
+    console.log('built public/used/index.html', usedStock ? `(${n} used units inlined)` : '(no content/used/stock.json yet, page uses the API or shows an empty listing)');
+  }
+}
 console.log('built public/index.html and dist/artifact.html', catalog ? `(catalogue: ${catalog.models.length} models)` : '(no catalogue yet, page uses its fallback)', stock ? '(stock inlined)' : '(no stock files yet)', Object.keys(thumbs).length + ' photos');

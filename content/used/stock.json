@@ -1,0 +1,5384 @@
+{
+ "generated": "2026-10-16",
+ "priceNote": "Prices exclude government charges (stamp duty, registration and CTP). Illustrative demo data, not a real offer.",
+ "rows": [
+  {
+   "stockNo": "U-33002",
+   "vin": "JF2AXAH508875156000",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "RAV4",
+   "modelId": "rav4",
+   "variantCode": "AXAH52R",
+   "year": 2024,
+   "grade": "GX",
+   "gradeId": "gx",
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Urban Rock",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 40446,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 42888,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 39,
+   "arrivedAt": "2026-09-07",
+   "acquiredVia": "buy-back",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2024-02-18",
+   "compliance": "2024-01",
+   "regoExpiry": "2027-06",
+   "plate": "VXP56C",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2025-02-24",
+     "km": 15450,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-01-23",
+     "km": 29260,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-09-27",
+     "km": 40400,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 44000,
+    "date": "2027-01-23"
+   },
+   "inspection": {
+    "date": "2026-09-27",
+    "inspector": "Luke Harris",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Hybrid",
+      "note": "Hybrid battery health check passed (Toyota Health Check)",
+      "action": "noted"
+     },
+     {
+      "area": "Keys",
+      "note": "Second key cut and programmed",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Light scratch rear bumper, left corner",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 5,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 70,
+     "rear": 85
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-10",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-41599452"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2029-02-16"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/rav4.jpg",
+    "thumb": "/api/images/rav4/thumb.jpg",
+    "credit": "Alexander Migl, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Second key cut and programmed",
+     "cost": 690
+    },
+    {
+     "item": "Light scratch rear bumper, left corner",
+     "cost": 180
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33005",
+   "vin": "MNAAXAH509186207001",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "RAV4",
+   "modelId": "rav4",
+   "variantCode": "AXAH52R",
+   "year": 2023,
+   "grade": "GXL",
+   "gradeId": "gxl",
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Urban Rock",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 53185,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 44990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 47,
+   "arrivedAt": "2026-08-30",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30433",
+   "owners": 2,
+   "firstRegistered": "2023-09-19",
+   "compliance": "2023-08",
+   "regoExpiry": "2027-05",
+   "plate": "DVY59K",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2024-07-22",
+     "km": 14510,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-07-15",
+     "km": 31410,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-06-02",
+     "km": 46600,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-02",
+     "km": 53160,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 62000,
+    "date": "2027-06-02"
+   },
+   "inspection": {
+    "date": "2026-10-02",
+    "inspector": "Luke Harris",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     },
+     {
+      "area": "Brakes",
+      "note": "Brake fluid flushed",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 5,
+     "rear": 6
+    },
+    "brakesPct": {
+     "front": 70,
+     "rear": 57
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-07",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-19069162"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2028-09-17"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/rav4.jpg",
+    "thumb": "/api/images/rav4/thumb.jpg",
+    "credit": "Alexander Migl, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Infotainment software updated",
+     "cost": 140
+    },
+    {
+     "item": "Brake fluid flushed",
+     "cost": 840
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33006",
+   "vin": "MR0AXAH510587378002",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "RAV4",
+   "modelId": "rav4",
+   "variantCode": "AXAH54R",
+   "year": 2025,
+   "grade": "Cruiser",
+   "gradeId": "cruiser",
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Urban Rock",
+   "colourId": null,
+   "interior": "Leather-accented, black",
+   "km": 10807,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 55990,
+   "was": null,
+   "certified": true,
+   "demo": true,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 14,
+   "arrivedAt": "2026-10-02",
+   "acquiredVia": "ex-demo",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2025-09-02",
+   "compliance": "2025-08",
+   "regoExpiry": "2027-03",
+   "plate": "WNG62B",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-09-21",
+     "km": 10790,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 24000,
+    "date": "2027-09-21"
+   },
+   "inspection": {
+    "date": "2026-09-21",
+    "inspector": "Mia Thompson",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     },
+     {
+      "area": "Interior",
+      "note": "Rear cargo liner scuffed",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Stone chips on bonnet leading edge",
+      "action": "noted"
+     },
+     {
+      "area": "Hybrid",
+      "note": "Hybrid battery health check passed (Toyota Health Check)",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 6,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 76,
+     "rear": 50
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-25",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-75059511"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2030-09-01"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/rav4.jpg",
+    "thumb": "/api/images/rav4/thumb.jpg",
+    "credit": "Alexander Migl, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 370
+    },
+    {
+     "item": "Rear cargo liner scuffed",
+     "cost": 840
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33010",
+   "vin": "JF2MXAA511696655003",
+   "siteId": "hor",
+   "make": "Toyota",
+   "model": "RAV4",
+   "modelId": "rav4",
+   "variantCode": "MXAA52R",
+   "year": 2022,
+   "grade": "GX",
+   "gradeId": "gx",
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Urban Rock",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 69012,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Petrol",
+   "engine": "2.0L petrol",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 33990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 40,
+   "arrivedAt": "2026-09-06",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30360",
+   "owners": 1,
+   "firstRegistered": "2022-04-02",
+   "compliance": "2022-02",
+   "regoExpiry": "2027-08",
+   "plate": "CZZ36Y",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2023-04-17",
+     "km": 15960,
+     "by": "Toyota dealer (Newcastle)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-02-27",
+     "km": 29240,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2025-04-16",
+     "km": 46620,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-02-19",
+     "km": 59570,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-09-23",
+     "km": 69000,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 75000,
+    "date": "2027-02-19"
+   },
+   "inspection": {
+    "date": "2026-09-23",
+    "inspector": "Grace Lin",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Body",
+      "note": "Light scratch rear bumper, left corner",
+      "action": "repaired"
+     },
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 49,
+     "rear": 79
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-14",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-47740375"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2027-04-01"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/rav4.jpg",
+    "thumb": "/api/images/rav4/thumb.jpg",
+    "credit": "Alexander Migl, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Light scratch rear bumper, left corner",
+     "cost": 290
+    },
+    {
+     "item": "Infotainment software updated",
+     "cost": 140
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33013",
+   "vin": "JM0AXAH512718556004",
+   "siteId": "pen",
+   "make": "Toyota",
+   "model": "RAV4",
+   "modelId": "rav4",
+   "variantCode": "AXAH54R",
+   "year": 2024,
+   "grade": "XSE",
+   "gradeId": null,
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Urban Rock",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 29229,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 52490,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "arriving",
+   "etaDays": 6,
+   "daysInStock": 0,
+   "arrivedAt": null,
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30228",
+   "owners": 1,
+   "firstRegistered": "2024-03-27",
+   "compliance": "2024-03",
+   "regoExpiry": "2027-07",
+   "plate": "EKU44W",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2025-07-18",
+     "km": 14790,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-13",
+     "km": 28930,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-10-06",
+     "km": 29210,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 44000,
+    "date": "2027-10-13"
+   },
+   "inspection": {
+    "date": "2026-10-06",
+    "inspector": "Tom Nguyen",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Brakes",
+      "note": "Brake fluid flushed",
+      "action": "replaced"
+     },
+     {
+      "area": "Brakes",
+      "note": "Front pads and rotors replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 7,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 100,
+     "rear": 55
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-08",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-12604650"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2029-03-26"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/rav4.jpg",
+    "thumb": "/api/images/rav4/thumb.jpg",
+    "credit": "Alexander Migl, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Brake fluid flushed",
+     "cost": 260
+    },
+    {
+     "item": "Front pads and rotors replaced",
+     "cost": 770
+    },
+    {
+     "item": "Infotainment software updated",
+     "cost": 260
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33015",
+   "vin": "JTEZWE2113526220005",
+   "siteId": "liv",
+   "make": "Toyota",
+   "model": "Corolla",
+   "modelId": "corolla",
+   "variantCode": "ZWE211R",
+   "year": 2021,
+   "grade": "Ascent Sport Hybrid",
+   "gradeId": null,
+   "body": "hatch",
+   "bodyLabel": "Hatch",
+   "colour": "Glacier White",
+   "colourId": "glacier-white",
+   "interior": "Fabric, black",
+   "km": 71225,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "1.8L hybrid",
+   "seats": 5,
+   "towKg": 0,
+   "price": 25888,
+   "was": null,
+   "certified": false,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 44,
+   "arrivedAt": "2026-09-02",
+   "acquiredVia": "auction",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2021-02-22",
+   "compliance": "2020-12",
+   "regoExpiry": "2027-03",
+   "plate": "XNE93H",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2022-06-15",
+     "km": 16460,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2023-06-19",
+     "km": 29160,
+     "by": "Harbourline Toyota Liverpool",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2024-10-07",
+     "km": 45520,
+     "by": "Toyota dealer (Canberra)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-11-25",
+     "km": 59780,
+     "by": "Toyota dealer (Newcastle)",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-09-23",
+     "km": 71180,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 75000,
+    "date": "2026-11-25"
+   },
+   "inspection": {
+    "date": "2026-09-23",
+    "inspector": "Omar Haddad",
+    "points": 90,
+    "passed": true,
+    "items": [
+     {
+      "area": "Mechanical",
+      "note": "Cabin filter and engine air filter replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Glass",
+      "note": "Windscreen chip passenger side, resin repaired",
+      "action": "repaired"
+     },
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 55,
+     "rear": 89
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-10",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-61591398"
+   },
+   "warranty": {
+    "type": "Statutory (3 months / 5,000 km)",
+    "until": null,
+    "kmLimit": 5000,
+    "roadside": false,
+    "note": null
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/corolla.jpg",
+    "thumb": "/api/images/corolla/thumb.jpg",
+    "credit": "Bene Riobó, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Cabin filter and engine air filter replaced",
+     "cost": 280
+    },
+    {
+     "item": "Windscreen chip passenger side, resin repaired",
+     "cost": 240
+    },
+    {
+     "item": "Infotainment software updated",
+     "cost": 320
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33018",
+   "vin": "JTMZWE2114510889006",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "Corolla",
+   "modelId": "corolla",
+   "variantCode": "ZWE219R",
+   "year": 2023,
+   "grade": "SX Hybrid",
+   "gradeId": "sx",
+   "body": "hatch",
+   "bodyLabel": "Hatch",
+   "colour": "Glacier White",
+   "colourId": "glacier-white",
+   "interior": "Fabric, black",
+   "km": 37848,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "1.8L hybrid",
+   "seats": 5,
+   "towKg": 0,
+   "price": 31990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 40,
+   "arrivedAt": "2026-09-06",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30434",
+   "owners": 2,
+   "firstRegistered": "2023-11-22",
+   "compliance": "2023-10",
+   "regoExpiry": "2027-08",
+   "plate": "PTP65P",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2025-01-21",
+     "km": 15120,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-03-22",
+     "km": 30240,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-09-10",
+     "km": 37840,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 45000,
+    "date": "2027-03-22"
+   },
+   "inspection": {
+    "date": "2026-09-10",
+    "inspector": "Mia Thompson",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Keys",
+      "note": "Second key cut and programmed",
+      "action": "replaced"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Hybrid",
+      "note": "Hybrid battery health check passed (Toyota Health Check)",
+      "action": "noted"
+     },
+     {
+      "area": "Tyres",
+      "note": "Rear tyres 60% remaining",
+      "action": "noted"
+     },
+     {
+      "area": "Brakes",
+      "note": "Brake fluid flushed",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 6,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 63,
+     "rear": 62
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-27",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-36999033"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2028-11-20"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/corolla.jpg",
+    "thumb": "/api/images/corolla/thumb.jpg",
+    "credit": "Bene Riobó, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Second key cut and programmed",
+     "cost": 480
+    },
+    {
+     "item": "Brake fluid flushed",
+     "cost": 230
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33021",
+   "vin": "MNAZWE2115973856007",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "Corolla",
+   "modelId": "corolla",
+   "variantCode": "ZWE219R",
+   "year": 2022,
+   "grade": "ZR Hybrid",
+   "gradeId": "zr",
+   "body": "hatch",
+   "bodyLabel": "Hatch",
+   "colour": "Glacier White",
+   "colourId": "glacier-white",
+   "interior": "Leather-accented, black",
+   "km": 48047,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "1.8L hybrid",
+   "seats": 5,
+   "towKg": 0,
+   "price": 33490,
+   "was": 34990,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 7,
+   "arrivedAt": "2026-10-09",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30385",
+   "owners": 2,
+   "firstRegistered": "2022-10-13",
+   "compliance": "2022-09",
+   "regoExpiry": "2027-07",
+   "plate": "ELZ20B",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2024-02-05",
+     "km": 15800,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-05-06",
+     "km": 30780,
+     "by": "Toyota dealer (Canberra)",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-07-21",
+     "km": 45290,
+     "by": "Toyota dealer (Canberra)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-11",
+     "km": 48050,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 60000,
+    "date": "2027-07-21"
+   },
+   "inspection": {
+    "date": "2026-09-11",
+    "inspector": "Luke Harris",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Brakes",
+      "note": "Front pads and rotors replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Tyres",
+      "note": "Rear tyres 60% remaining",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 7,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 100,
+     "rear": 51
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-07",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-91254542"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2027-10-12"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/corolla.jpg",
+    "thumb": "/api/images/corolla/thumb.jpg",
+    "credit": "Bene Riobó, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Front pads and rotors replaced",
+     "cost": 820
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33025",
+   "vin": "JTMAXVH816962748008",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "Camry",
+   "modelId": "camry",
+   "variantCode": "AXVH80R",
+   "year": 2025,
+   "grade": "SL",
+   "gradeId": "sl",
+   "body": "sedan",
+   "bodyLabel": "Sedan",
+   "colour": "Celestial Silver",
+   "colourId": "silver-sky",
+   "interior": "Leather-accented, black",
+   "km": 14930,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 5,
+   "towKg": 400,
+   "price": 50888,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 31,
+   "arrivedAt": "2026-09-15",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30419",
+   "owners": 1,
+   "firstRegistered": "2025-05-27",
+   "compliance": "2025-04",
+   "regoExpiry": "2027-03",
+   "plate": "MRY81B",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-10-16",
+     "km": 14630,
+     "by": "Toyota dealer (Newcastle)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-12",
+     "km": 14900,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 30000,
+    "date": "2027-10-16"
+   },
+   "inspection": {
+    "date": "2026-10-12",
+    "inspector": "Luke Harris",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     },
+     {
+      "area": "Body",
+      "note": "Light scratch rear bumper, left corner",
+      "action": "repaired"
+     },
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Wiper blades replaced",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 7,
+     "rear": 5
+    },
+    "brakesPct": {
+     "front": 58,
+     "rear": 67
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-30",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-75047315"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2030-05-26"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/camry.jpg",
+    "thumb": "/api/images/camry/thumb.jpg",
+    "credit": "Mr.choppers, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 380
+    },
+    {
+     "item": "Light scratch rear bumper, left corner",
+     "cost": 410
+    },
+    {
+     "item": "Infotainment software updated",
+     "cost": 210
+    },
+    {
+     "item": "Wiper blades replaced",
+     "cost": 270
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33027",
+   "vin": "JT2AXVH817435849009",
+   "siteId": "hor",
+   "make": "Toyota",
+   "model": "Camry",
+   "modelId": "camry",
+   "variantCode": "AXVH80R",
+   "year": 2026,
+   "grade": "SL",
+   "gradeId": "sl",
+   "body": "sedan",
+   "bodyLabel": "Sedan",
+   "colour": "Celestial Silver",
+   "colourId": "silver-sky",
+   "interior": "Leather-accented, black",
+   "km": 12347,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 5,
+   "towKg": 400,
+   "price": 51888,
+   "was": null,
+   "certified": true,
+   "demo": true,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 18,
+   "arrivedAt": "2026-09-28",
+   "acquiredVia": "ex-demo",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2026-07-06",
+   "compliance": "2026-05",
+   "regoExpiry": "2027-05",
+   "plate": "KNU28U",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-09-16",
+     "km": 12330,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 25000,
+    "date": "2027-09-16"
+   },
+   "inspection": {
+    "date": "2026-09-16",
+    "inspector": "Grace Lin",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Interior",
+      "note": "Rear cargo liner scuffed",
+      "action": "replaced"
+     },
+     {
+      "area": "Interior",
+      "note": "Steering wheel leather polished",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 7,
+     "rear": 5
+    },
+    "brakesPct": {
+     "front": 52,
+     "rear": 70
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-14",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-61339787"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2031-07-05"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/camry.jpg",
+    "thumb": "/api/images/camry/thumb.jpg",
+    "credit": "Mr.choppers, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Rear cargo liner scuffed",
+     "cost": 700
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33032",
+   "vin": "MR0AXVH718845684010",
+   "siteId": "pen",
+   "make": "Toyota",
+   "model": "Camry",
+   "modelId": "camry",
+   "variantCode": "AXVH70R",
+   "year": 2021,
+   "grade": "Ascent Hybrid",
+   "gradeId": "ascent",
+   "body": "sedan",
+   "bodyLabel": "Sedan",
+   "colour": "Celestial Silver",
+   "colourId": "silver-sky",
+   "interior": "Fabric, black",
+   "km": 78189,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 5,
+   "towKg": 400,
+   "price": 29990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 9,
+   "arrivedAt": "2026-10-07",
+   "acquiredVia": "ex-fleet",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2021-11-13",
+   "compliance": "2021-09",
+   "regoExpiry": "2027-06",
+   "plate": "CXK26S",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2022-11-20",
+     "km": 16200,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2023-11-04",
+     "km": 31370,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2024-09-07",
+     "km": 44810,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-08-31",
+     "km": 60390,
+     "by": "Toyota dealer (Canberra)",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-08-02",
+     "km": 75010,
+     "by": "Harbourline Toyota Liverpool",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-23",
+     "km": 78180,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 90000,
+    "date": "2027-08-02"
+   },
+   "inspection": {
+    "date": "2026-09-23",
+    "inspector": "Sarah Pike",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Interior",
+      "note": "Steering wheel leather polished",
+      "action": "noted"
+     },
+     {
+      "area": "Tyres",
+      "note": "Front tyres replaced (Bridgestone Alenza)",
+      "action": "replaced"
+     },
+     {
+      "area": "Glass",
+      "note": "Windscreen chip passenger side, resin repaired",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 8,
+     "rear": 5
+    },
+    "brakesPct": {
+     "front": 77,
+     "rear": 71
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-28",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-59493524"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2026-11-12"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/camry.jpg",
+    "thumb": "/api/images/camry/thumb.jpg",
+    "credit": "Mr.choppers, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Front tyres replaced (Bridgestone Alenza)",
+     "cost": 370
+    },
+    {
+     "item": "Windscreen chip passenger side, resin repaired",
+     "cost": 300
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33033",
+   "vin": "JM0AXUH719767361011",
+   "siteId": "liv",
+   "make": "Toyota",
+   "model": "Kluger",
+   "modelId": "kluger",
+   "variantCode": "AXUH78R",
+   "year": 2023,
+   "grade": "GX",
+   "gradeId": "gx",
+   "body": "suv-large",
+   "bodyLabel": "SUV",
+   "colour": "Silver Sky",
+   "colourId": "silver-sky",
+   "interior": "Fabric, black",
+   "km": 50655,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 7,
+   "towKg": 2000,
+   "price": 49990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 36,
+   "arrivedAt": "2026-09-10",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30358",
+   "owners": 1,
+   "firstRegistered": "2023-04-21",
+   "compliance": "2023-03",
+   "regoExpiry": "2027-03",
+   "plate": "LAH19C",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2024-06-15",
+     "km": 16690,
+     "by": "Toyota dealer (Newcastle)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-05-16",
+     "km": 29950,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-05-12",
+     "km": 44260,
+     "by": "Toyota dealer (Canberra)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-08",
+     "km": 50650,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 59000,
+    "date": "2027-05-12"
+   },
+   "inspection": {
+    "date": "2026-10-08",
+    "inspector": "Omar Haddad",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Glass",
+      "note": "Windscreen chip passenger side, resin repaired",
+      "action": "repaired"
+     },
+     {
+      "area": "Interior",
+      "note": "Child-seat anchor marks rear seat",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Cabin filter and engine air filter replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 7,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 71,
+     "rear": 63
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-25",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-78921286"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2028-04-19"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/kluger.jpg",
+    "thumb": "/api/images/kluger/thumb.jpg",
+    "credit": "LuvsMG481, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Windscreen chip passenger side, resin repaired",
+     "cost": 320
+    },
+    {
+     "item": "Cabin filter and engine air filter replaced",
+     "cost": 450
+    },
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 320
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33037",
+   "vin": "JTEGSU7020233360012",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "Kluger",
+   "modelId": "kluger",
+   "variantCode": "GSU70R",
+   "year": 2022,
+   "grade": "GXL",
+   "gradeId": "gxl",
+   "body": "suv-large",
+   "bodyLabel": "SUV",
+   "colour": "Silver Sky",
+   "colourId": "silver-sky",
+   "interior": "Fabric, black",
+   "km": 59658,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Petrol",
+   "engine": "3.5L V6 petrol",
+   "seats": 7,
+   "towKg": 2000,
+   "price": 47990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 48,
+   "arrivedAt": "2026-08-29",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30307",
+   "owners": 1,
+   "firstRegistered": "2022-07-08",
+   "compliance": "2022-05",
+   "regoExpiry": "2027-04",
+   "plate": "VXN15M",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2023-08-10",
+     "km": 15280,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-08-11",
+     "km": 29410,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2025-10-13",
+     "km": 45840,
+     "by": "Harbourline Toyota Liverpool",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-15",
+     "km": 59240,
+     "by": "Toyota dealer (Sydney metro)",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-09-14",
+     "km": 59640,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 74000,
+    "date": "2027-09-15"
+   },
+   "inspection": {
+    "date": "2026-09-14",
+    "inspector": "Mia Thompson",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Body",
+      "note": "Light scratch rear bumper, left corner",
+      "action": "repaired"
+     },
+     {
+      "area": "Interior",
+      "note": "Rear cargo liner scuffed",
+      "action": "replaced"
+     },
+     {
+      "area": "Interior",
+      "note": "Child-seat anchor marks rear seat",
+      "action": "noted"
+     },
+     {
+      "area": "Tyres",
+      "note": "Front tyres replaced (Bridgestone Alenza)",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 8,
+     "rear": 5
+    },
+    "brakesPct": {
+     "front": 80,
+     "rear": 66
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-27",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-52378827"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2027-07-07"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/kluger.jpg",
+    "thumb": "/api/images/kluger/thumb.jpg",
+    "credit": "LuvsMG481, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Light scratch rear bumper, left corner",
+     "cost": 100
+    },
+    {
+     "item": "Rear cargo liner scuffed",
+     "cost": 710
+    },
+    {
+     "item": "Front tyres replaced (Bridgestone Alenza)",
+     "cost": 450
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33039",
+   "vin": "KMHAXUH721353602013",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "Kluger",
+   "modelId": "kluger",
+   "variantCode": "AXUH78R",
+   "year": 2024,
+   "grade": "Grande",
+   "gradeId": "grande",
+   "body": "suv-large",
+   "bodyLabel": "SUV",
+   "colour": "Silver Sky",
+   "colourId": "silver-sky",
+   "interior": "Leather-accented, black",
+   "km": 19089,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Hybrid",
+   "engine": "2.5L hybrid",
+   "seats": 7,
+   "towKg": 2000,
+   "price": 68990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "reconditioning",
+   "etaDays": null,
+   "daysInStock": 40,
+   "arrivedAt": "2026-09-06",
+   "acquiredVia": "buy-back",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2024-08-11",
+   "compliance": "2024-07",
+   "regoExpiry": "2027-04",
+   "plate": "RDA93P",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-05-19",
+     "km": 15580,
+     "by": "Harbourline Toyota Liverpool",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-10",
+     "km": 19090,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 31000,
+    "date": "2027-05-19"
+   },
+   "inspection": {
+    "date": "2026-10-10",
+    "inspector": "Luke Harris",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Hybrid",
+      "note": "Hybrid battery health check passed (Toyota Health Check)",
+      "action": "noted"
+     },
+     {
+      "area": "Keys",
+      "note": "Second key cut and programmed",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Kerb rash front-left alloy",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 49,
+     "rear": 70
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-22",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-77508457"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2029-08-10"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/kluger.jpg",
+    "thumb": "/api/images/kluger/thumb.jpg",
+    "credit": "LuvsMG481, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Second key cut and programmed",
+     "cost": 240
+    },
+    {
+     "item": "Kerb rash front-left alloy",
+     "cost": 190
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33043",
+   "vin": "JTNGUN1222323714014",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "HiLux",
+   "modelId": "hilux",
+   "variantCode": "GUN126R",
+   "year": 2023,
+   "grade": "SR5",
+   "gradeId": "sr5",
+   "body": "ute",
+   "bodyLabel": "Ute",
+   "colour": "Eclipse Black",
+   "colourId": "eclipse-black",
+   "interior": "Fabric, black",
+   "km": 56625,
+   "transmission": "Automatic",
+   "drive": "4x4",
+   "fuel": "Diesel",
+   "engine": "2.8L turbo-diesel",
+   "seats": 5,
+   "towKg": 3500,
+   "price": 52990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 43,
+   "arrivedAt": "2026-09-03",
+   "acquiredVia": "auction",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2023-03-13",
+   "compliance": "2023-02",
+   "regoExpiry": "2027-02",
+   "plate": "EYR23L",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2024-02-10",
+     "km": 14460,
+     "by": "Toyota dealer (Sydney metro)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-01-22",
+     "km": 29460,
+     "by": "Toyota dealer (Sydney metro)",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-02-14",
+     "km": 46240,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-19",
+     "km": 56630,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 61000,
+    "date": "2027-02-14"
+   },
+   "inspection": {
+    "date": "2026-09-19",
+    "inspector": "Luke Harris",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Mechanical",
+      "note": "Wiper blades replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Brakes",
+      "note": "Front pads and rotors replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Interior",
+      "note": "Child-seat anchor marks rear seat",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 7,
+     "rear": 6
+    },
+    "brakesPct": {
+     "front": 100,
+     "rear": 83
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-18",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-44516396"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2028-03-11"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Tub liner",
+    "Tow bar and 7-pin wiring",
+    "Side steps",
+    "Hard tonneau cover",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/hilux.jpg",
+    "thumb": "/api/images/hilux/thumb.jpg",
+    "credit": "TTTNIS, Wikimedia Commons, CC0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Wiper blades replaced",
+     "cost": 180
+    },
+    {
+     "item": "Front pads and rotors replaced",
+     "cost": 290
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33047",
+   "vin": "MNAGUN1223491018015",
+   "siteId": "hor",
+   "make": "Toyota",
+   "model": "HiLux",
+   "modelId": "hilux",
+   "variantCode": "GUN126R",
+   "year": 2021,
+   "grade": "SR",
+   "gradeId": "sr",
+   "body": "ute",
+   "bodyLabel": "Ute",
+   "colour": "Eclipse Black",
+   "colourId": "eclipse-black",
+   "interior": "Fabric, black",
+   "km": 100770,
+   "transmission": "Automatic",
+   "drive": "4x4",
+   "fuel": "Diesel",
+   "engine": "2.8L turbo-diesel",
+   "seats": 5,
+   "towKg": 3500,
+   "price": 41990,
+   "was": null,
+   "certified": false,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 66,
+   "arrivedAt": "2026-08-11",
+   "acquiredVia": "ex-fleet",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2021-05-05",
+   "compliance": "2021-04",
+   "regoExpiry": "2027-07",
+   "plate": "PHT89C",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2022-03-09",
+     "km": 15670,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2022-12-28",
+     "km": 30660,
+     "by": "Toyota dealer (Sydney metro)",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2023-10-30",
+     "km": 46260,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-07-19",
+     "km": 59630,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2025-05-25",
+     "km": 75410,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-03-27",
+     "km": 90990,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-10-05",
+     "km": 100730,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 106000,
+    "date": "2027-03-27"
+   },
+   "inspection": {
+    "date": "2026-10-05",
+    "inspector": "Grace Lin",
+    "points": 90,
+    "passed": true,
+    "items": [
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Body",
+      "note": "Light scratch rear bumper, left corner",
+      "action": "repaired"
+     },
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     },
+     {
+      "area": "Tyres",
+      "note": "Rear tyres 60% remaining",
+      "action": "noted"
+     },
+     {
+      "area": "Brakes",
+      "note": "Brake fluid flushed",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 5,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 68,
+     "rear": 57
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-21",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-48540158"
+   },
+   "warranty": {
+    "type": "Statutory (3 months / 5,000 km)",
+    "until": null,
+    "kmLimit": 5000,
+    "roadside": false,
+    "note": null
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Tub liner",
+    "Tow bar and 7-pin wiring",
+    "Side steps",
+    "Hard tonneau cover",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/hilux.jpg",
+    "thumb": "/api/images/hilux/thumb.jpg",
+    "credit": "TTTNIS, Wikimedia Commons, CC0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Light scratch rear bumper, left corner",
+     "cost": 240
+    },
+    {
+     "item": "Infotainment software updated",
+     "cost": 290
+    },
+    {
+     "item": "Brake fluid flushed",
+     "cost": 390
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33050",
+   "vin": "JTMGUN1224536227016",
+   "siteId": "pen",
+   "make": "Toyota",
+   "model": "HiLux",
+   "modelId": "hilux",
+   "variantCode": "GUN126R",
+   "year": 2024,
+   "grade": "Rogue",
+   "gradeId": "rogue",
+   "body": "ute",
+   "bodyLabel": "Ute",
+   "colour": "Eclipse Black",
+   "colourId": "eclipse-black",
+   "interior": "Leather-accented, black",
+   "km": 21350,
+   "transmission": "Automatic",
+   "drive": "4x4",
+   "fuel": "Diesel",
+   "engine": "2.8L turbo-diesel",
+   "seats": 5,
+   "towKg": 3500,
+   "price": 66990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 27,
+   "arrivedAt": "2026-09-19",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30316",
+   "owners": 1,
+   "firstRegistered": "2024-07-27",
+   "compliance": "2024-06",
+   "regoExpiry": "2027-03",
+   "plate": "LZJ21G",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-01-24",
+     "km": 14190,
+     "by": "Toyota dealer (Canberra)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-10",
+     "km": 21310,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 29000,
+    "date": "2027-01-24"
+   },
+   "inspection": {
+    "date": "2026-09-10",
+    "inspector": "Sarah Pike",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Interior",
+      "note": "Rear cargo liner scuffed",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Kerb rash front-left alloy",
+      "action": "repaired"
+     },
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Wiper blades replaced",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 5,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 61,
+     "rear": 80
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-16",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-37698018"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2029-07-26"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Tub liner",
+    "Tow bar and 7-pin wiring",
+    "Side steps",
+    "Hard tonneau cover",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/hilux.jpg",
+    "thumb": "/api/images/hilux/thumb.jpg",
+    "credit": "TTTNIS, Wikimedia Commons, CC0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Rear cargo liner scuffed",
+     "cost": 170
+    },
+    {
+     "item": "Kerb rash front-left alloy",
+     "cost": 110
+    },
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 110
+    },
+    {
+     "item": "Wiper blades replaced",
+     "cost": 600
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33052",
+   "vin": "JMYTGN1225693234017",
+   "siteId": "liv",
+   "make": "Toyota",
+   "model": "HiLux",
+   "modelId": "hilux",
+   "variantCode": "TGN121R",
+   "year": 2022,
+   "grade": "Workmate",
+   "gradeId": "workmate",
+   "body": "ute",
+   "bodyLabel": "Ute",
+   "colour": "Eclipse Black",
+   "colourId": "eclipse-black",
+   "interior": "Fabric, black",
+   "km": 62219,
+   "transmission": "Manual",
+   "drive": "2WD",
+   "fuel": "Petrol",
+   "engine": "2.7L petrol",
+   "seats": 5,
+   "towKg": 3500,
+   "price": 29990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 30,
+   "arrivedAt": "2026-09-16",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30277",
+   "owners": 1,
+   "firstRegistered": "2022-10-16",
+   "compliance": "2022-09",
+   "regoExpiry": "2027-06",
+   "plate": "PSN82J",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2023-10-22",
+     "km": 15800,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-10-17",
+     "km": 31150,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2025-09-21",
+     "km": 45620,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-05",
+     "km": 60480,
+     "by": "Toyota dealer (Sydney metro)",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-09-10",
+     "km": 62200,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 75000,
+    "date": "2027-09-05"
+   },
+   "inspection": {
+    "date": "2026-09-10",
+    "inspector": "Omar Haddad",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Interior",
+      "note": "Steering wheel leather polished",
+      "action": "noted"
+     },
+     {
+      "area": "Glass",
+      "note": "Windscreen chip passenger side, resin repaired",
+      "action": "repaired"
+     },
+     {
+      "area": "Body",
+      "note": "Stone chips on bonnet leading edge",
+      "action": "noted"
+     },
+     {
+      "area": "Interior",
+      "note": "Driver seat bolster wear",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 66,
+     "rear": 87
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-18",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-26062644"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2027-10-15"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Tub liner",
+    "Tow bar and 7-pin wiring",
+    "Side steps",
+    "Hard tonneau cover",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/hilux.jpg",
+    "thumb": "/api/images/hilux/thumb.jpg",
+    "credit": "TTTNIS, Wikimedia Commons, CC0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Windscreen chip passenger side, resin repaired",
+     "cost": 210
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33055",
+   "vin": "MR0GDJ1526510584018",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "LandCruiser Prado",
+   "modelId": "prado",
+   "variantCode": "GDJ150R",
+   "year": 2022,
+   "grade": "GXL",
+   "gradeId": "gxl",
+   "body": "suv-large",
+   "bodyLabel": "SUV",
+   "colour": "White Pearl",
+   "colourId": "frosted-white",
+   "interior": "Fabric, black",
+   "km": 63950,
+   "transmission": "Automatic",
+   "drive": "4x4",
+   "fuel": "Diesel",
+   "engine": "2.8L turbo-diesel",
+   "seats": 7,
+   "towKg": 3500,
+   "price": 62990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 20,
+   "arrivedAt": "2026-09-26",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2022-08-16",
+   "compliance": "2022-07",
+   "regoExpiry": "2027-06",
+   "plate": "MJE55V",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2023-09-08",
+     "km": 16320,
+     "by": "Toyota dealer (Newcastle)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-08-22",
+     "km": 30960,
+     "by": "Toyota dealer (Newcastle)",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2025-07-28",
+     "km": 45260,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-08-24",
+     "km": 61730,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-10-04",
+     "km": 63920,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 77000,
+    "date": "2027-08-24"
+   },
+   "inspection": {
+    "date": "2026-10-04",
+    "inspector": "Mia Thompson",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Mechanical",
+      "note": "Wiper blades replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     },
+     {
+      "area": "Interior",
+      "note": "Steering wheel leather polished",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Cabin filter and engine air filter replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Stone chips on bonnet leading edge",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 7,
+     "rear": 6
+    },
+    "brakesPct": {
+     "front": 51,
+     "rear": 52
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-11",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-68195300"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2027-08-15"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Multi-terrain select",
+    "Crawl control",
+    "Low-range transfer case",
+    "Tow bar and 12-pin wiring",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/prado.jpg",
+    "thumb": "/api/images/prado/thumb.jpg",
+    "credit": "Ethan Llamas, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Wiper blades replaced",
+     "cost": 200
+    },
+    {
+     "item": "Infotainment software updated",
+     "cost": 80
+    },
+    {
+     "item": "Cabin filter and engine air filter replaced",
+     "cost": 390
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33057",
+   "vin": "MNATAJA227462653019",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "LandCruiser Prado",
+   "modelId": "prado",
+   "variantCode": "TAJA250R",
+   "year": 2025,
+   "grade": "VX",
+   "gradeId": "vx",
+   "body": "suv-large",
+   "bodyLabel": "SUV",
+   "colour": "White Pearl",
+   "colourId": "frosted-white",
+   "interior": "Leather-accented, black",
+   "km": 15988,
+   "transmission": "Automatic",
+   "drive": "4x4",
+   "fuel": "Diesel",
+   "engine": "2.8L turbo-diesel 48V",
+   "seats": 7,
+   "towKg": 3500,
+   "price": 94990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 7,
+   "arrivedAt": "2026-10-09",
+   "acquiredVia": "auction",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2025-09-19",
+   "compliance": "2025-08",
+   "regoExpiry": "2027-04",
+   "plate": "RXB92E",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-10-08",
+     "km": 15510,
+     "by": "Harbourline Toyota Liverpool",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-06",
+     "km": 15950,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 31000,
+    "date": "2027-10-08"
+   },
+   "inspection": {
+    "date": "2026-10-06",
+    "inspector": "Luke Harris",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Body",
+      "note": "Stone chips on bonnet leading edge",
+      "action": "noted"
+     },
+     {
+      "area": "Interior",
+      "note": "Child-seat anchor marks rear seat",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 6,
+     "rear": 6
+    },
+    "brakesPct": {
+     "front": 65,
+     "rear": 85
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-04",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-72261127"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2030-09-18"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Multi-terrain select",
+    "Crawl control",
+    "Low-range transfer case",
+    "Tow bar and 12-pin wiring",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/prado.jpg",
+    "thumb": "/api/images/prado/thumb.jpg",
+    "credit": "Ethan Llamas, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": []
+  },
+  {
+   "stockNo": "U-33060",
+   "vin": "KNAFJA3028454841020",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "LandCruiser 300",
+   "modelId": "landcruiser-300",
+   "variantCode": "FJA300R",
+   "year": 2025,
+   "grade": "Sahara",
+   "gradeId": "sahara",
+   "body": "suv-large",
+   "bodyLabel": "SUV",
+   "colour": "Crystal Pearl",
+   "colourId": "frosted-white",
+   "interior": "Leather-accented, black",
+   "km": 20337,
+   "transmission": "Automatic",
+   "drive": "4x4",
+   "fuel": "Diesel",
+   "engine": "3.3L twin-turbo diesel V6",
+   "seats": 7,
+   "towKg": 3500,
+   "price": 122512,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 56,
+   "arrivedAt": "2026-08-21",
+   "acquiredVia": "buy-back",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2025-03-02",
+   "compliance": "2025-02",
+   "regoExpiry": "2027-07",
+   "plate": "UYH26V",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-07-11",
+     "km": 16580,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-10",
+     "km": 20290,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 32000,
+    "date": "2027-07-11"
+   },
+   "inspection": {
+    "date": "2026-09-10",
+    "inspector": "Luke Harris",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Glass",
+      "note": "Windscreen chip passenger side, resin repaired",
+      "action": "repaired"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Keys",
+      "note": "Second key cut and programmed",
+      "action": "replaced"
+     },
+     {
+      "area": "Brakes",
+      "note": "Front pads and rotors replaced",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 5,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 100,
+     "rear": 82
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-12",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-41405048"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2030-03-01"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Multi-terrain select",
+    "Crawl control",
+    "Low-range transfer case",
+    "Tow bar and 12-pin wiring",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/landcruiser-300.jpg",
+    "thumb": "/api/images/landcruiser-300/thumb.jpg",
+    "credit": "Dinkun Chen, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Windscreen chip passenger side, resin repaired",
+     "cost": 280
+    },
+    {
+     "item": "Second key cut and programmed",
+     "cost": 720
+    },
+    {
+     "item": "Front pads and rotors replaced",
+     "cost": 710
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33064",
+   "vin": "MNAGUN1529906291021",
+   "siteId": "hor",
+   "make": "Toyota",
+   "model": "Fortuner",
+   "modelId": "fortuner",
+   "variantCode": "GUN156R",
+   "year": 2022,
+   "grade": "GXL",
+   "gradeId": "gxl",
+   "body": "suv-large",
+   "bodyLabel": "SUV",
+   "colour": "Glacier White",
+   "colourId": "glacier-white",
+   "interior": "Fabric, black",
+   "km": 51256,
+   "transmission": "Automatic",
+   "drive": "4x4",
+   "fuel": "Diesel",
+   "engine": "2.8L turbo-diesel",
+   "seats": 7,
+   "towKg": 3100,
+   "price": 49990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 17,
+   "arrivedAt": "2026-09-29",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2022-08-05",
+   "compliance": "2022-05",
+   "regoExpiry": "2027-02",
+   "plate": "HJZ98L",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2023-11-15",
+     "km": 15740,
+     "by": "Toyota dealer (Canberra)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-02-22",
+     "km": 31400,
+     "by": "Harbourline Toyota Liverpool",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-03-26",
+     "km": 44760,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-17",
+     "km": 51230,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 60000,
+    "date": "2027-03-26"
+   },
+   "inspection": {
+    "date": "2026-09-17",
+    "inspector": "Ben Kowalski",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Interior",
+      "note": "Steering wheel leather polished",
+      "action": "noted"
+     },
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     },
+     {
+      "area": "Body",
+      "note": "Kerb rash front-left alloy",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 82,
+     "rear": 79
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-21",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-56656078"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2027-08-04"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Multi-terrain select",
+    "Crawl control",
+    "Low-range transfer case",
+    "Tow bar and 12-pin wiring",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/fortuner.jpg",
+    "thumb": "/api/images/fortuner/thumb.jpg",
+    "credit": "Ethan Llamas, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 420
+    },
+    {
+     "item": "Kerb rash front-left alloy",
+     "cost": 300
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33067",
+   "vin": "JF2MXPB130986160022",
+   "siteId": "pen",
+   "make": "Toyota",
+   "model": "Yaris Cross",
+   "modelId": "yaris-cross",
+   "variantCode": "MXPB10R",
+   "year": 2022,
+   "grade": "Ascent Sport",
+   "gradeId": null,
+   "body": "suv-small",
+   "bodyLabel": "SUV",
+   "colour": "Grayish Blue",
+   "colourId": "saturn-blue",
+   "interior": "Fabric, black",
+   "km": 45073,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "1.5L hybrid",
+   "seats": 5,
+   "towKg": 400,
+   "price": 24888,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 31,
+   "arrivedAt": "2026-09-15",
+   "acquiredVia": "buy-back",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2022-11-16",
+   "compliance": "2022-09",
+   "regoExpiry": "2027-03",
+   "plate": "BLS55L",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2024-02-18",
+     "km": 14470,
+     "by": "Harbourline Toyota Hornsby",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-06-14",
+     "km": 29660,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-09-26",
+     "km": 44720,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-05",
+     "km": 45060,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 60000,
+    "date": "2027-09-26"
+   },
+   "inspection": {
+    "date": "2026-10-05",
+    "inspector": "Sarah Pike",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Brakes",
+      "note": "Front pads and rotors replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     },
+     {
+      "area": "Brakes",
+      "note": "Brake fluid flushed",
+      "action": "replaced"
+     },
+     {
+      "area": "Interior",
+      "note": "Rear cargo liner scuffed",
+      "action": "replaced"
+     },
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 6,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 100,
+     "rear": 68
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-08",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-61770553"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2027-11-15"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/yaris-cross.jpg",
+    "thumb": "/api/images/yaris-cross/thumb.jpg",
+    "credit": "Mr.choppers, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Front pads and rotors replaced",
+     "cost": 130
+    },
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 450
+    },
+    {
+     "item": "Brake fluid flushed",
+     "cost": 350
+    },
+    {
+     "item": "Rear cargo liner scuffed",
+     "cost": 140
+    },
+    {
+     "item": "Infotainment software updated",
+     "cost": 190
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33070",
+   "vin": "JTMMXPJ131835933023",
+   "siteId": "liv",
+   "make": "Toyota",
+   "model": "Yaris Cross",
+   "modelId": "yaris-cross",
+   "variantCode": "MXPJ15R",
+   "year": 2024,
+   "grade": "Urban",
+   "gradeId": "urban",
+   "body": "suv-small",
+   "bodyLabel": "SUV",
+   "colour": "Grayish Blue",
+   "colourId": "saturn-blue",
+   "interior": "Fabric, black",
+   "km": 14557,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Hybrid",
+   "engine": "1.5L hybrid",
+   "seats": 5,
+   "towKg": 400,
+   "price": 36990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 33,
+   "arrivedAt": "2026-09-13",
+   "acquiredVia": "auction",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2024-04-21",
+   "compliance": "2024-03",
+   "regoExpiry": "2027-05",
+   "plate": "WRX82L",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-09-10",
+     "km": 13900,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-05",
+     "km": 14500,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 29000,
+    "date": "2027-09-10"
+   },
+   "inspection": {
+    "date": "2026-10-05",
+    "inspector": "Omar Haddad",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Mechanical",
+      "note": "Wiper blades replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Brakes",
+      "note": "Front pads and rotors replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Tyres",
+      "note": "Rear tyres 60% remaining",
+      "action": "noted"
+     },
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 5,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 100,
+     "rear": 57
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-22",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-20418172"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2029-04-20"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/yaris-cross.jpg",
+    "thumb": "/api/images/yaris-cross/thumb.jpg",
+    "credit": "Mr.choppers, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Wiper blades replaced",
+     "cost": 560
+    },
+    {
+     "item": "Front pads and rotors replaced",
+     "cost": 780
+    },
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 230
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33074",
+   "vin": "JMYMXGH132575544024",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "Corolla Cross",
+   "modelId": "corolla-cross",
+   "variantCode": "MXGH10R",
+   "year": 2023,
+   "grade": "GXL",
+   "gradeId": "gxl",
+   "body": "suv-small",
+   "bodyLabel": "SUV",
+   "colour": "Celestite Grey",
+   "colourId": "graphite",
+   "interior": "Fabric, black",
+   "km": 33958,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "2.0L hybrid",
+   "seats": 5,
+   "towKg": 750,
+   "price": 38990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 20,
+   "arrivedAt": "2026-09-26",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30313",
+   "owners": 2,
+   "firstRegistered": "2023-09-23",
+   "compliance": "2023-07",
+   "regoExpiry": "2027-03",
+   "plate": "TBM55N",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2025-02-02",
+     "km": 15020,
+     "by": "Harbourline Toyota Parramatta",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-06-14",
+     "km": 30010,
+     "by": "Harbourline Toyota Liverpool",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-09-19",
+     "km": 33930,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 45000,
+    "date": "2027-06-14"
+   },
+   "inspection": {
+    "date": "2026-09-19",
+    "inspector": "Mia Thompson",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Interior",
+      "note": "Rear cargo liner scuffed",
+      "action": "replaced"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Cabin filter and engine air filter replaced",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 6
+    },
+    "brakesPct": {
+     "front": 68,
+     "rear": 84
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-28",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-52526533"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2028-09-21"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/corolla-cross.jpg",
+    "thumb": "/api/images/corolla-cross/thumb.jpg",
+    "credit": "Ethan Llamas, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Rear cargo liner scuffed",
+     "cost": 450
+    },
+    {
+     "item": "Cabin filter and engine air filter replaced",
+     "cost": 620
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33075",
+   "vin": "JTNMXGH133807142025",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "Corolla Cross",
+   "modelId": "corolla-cross",
+   "variantCode": "MXGH15R",
+   "year": 2024,
+   "grade": "Atmos",
+   "gradeId": "atmos",
+   "body": "suv-small",
+   "bodyLabel": "SUV",
+   "colour": "Celestite Grey",
+   "colourId": "graphite",
+   "interior": "Leather-accented, black",
+   "km": 22467,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Hybrid",
+   "engine": "2.0L hybrid",
+   "seats": 5,
+   "towKg": 750,
+   "price": 46990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 48,
+   "arrivedAt": "2026-08-29",
+   "acquiredVia": "trade-in",
+   "tradeInId": "TI-30302",
+   "owners": 1,
+   "firstRegistered": "2024-05-11",
+   "compliance": "2024-04",
+   "regoExpiry": "2027-08",
+   "plate": "YTJ21X",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-01-06",
+     "km": 15400,
+     "by": "Toyota dealer (Canberra)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-02",
+     "km": 22420,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 30000,
+    "date": "2027-01-06"
+   },
+   "inspection": {
+    "date": "2026-10-02",
+    "inspector": "Mia Thompson",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Body",
+      "note": "Stone chips on bonnet leading edge",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Wiper blades replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Tyres",
+      "note": "Front tyres replaced (Bridgestone Alenza)",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 8,
+     "rear": 6
+    },
+    "brakesPct": {
+     "front": 83,
+     "rear": 79
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-10",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-87852854"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2029-05-10"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": {
+    "src": "/api/images/corolla-cross.jpg",
+    "thumb": "/api/images/corolla-cross/thumb.jpg",
+    "credit": "Ethan Llamas, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Wiper blades replaced",
+     "cost": 730
+    },
+    {
+     "item": "Front tyres replaced (Bridgestone Alenza)",
+     "cost": 590
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33079",
+   "vin": "5TDMXPH134950941026",
+   "siteId": "par",
+   "make": "Toyota",
+   "model": "C-HR",
+   "modelId": "c-hr",
+   "variantCode": "MXPH10R",
+   "year": 2024,
+   "grade": "GXL",
+   "gradeId": "gxl",
+   "body": "suv-small",
+   "bodyLabel": "SUV",
+   "colour": "Frosted White",
+   "colourId": "frosted-white",
+   "interior": "Fabric, black",
+   "km": 24216,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Hybrid",
+   "engine": "1.8L hybrid",
+   "seats": 5,
+   "towKg": 725,
+   "price": 41990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 22,
+   "arrivedAt": "2026-09-24",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2024-09-22",
+   "compliance": "2024-08",
+   "regoExpiry": "2027-02",
+   "plate": "PDB96V",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2025-12-09",
+     "km": 14110,
+     "by": "Toyota dealer (Sydney metro)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-10",
+     "km": 24180,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 29000,
+    "date": "2026-12-09"
+   },
+   "inspection": {
+    "date": "2026-10-10",
+    "inspector": "Mia Thompson",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Tyres",
+      "note": "Rear tyres 60% remaining",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Wiper blades replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Electrical",
+      "note": "Infotainment software updated",
+      "action": "repaired"
+     },
+     {
+      "area": "Brakes",
+      "note": "Brake fluid flushed",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 78,
+     "rear": 85
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-27",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-50932211"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2029-09-21"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/c-hr.jpg",
+    "thumb": "/api/images/c-hr/thumb.jpg",
+    "credit": "Calreyn88, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Wiper blades replaced",
+     "cost": 880
+    },
+    {
+     "item": "Infotainment software updated",
+     "cost": 400
+    },
+    {
+     "item": "Brake fluid flushed",
+     "cost": 580
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33082",
+   "vin": "JMYXEAM135646374027",
+   "siteId": "hor",
+   "make": "Toyota",
+   "model": "bZ4X",
+   "modelId": "bz4x",
+   "variantCode": "XEAM10R",
+   "year": 2024,
+   "grade": "FWD",
+   "gradeId": "fwd",
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Graphite",
+   "colourId": "graphite",
+   "interior": "Fabric, black",
+   "km": 25393,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Electric",
+   "engine": "71.4 kWh battery, 150 kW",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 49990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 34,
+   "arrivedAt": "2026-09-12",
+   "acquiredVia": "auction",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2024-10-06",
+   "compliance": "2024-08",
+   "regoExpiry": "2027-08",
+   "plate": "TYS65X",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2026-01-04",
+     "km": 15810,
+     "by": "Harbourline Toyota Liverpool",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-13",
+     "km": 25360,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 31000,
+    "date": "2027-01-04"
+   },
+   "inspection": {
+    "date": "2026-10-13",
+    "inspector": "Grace Lin",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Glass",
+      "note": "Windscreen chip passenger side, resin repaired",
+      "action": "repaired"
+     },
+     {
+      "area": "Body",
+      "note": "Stone chips on bonnet leading edge",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 53,
+     "rear": 68
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-19",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-40694403"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2029-10-05"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/bz4x.jpg",
+    "thumb": "/api/images/bz4x/thumb.jpg",
+    "credit": "Alexander Migl, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Windscreen chip passenger side, resin repaired",
+     "cost": 230
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33085",
+   "vin": "JF2GXPA136253434028",
+   "siteId": "pen",
+   "make": "Toyota",
+   "model": "GR Yaris",
+   "modelId": "gr-yaris",
+   "variantCode": "GXPA16R",
+   "year": 2023,
+   "grade": "GTS",
+   "gradeId": "gts",
+   "body": "hatch",
+   "bodyLabel": "Hatch",
+   "colour": "Glacier White",
+   "colourId": "glacier-white",
+   "interior": "Fabric, black",
+   "km": 31817,
+   "transmission": "Manual",
+   "drive": "AWD",
+   "fuel": "Petrol",
+   "engine": "1.6L turbo three-cylinder",
+   "seats": 4,
+   "towKg": 0,
+   "price": 54990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 35,
+   "arrivedAt": "2026-09-11",
+   "acquiredVia": "buy-back",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2023-10-03",
+   "compliance": "2023-08",
+   "regoExpiry": "2027-04",
+   "plate": "VML62P",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2025-04-09",
+     "km": 16080,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-08-26",
+     "km": 30730,
+     "by": "Harbourline Toyota Penrith",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-10-05",
+     "km": 31790,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 46000,
+    "date": "2027-08-26"
+   },
+   "inspection": {
+    "date": "2026-10-05",
+    "inspector": "Tom Nguyen",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Keys",
+      "note": "Second key cut and programmed",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Stone chips on bonnet leading edge",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Interior",
+      "note": "Steering wheel leather polished",
+      "action": "noted"
+     },
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 7,
+     "rear": 5
+    },
+    "brakesPct": {
+     "front": 65,
+     "rear": 52
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-04",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-45275989"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2028-10-01"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/gr-yaris.jpg",
+    "thumb": "/api/images/gr-yaris/thumb.jpg",
+    "credit": "Mr.choppers, Wikimedia Commons, CC BY-SA 3.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Second key cut and programmed",
+     "cost": 160
+    },
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 420
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33089",
+   "vin": "JM0ZN8XX37757856029",
+   "siteId": "liv",
+   "make": "Toyota",
+   "model": "GR86",
+   "modelId": "gr86",
+   "variantCode": "ZN8",
+   "year": 2023,
+   "grade": "GTS",
+   "gradeId": "gts",
+   "body": "coupe",
+   "bodyLabel": "Coupe",
+   "colour": "Halo White",
+   "colourId": "glacier-white",
+   "interior": "Fabric, black",
+   "km": 23221,
+   "transmission": "Manual",
+   "drive": "2WD",
+   "fuel": "Petrol",
+   "engine": "2.4L flat-four",
+   "seats": 4,
+   "towKg": 0,
+   "price": 44990,
+   "was": null,
+   "certified": true,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 18,
+   "arrivedAt": "2026-09-28",
+   "acquiredVia": "buy-back",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2023-02-18",
+   "compliance": "2022-12",
+   "regoExpiry": "2027-08",
+   "plate": "YSB73N",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2025-10-06",
+     "km": 16660,
+     "by": "Toyota dealer (Newcastle)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-24",
+     "km": 23180,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Toyota Certified 120-point inspection and pre-delivery service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 32000,
+    "date": "2026-10-06"
+   },
+   "inspection": {
+    "date": "2026-09-24",
+    "inspector": "Omar Haddad",
+    "points": 120,
+    "passed": true,
+    "items": [
+     {
+      "area": "Mechanical",
+      "note": "Cabin filter and engine air filter replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Tyres",
+      "note": "Rear tyres 60% remaining",
+      "action": "noted"
+     },
+     {
+      "area": "Body",
+      "note": "Kerb rash front-left alloy",
+      "action": "repaired"
+     },
+     {
+      "area": "Keys",
+      "note": "Second key cut and programmed",
+      "action": "replaced"
+     },
+     {
+      "area": "Body",
+      "note": "Small dent rear quarter, paintless repair",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 4
+    },
+    "brakesPct": {
+     "front": 57,
+     "rear": 90
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-29",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-68084230"
+   },
+   "warranty": {
+    "type": "Toyota Certified Pre-Owned",
+    "until": "2027-10-16",
+    "kmLimit": null,
+    "roadside": true,
+    "note": "plus balance of new-car warranty to 2028-02-17"
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": {
+    "src": "/api/images/gr86.jpg",
+    "thumb": "/api/images/gr86/thumb.jpg",
+    "credit": "Elise240SX, Wikimedia Commons, CC BY-SA 4.0",
+    "library": true
+   },
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Cabin filter and engine air filter replaced",
+     "cost": 260
+    },
+    {
+     "item": "Kerb rash front-left alloy",
+     "cost": 170
+    },
+    {
+     "item": "Second key cut and programmed",
+     "cost": 720
+    },
+    {
+     "item": "Small dent rear quarter, paintless repair",
+     "cost": 340
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33092",
+   "vin": "KNAKFSXX38964098030",
+   "siteId": "par",
+   "make": "Mazda",
+   "model": "CX-5",
+   "modelId": null,
+   "variantCode": "KF Series",
+   "year": 2020,
+   "grade": "Maxx Sport",
+   "gradeId": null,
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Shadow Black",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 80400,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Petrol",
+   "engine": "2.5L petrol",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 27990,
+   "was": null,
+   "certified": false,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 45,
+   "arrivedAt": "2026-09-01",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2020-09-19",
+   "compliance": "2020-07",
+   "regoExpiry": "2027-08",
+   "plate": "EZU17S",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2021-06-09",
+     "km": 9510,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2022-04-05",
+     "km": 20370,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2023-02-12",
+     "km": 31710,
+     "by": "Mazda dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2023-11-06",
+     "km": 41340,
+     "by": "Independent workshop",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2024-06-20",
+     "km": 49550,
+     "by": "Mazda dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-04-18",
+     "km": 60480,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-01-20",
+     "km": 70520,
+     "by": "Mazda dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-18",
+     "km": 80070,
+     "by": "Mazda dealer (Sydney)",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-09-30",
+     "km": 80390,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Pre-delivery inspection and service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 90000,
+    "date": "2027-09-18"
+   },
+   "inspection": {
+    "date": "2026-09-30",
+    "inspector": "Mia Thompson",
+    "points": 90,
+    "passed": true,
+    "items": [
+     {
+      "area": "Brakes",
+      "note": "Brake fluid flushed",
+      "action": "replaced"
+     },
+     {
+      "area": "Interior",
+      "note": "Steering wheel leather polished",
+      "action": "noted"
+     },
+     {
+      "area": "Brakes",
+      "note": "Front pads and rotors replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Keys",
+      "note": "Second key cut and programmed",
+      "action": "replaced"
+     },
+     {
+      "area": "Tyres",
+      "note": "Front tyres replaced (Bridgestone Alenza)",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 8,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 100,
+     "rear": 58
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-03",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-57112202"
+   },
+   "warranty": {
+    "type": "Statutory (3 months / 5,000 km)",
+    "until": null,
+    "kmLimit": 5000,
+    "roadside": false,
+    "note": null
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": null,
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Brake fluid flushed",
+     "cost": 690
+    },
+    {
+     "item": "Front pads and rotors replaced",
+     "cost": 350
+    },
+    {
+     "item": "Second key cut and programmed",
+     "cost": 420
+    },
+    {
+     "item": "Front tyres replaced (Bridgestone Alenza)",
+     "cost": 460
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33093",
+   "vin": "JTEPXMII39863031031",
+   "siteId": "par",
+   "make": "Ford",
+   "model": "Ranger",
+   "modelId": null,
+   "variantCode": "PX MkIII",
+   "year": 2021,
+   "grade": "XLT",
+   "gradeId": null,
+   "body": "ute",
+   "bodyLabel": "Ute",
+   "colour": "Shadow Black",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 86261,
+   "transmission": "Automatic",
+   "drive": "4x4",
+   "fuel": "Diesel",
+   "engine": "2.0L bi-turbo diesel",
+   "seats": 5,
+   "towKg": 3500,
+   "price": 46990,
+   "was": null,
+   "certified": false,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 47,
+   "arrivedAt": "2026-08-30",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2021-09-06",
+   "compliance": "2021-07",
+   "regoExpiry": "2027-03",
+   "plate": "PGD42U",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2022-05-01",
+     "km": 10990,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2022-12-14",
+     "km": 21530,
+     "by": "Ford dealer (Sydney)",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2023-06-24",
+     "km": 30480,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-01-13",
+     "km": 39910,
+     "by": "Independent workshop",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2024-08-27",
+     "km": 50460,
+     "by": "Ford dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-03-08",
+     "km": 59430,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2025-10-07",
+     "km": 69290,
+     "by": "Ford dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-05-13",
+     "km": 79440,
+     "by": "Independent workshop",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-09-13",
+     "km": 86220,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Pre-delivery inspection and service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 89000,
+    "date": "2027-05-13"
+   },
+   "inspection": {
+    "date": "2026-09-13",
+    "inspector": "Mia Thompson",
+    "points": 90,
+    "passed": true,
+    "items": [
+     {
+      "area": "Tyres",
+      "note": "Front tyres replaced (Bridgestone Alenza)",
+      "action": "replaced"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Cabin filter and engine air filter replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Glass",
+      "note": "Windscreen chip passenger side, resin repaired",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 8,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 62,
+     "rear": 69
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-20",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-86543577"
+   },
+   "warranty": {
+    "type": "Statutory (3 months / 5,000 km)",
+    "until": null,
+    "kmLimit": 5000,
+    "roadside": false,
+    "note": null
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Tub liner",
+    "Tow bar and 7-pin wiring",
+    "Side steps",
+    "Hard tonneau cover",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": null,
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Front tyres replaced (Bridgestone Alenza)",
+     "cost": 210
+    },
+    {
+     "item": "Cabin filter and engine air filter replaced",
+     "cost": 220
+    },
+    {
+     "item": "Windscreen chip passenger side, resin repaired",
+     "cost": 400
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33098",
+   "vin": "JMYPDXXX40845344032",
+   "siteId": "par",
+   "make": "Hyundai",
+   "model": "i30",
+   "modelId": null,
+   "variantCode": "PD",
+   "year": 2019,
+   "grade": "Active",
+   "gradeId": null,
+   "body": "hatch",
+   "bodyLabel": "Hatch",
+   "colour": "Steel Blue",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 115137,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Petrol",
+   "engine": "2.0L petrol",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 17990,
+   "was": null,
+   "certified": false,
+   "demo": false,
+   "status": "reconditioning",
+   "etaDays": null,
+   "daysInStock": 19,
+   "arrivedAt": "2026-09-27",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2019-10-25",
+   "compliance": "2019-09",
+   "regoExpiry": "2027-04",
+   "plate": "JFG30B",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2020-06-07",
+     "km": 10200,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2021-01-11",
+     "km": 20010,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2021-09-08",
+     "km": 30780,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2022-04-11",
+     "km": 40490,
+     "by": "Hyundai dealer (Sydney)",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2022-10-28",
+     "km": 49510,
+     "by": "Hyundai dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2023-06-15",
+     "km": 59840,
+     "by": "Hyundai dealer (Sydney)",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2024-02-09",
+     "km": 70610,
+     "by": "Hyundai dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-08-18",
+     "km": 79220,
+     "by": "Hyundai dealer (Sydney)",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2025-04-27",
+     "km": 90550,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-13",
+     "km": 115110,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Pre-delivery inspection and service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 101000,
+    "date": "2026-04-27"
+   },
+   "inspection": {
+    "date": "2026-10-13",
+    "inspector": "Luke Harris",
+    "points": 90,
+    "passed": true,
+    "items": [
+     {
+      "area": "Brakes",
+      "note": "Brake fluid flushed",
+      "action": "replaced"
+     },
+     {
+      "area": "Brakes",
+      "note": "Front pads and rotors replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Interior",
+      "note": "Driver seat bolster wear",
+      "action": "noted"
+     },
+     {
+      "area": "Interior",
+      "note": "Steering wheel leather polished",
+      "action": "noted"
+     },
+     {
+      "area": "Interior",
+      "note": "Rear cargo liner scuffed",
+      "action": "replaced"
+     }
+    ],
+    "tyresMm": {
+     "front": 6,
+     "rear": 5
+    },
+    "brakesPct": {
+     "front": 100,
+     "rear": 62
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-25",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-76863548"
+   },
+   "warranty": {
+    "type": "Statutory (3 months / 5,000 km)",
+    "until": null,
+    "kmLimit": 5000,
+    "roadside": false,
+    "note": null
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": null,
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Brake fluid flushed",
+     "cost": 160
+    },
+    {
+     "item": "Front pads and rotors replaced",
+     "cost": 120
+    },
+    {
+     "item": "Rear cargo liner scuffed",
+     "cost": 320
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33101",
+   "vin": "JMYNQ5XX41237410033",
+   "siteId": "hor",
+   "make": "Kia",
+   "model": "Sportage",
+   "modelId": null,
+   "variantCode": "NQ5",
+   "year": 2022,
+   "grade": "SX",
+   "gradeId": null,
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Steel Blue",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 38758,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Petrol",
+   "engine": "2.0L petrol",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 34990,
+   "was": null,
+   "certified": false,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 24,
+   "arrivedAt": "2026-09-22",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 2,
+   "firstRegistered": "2022-08-19",
+   "compliance": "2022-06",
+   "regoExpiry": "2027-04",
+   "plate": "LMB64V",
+   "keys": 1,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2023-11-20",
+     "km": 11680,
+     "by": "Kia dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-12-20",
+     "km": 21750,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-01-16",
+     "km": 31730,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-09-27",
+     "km": 38340,
+     "by": "Independent workshop",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2026-10-02",
+     "km": 38700,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Pre-delivery inspection and service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 48000,
+    "date": "2027-09-27"
+   },
+   "inspection": {
+    "date": "2026-10-02",
+    "inspector": "Ben Kowalski",
+    "points": 90,
+    "passed": true,
+    "items": [
+     {
+      "area": "Tyres",
+      "note": "Rear tyres 60% remaining",
+      "action": "noted"
+     },
+     {
+      "area": "Mechanical",
+      "note": "Wiper blades replaced",
+      "action": "replaced"
+     },
+     {
+      "area": "Interior",
+      "note": "Driver seat bolster wear",
+      "action": "noted"
+     },
+     {
+      "area": "Body",
+      "note": "Kerb rash front-left alloy",
+      "action": "repaired"
+     }
+    ],
+    "tyresMm": {
+     "front": 5,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 82,
+     "rear": 55
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-21",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-55381515"
+   },
+   "warranty": {
+    "type": "Statutory (3 months / 5,000 km)",
+    "until": null,
+    "kmLimit": 5000,
+    "roadside": false,
+    "note": null
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": null,
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Wiper blades replaced",
+     "cost": 530
+    },
+    {
+     "item": "Kerb rash front-left alloy",
+     "cost": 260
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33104",
+   "vin": "JMYS5XXX42721389034",
+   "siteId": "pen",
+   "make": "Subaru",
+   "model": "Forester",
+   "modelId": null,
+   "variantCode": "S5",
+   "year": 2021,
+   "grade": "2.5i Premium",
+   "gradeId": null,
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Steel Blue",
+   "colourId": null,
+   "interior": "Leather-accented, black",
+   "km": 72696,
+   "transmission": "Automatic",
+   "drive": "AWD",
+   "fuel": "Petrol",
+   "engine": "2.5L boxer petrol",
+   "seats": 5,
+   "towKg": 1500,
+   "price": 33990,
+   "was": null,
+   "certified": false,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 42,
+   "arrivedAt": "2026-09-04",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2021-10-02",
+   "compliance": "2021-08",
+   "regoExpiry": "2027-02",
+   "plate": "EEZ68B",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2022-06-16",
+     "km": 10230,
+     "by": "Subaru dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2023-03-31",
+     "km": 21710,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2023-11-03",
+     "km": 30330,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2024-08-05",
+     "km": 41310,
+     "by": "Subaru dealer (Sydney)",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2025-03-02",
+     "km": 49640,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-12-16",
+     "km": 61150,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-08-21",
+     "km": 71000,
+     "by": "Subaru dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-12",
+     "km": 72650,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Pre-delivery inspection and service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 81000,
+    "date": "2027-08-21"
+   },
+   "inspection": {
+    "date": "2026-10-12",
+    "inspector": "Tom Nguyen",
+    "points": 90,
+    "passed": true,
+    "items": [
+     {
+      "area": "Keys",
+      "note": "Second key cut and programmed",
+      "action": "replaced"
+     },
+     {
+      "area": "Interior",
+      "note": "Driver seat bolster wear",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 4,
+     "rear": 6
+    },
+    "brakesPct": {
+     "front": 54,
+     "rear": 71
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-10-03",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-19347267"
+   },
+   "warranty": {
+    "type": "Statutory (3 months / 5,000 km)",
+    "until": null,
+    "kmLimit": 5000,
+    "roadside": false,
+    "note": null
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Leather-accented seats",
+    "Heated front seats",
+    "Power tailgate",
+    "Head-up display",
+    "JBL premium audio",
+    "Panoramic view monitor"
+   ],
+   "photo": null,
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Second key cut and programmed",
+     "cost": 890
+    }
+   ]
+  },
+  {
+   "stockNo": "U-33106",
+   "vin": "JM0ZLXXX43645661035",
+   "siteId": "liv",
+   "make": "Mitsubishi",
+   "model": "Outlander",
+   "modelId": null,
+   "variantCode": "ZL",
+   "year": 2020,
+   "grade": "LS",
+   "gradeId": null,
+   "body": "suv-mid",
+   "bodyLabel": "SUV",
+   "colour": "Machine Grey",
+   "colourId": null,
+   "interior": "Fabric, black",
+   "km": 73228,
+   "transmission": "Automatic",
+   "drive": "2WD",
+   "fuel": "Petrol",
+   "engine": "2.4L petrol",
+   "seats": 7,
+   "towKg": 1500,
+   "price": 24990,
+   "was": null,
+   "certified": false,
+   "demo": false,
+   "status": "on_lot",
+   "etaDays": null,
+   "daysInStock": 33,
+   "arrivedAt": "2026-09-13",
+   "acquiredVia": "trade-in",
+   "tradeInId": null,
+   "owners": 1,
+   "firstRegistered": "2020-05-03",
+   "compliance": "2020-02",
+   "regoExpiry": "2027-08",
+   "plate": "XZS38J",
+   "keys": 2,
+   "books": true,
+   "serviceHistory": [
+    {
+     "date": "2021-03-02",
+     "km": 9480,
+     "by": "Mitsubishi dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2022-01-22",
+     "km": 19660,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2022-11-28",
+     "km": 29340,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2023-12-04",
+     "km": 40920,
+     "by": "Independent workshop",
+     "work": "Major service: oil and filter, brake fluid, cabin filter, spark plugs inspected"
+    },
+    {
+     "date": "2024-08-23",
+     "km": 49140,
+     "by": "Mitsubishi dealer (Sydney)",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2025-07-21",
+     "km": 59520,
+     "by": "Mitsubishi dealer (Sydney)",
+     "work": "Logbook service: oil and filter, brake inspection, tyre rotation"
+    },
+    {
+     "date": "2026-06-13",
+     "km": 69750,
+     "by": "Independent workshop",
+     "work": "Logbook service: oil and filter, multi-point inspection"
+    },
+    {
+     "date": "2026-10-12",
+     "km": 73190,
+     "by": "Harbourline Toyota (pre-delivery)",
+     "work": "Pre-delivery inspection and service"
+    }
+   ],
+   "nextServiceDue": {
+    "km": 80000,
+    "date": "2027-06-13"
+   },
+   "inspection": {
+    "date": "2026-10-12",
+    "inspector": "Jess Carter",
+    "points": 90,
+    "passed": true,
+    "items": [
+     {
+      "area": "Tyres",
+      "note": "Rear tyres 60% remaining",
+      "action": "noted"
+     },
+     {
+      "area": "Tyres",
+      "note": "Front tyres replaced (Bridgestone Alenza)",
+      "action": "replaced"
+     },
+     {
+      "area": "Mechanical",
+      "note": "12V battery load-tested, passed",
+      "action": "noted"
+     }
+    ],
+    "tyresMm": {
+     "front": 8,
+     "rear": 7
+    },
+    "brakesPct": {
+     "front": 74,
+     "rear": 75
+    }
+   },
+   "ppsr": {
+    "checkedAt": "2026-09-25",
+    "encumbrance": false,
+    "writtenOff": false,
+    "stolen": false,
+    "certificate": "PPSR-82273539"
+   },
+   "warranty": {
+    "type": "Statutory (3 months / 5,000 km)",
+    "until": null,
+    "kmLimit": 5000,
+    "roadside": false,
+    "note": null
+   },
+   "features": [
+    "Apple CarPlay and Android Auto",
+    "Reversing camera",
+    "Adaptive cruise control",
+    "Lane trace assist",
+    "Pre-collision safety system",
+    "Blind-spot monitor",
+    "Satellite navigation"
+   ],
+   "photo": null,
+   "video": null,
+   "reconditioning": [
+    {
+     "item": "Front tyres replaced (Bridgestone Alenza)",
+     "cost": 260
+    }
+   ]
+  }
+ ]
+}

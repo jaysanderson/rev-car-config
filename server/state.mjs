@@ -14,7 +14,7 @@ import { ROOT } from './env.mjs';
 
 export const SEED_DIR = join(ROOT, 'content', 'dealer');
 let STATE_DIR = process.env.DEALER_STATE_DIR || SEED_DIR;
-const STATE_FILES = new Set(['bookings.json', 'promotions.generated.json', 'events.jsonl']);
+const STATE_FILES = new Set(['bookings.json', 'promotions.generated.json', 'events.jsonl', 'used_comments.generated.json', 'used_sessions.jsonl', 'used_watches.json', 'used_holds.json', 'used_enquiries.json']);
 
 /** Path a file is read from: the state copy when it exists, else the seed. */
 export function dealerPath(name) {

@@ -1,6 +1,10 @@
-# Harbourline Toyota Configurator
+# Harbourline Toyota: configurator, used-car retail and back office
 
-A car-configurator prototype from a dealer-management-system vendor, built for a fictional Toyota dealer (Harbourline Toyota, Parramatta, with Hornsby, Penrith and Liverpool sister sites).
+A prototype from a dealer-management-system vendor, built for a fictional Toyota dealer (Harbourline Toyota, Parramatta, with Hornsby, Penrith and Liverpool sister sites).
+
+## Three surfaces, one knowledge layer
+
+One Progress Agentic RAG knowledge box and one set of Domo stand-in datasets serve three applications in the same Node server: the **new-car configurator** at `/` (finder, build, availability, offers, cited assistant), the **used-car retail surface** at `/used/` (listing with semantic sort, agent-written dealer comments from each car's own resource, a vehicle page with provenance and an assistant that remembers what you asked, a used-car finder, personalised rows from your session, enquiries and holds into the back office; spec `docs/USED-SPEC.md`), and the **sales back office** at `/dms/` (API-first DMS with OpenAPI and MCP). The platform thesis and surface map are in `docs/PLATFORM.md`.
 
 - **Progress Agentic RAG (Nuclia)** drives the consultative parts: cited answers in the customer's language, a 5-question finder that branches on every answer, and "For you" rows built from semantic search.
 - **Domo** supplies stock intelligence from the DMS: stock by site, aged-stock actions, transfer feasibility, inbound pipeline and order-bank ETAs. Its nightly Intelligence output `dealer_signals` (days of supply, allocation, target gap, margin headroom per model, from the ERP) decides the dealer nudges and which promotions exist. It shapes offers, availability and answers.

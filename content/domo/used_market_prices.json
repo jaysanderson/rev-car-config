@@ -1,0 +1,498 @@
+{
+ "dataset": "used_market_prices",
+ "refreshed_at": "2026-10-16T22:00:00.000Z",
+ "note": "Stand-in for a Domo dataset of NSW private and dealer asking prices by model and model-year band (demo data).",
+ "rows": [
+  {
+   "make": "Toyota",
+   "model": "RAV4",
+   "gradeTier": "base",
+   "grades": [
+    "GX"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 44410,
+   "low": 41300,
+   "high": 47960,
+   "sample": 9
+  },
+  {
+   "make": "Toyota",
+   "model": "RAV4",
+   "gradeTier": "mid",
+   "grades": [
+    "GXL"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 45290,
+   "low": 42120,
+   "high": 48910,
+   "sample": 12
+  },
+  {
+   "make": "Toyota",
+   "model": "RAV4",
+   "gradeTier": "top",
+   "grades": [
+    "Cruiser",
+    "XSE"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 55490,
+   "low": 51610,
+   "high": 59930,
+   "sample": 42
+  },
+  {
+   "make": "Toyota",
+   "model": "RAV4",
+   "gradeTier": "base",
+   "grades": [
+    "GX"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 34380,
+   "low": 31970,
+   "high": 37130,
+   "sample": 41
+  },
+  {
+   "make": "Toyota",
+   "model": "Corolla",
+   "gradeTier": "mid",
+   "grades": [
+    "Ascent Sport Hybrid"
+   ],
+   "yearFrom": 2020,
+   "yearTo": 2021,
+   "median": 26620,
+   "low": 24760,
+   "high": 28750,
+   "sample": 20
+  },
+  {
+   "make": "Toyota",
+   "model": "Corolla",
+   "gradeTier": "mid",
+   "grades": [
+    "SX Hybrid"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 33890,
+   "low": 31520,
+   "high": 36600,
+   "sample": 42
+  },
+  {
+   "make": "Toyota",
+   "model": "Corolla",
+   "gradeTier": "top",
+   "grades": [
+    "ZR Hybrid"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 33380,
+   "low": 31040,
+   "high": 36050,
+   "sample": 32
+  },
+  {
+   "make": "Toyota",
+   "model": "Camry",
+   "gradeTier": "top",
+   "grades": [
+    "SL"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 54430,
+   "low": 50620,
+   "high": 58780,
+   "sample": 9
+  },
+  {
+   "make": "Toyota",
+   "model": "Camry",
+   "gradeTier": "top",
+   "grades": [
+    "SL"
+   ],
+   "yearFrom": 2026,
+   "yearTo": 2027,
+   "median": 51540,
+   "low": 47930,
+   "high": 55660,
+   "sample": 6
+  },
+  {
+   "make": "Toyota",
+   "model": "Camry",
+   "gradeTier": "mid",
+   "grades": [
+    "Ascent Hybrid"
+   ],
+   "yearFrom": 2020,
+   "yearTo": 2021,
+   "median": 31650,
+   "low": 29430,
+   "high": 34180,
+   "sample": 38
+  },
+  {
+   "make": "Toyota",
+   "model": "Kluger",
+   "gradeTier": "base",
+   "grades": [
+    "GX"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 50700,
+   "low": 47150,
+   "high": 54760,
+   "sample": 17
+  },
+  {
+   "make": "Toyota",
+   "model": "Kluger",
+   "gradeTier": "mid",
+   "grades": [
+    "GXL"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 49970,
+   "low": 46470,
+   "high": 53970,
+   "sample": 34
+  },
+  {
+   "make": "Toyota",
+   "model": "Kluger",
+   "gradeTier": "top",
+   "grades": [
+    "Grande"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 71530,
+   "low": 66520,
+   "high": 77250,
+   "sample": 22
+  },
+  {
+   "make": "Toyota",
+   "model": "HiLux",
+   "gradeTier": "mid",
+   "grades": [
+    "SR5"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 53720,
+   "low": 49960,
+   "high": 58020,
+   "sample": 35
+  },
+  {
+   "make": "Toyota",
+   "model": "HiLux",
+   "gradeTier": "base",
+   "grades": [
+    "SR"
+   ],
+   "yearFrom": 2020,
+   "yearTo": 2021,
+   "median": 42760,
+   "low": 39770,
+   "high": 46180,
+   "sample": 34
+  },
+  {
+   "make": "Toyota",
+   "model": "HiLux",
+   "gradeTier": "top",
+   "grades": [
+    "Rogue"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 69340,
+   "low": 64490,
+   "high": 74890,
+   "sample": 25
+  },
+  {
+   "make": "Toyota",
+   "model": "HiLux",
+   "gradeTier": "base",
+   "grades": [
+    "Workmate"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 30930,
+   "low": 28760,
+   "high": 33400,
+   "sample": 30
+  },
+  {
+   "make": "Toyota",
+   "model": "LandCruiser Prado",
+   "gradeTier": "mid",
+   "grades": [
+    "GXL"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 64130,
+   "low": 59640,
+   "high": 69260,
+   "sample": 40
+  },
+  {
+   "make": "Toyota",
+   "model": "LandCruiser Prado",
+   "gradeTier": "top",
+   "grades": [
+    "VX"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 94180,
+   "low": 87590,
+   "high": 101710,
+   "sample": 24
+  },
+  {
+   "make": "Toyota",
+   "model": "LandCruiser 300",
+   "gradeTier": "top",
+   "grades": [
+    "Sahara"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 127930,
+   "low": 118970,
+   "high": 138160,
+   "sample": 22
+  },
+  {
+   "make": "Toyota",
+   "model": "Fortuner",
+   "gradeTier": "mid",
+   "grades": [
+    "GXL"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 50900,
+   "low": 47340,
+   "high": 54970,
+   "sample": 24
+  },
+  {
+   "make": "Toyota",
+   "model": "Yaris Cross",
+   "gradeTier": "mid",
+   "grades": [
+    "Ascent Sport"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 26460,
+   "low": 24610,
+   "high": 28580,
+   "sample": 11
+  },
+  {
+   "make": "Toyota",
+   "model": "Yaris Cross",
+   "gradeTier": "top",
+   "grades": [
+    "Urban"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 38150,
+   "low": 35480,
+   "high": 41200,
+   "sample": 34
+  },
+  {
+   "make": "Toyota",
+   "model": "Corolla Cross",
+   "gradeTier": "mid",
+   "grades": [
+    "GXL"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 38650,
+   "low": 35940,
+   "high": 41740,
+   "sample": 23
+  },
+  {
+   "make": "Toyota",
+   "model": "Corolla Cross",
+   "gradeTier": "top",
+   "grades": [
+    "Atmos"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 48190,
+   "low": 44820,
+   "high": 52050,
+   "sample": 30
+  },
+  {
+   "make": "Toyota",
+   "model": "C-HR",
+   "gradeTier": "mid",
+   "grades": [
+    "GXL"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 42250,
+   "low": 39290,
+   "high": 45630,
+   "sample": 30
+  },
+  {
+   "make": "Toyota",
+   "model": "bZ4X",
+   "gradeTier": "base",
+   "grades": [
+    "FWD"
+   ],
+   "yearFrom": 2024,
+   "yearTo": 2025,
+   "median": 50160,
+   "low": 46650,
+   "high": 54170,
+   "sample": 10
+  },
+  {
+   "make": "Toyota",
+   "model": "GR Yaris",
+   "gradeTier": "top",
+   "grades": [
+    "GTS"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 57180,
+   "low": 53180,
+   "high": 61750,
+   "sample": 29
+  },
+  {
+   "make": "Toyota",
+   "model": "GR86",
+   "gradeTier": "top",
+   "grades": [
+    "GTS"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 45500,
+   "low": 42320,
+   "high": 49140,
+   "sample": 40
+  },
+  {
+   "make": "Mazda",
+   "model": "CX-5",
+   "gradeTier": "mid",
+   "grades": [
+    "Maxx Sport"
+   ],
+   "yearFrom": 2020,
+   "yearTo": 2021,
+   "median": 29380,
+   "low": 27320,
+   "high": 31730,
+   "sample": 31
+  },
+  {
+   "make": "Ford",
+   "model": "Ranger",
+   "gradeTier": "mid",
+   "grades": [
+    "XLT"
+   ],
+   "yearFrom": 2020,
+   "yearTo": 2021,
+   "median": 47600,
+   "low": 44270,
+   "high": 51410,
+   "sample": 45
+  },
+  {
+   "make": "Hyundai",
+   "model": "i30",
+   "gradeTier": "mid",
+   "grades": [
+    "Active"
+   ],
+   "yearFrom": 2018,
+   "yearTo": 2019,
+   "median": 19240,
+   "low": 17890,
+   "high": 20780,
+   "sample": 8
+  },
+  {
+   "make": "Kia",
+   "model": "Sportage",
+   "gradeTier": "mid",
+   "grades": [
+    "SX"
+   ],
+   "yearFrom": 2022,
+   "yearTo": 2023,
+   "median": 34940,
+   "low": 32490,
+   "high": 37740,
+   "sample": 39
+  },
+  {
+   "make": "Subaru",
+   "model": "Forester",
+   "gradeTier": "top",
+   "grades": [
+    "2.5i Premium"
+   ],
+   "yearFrom": 2020,
+   "yearTo": 2021,
+   "median": 34280,
+   "low": 31880,
+   "high": 37020,
+   "sample": 24
+  },
+  {
+   "make": "Mitsubishi",
+   "model": "Outlander",
+   "gradeTier": "base",
+   "grades": [
+    "LS"
+   ],
+   "yearFrom": 2020,
+   "yearTo": 2021,
+   "median": 26270,
+   "low": 24430,
+   "high": 28370,
+   "sample": 34
+  }
+ ]
+}
