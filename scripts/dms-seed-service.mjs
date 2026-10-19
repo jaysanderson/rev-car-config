@@ -157,14 +157,16 @@ function buildCards(pack) {
   let n = 20481; let m = 30012; let dn = 2001;
   const start = Date.parse('2024-10-20T00:00:00Z'); const months = 24; const perMonth = 27;
   const memo = (entity, entityId, at, by, kind, text, pinned = false) => memos.push({ id: `M-${m++}`, entity, entityId, at: iso(at), byStaffId: by, kind, text, pinned, seed: SEED_TAG });
-  for (let i = 0; i < months * perMonth; i++) {
-    const day = start + Math.floor((i / (months * perMonth)) * months * 30.4 * DAY) + R.int(0, 2) * DAY;
+  const dayList = [];
+  for (let i = 0; i < months * perMonth; i++) dayList.push(start + Math.floor((i / (months * perMonth)) * months * 30.4 * DAY) + R.int(0, 2) * DAY);
+  for (let d = -6; d <= 3; d++) for (let k = 0; k < (d <= 0 ? 7 : 4); k++) dayList.push(NOW + d * DAY); // a busy workshop this week and bookings for the next days
+  for (const day of dayList) {
     if (isSunday(day)) continue;
     const site = R.pick(SITES);
     const pickDeal = R.chance(0.78) ? R.pick(delivered.filter((x) => x.deal.siteId === site && Date.parse(x.deal.deliveryDate) < day) ) : null;
     let vehicle, customerId;
     if (pickDeal && pickDeal.veh) { const d = pickDeal.deal; const v = pickDeal.veh; const ageDays = (day - Date.parse(d.deliveryDate)) / DAY; vehicle = { vin: v.vin, rego: `${String.fromCharCode(65 + R.int(0, 25))}${String.fromCharCode(65, 65 + R.int(0, 25))[1]}${String.fromCharCode(65 + R.int(0, 25))}${R.int(10, 99)}${String.fromCharCode(65 + R.int(0, 25))}`, make: 'Toyota', model: MODEL[v.model]?.name || v.model, modelId: v.model, year: new Date(Date.parse(d.deliveryDate)).getUTCFullYear(), km: round(Math.max(1200, ageDays * R.u(28, 62)), 10) }; customerId = d.customerId; }
-    else { const c = R.pick(customers); const tb = R.pick([['mazda-cx-5', 'Mazda', 'CX-5'], ['ford-ranger', 'Ford', 'Ranger'], ['hyundai-i30', 'Hyundai', 'i30'], ['kia-sportage', 'Kia', 'Sportage'], ['subaru-forester', 'Subaru', 'Forester'], ['mitsubishi-outlander', 'Mitsubishi', 'Outlander'], ['corolla', 'Toyota', 'Corolla'], ['hilux', 'Toyota', 'HiLux'], ['rav4', 'Toyota', 'RAV4']]); const yr = R.int(2016, 2023); vehicle = { vin: `${tb[1] === 'Toyota' ? 'JTM' : 'XX' + tb[1][0]}${hash32(c.id + i).toString(36).toUpperCase().padStart(14, '0').slice(0, 14)}`, rego: `${String.fromCharCode(65 + R.int(0, 25))}${String.fromCharCode(65 + R.int(0, 25))}${String.fromCharCode(65 + R.int(0, 25))}${R.int(10, 99)}${String.fromCharCode(65 + R.int(0, 25))}`, make: tb[1], model: tb[2], modelId: MODEL[tb[0]] ? tb[0] : tb[0], year: yr, km: round((2026 - yr) * R.u(9000, 22000) + R.int(500, 8000), 10) }; customerId = c.id; }
+    else { const c = R.pick(customers); const tb = R.pick([['mazda-cx-5', 'Mazda', 'CX-5'], ['ford-ranger', 'Ford', 'Ranger'], ['hyundai-i30', 'Hyundai', 'i30'], ['kia-sportage', 'Kia', 'Sportage'], ['subaru-forester', 'Subaru', 'Forester'], ['mitsubishi-outlander', 'Mitsubishi', 'Outlander'], ['corolla', 'Toyota', 'Corolla'], ['hilux', 'Toyota', 'HiLux'], ['rav4', 'Toyota', 'RAV4']]); const yr = R.int(2016, 2023); vehicle = { vin: `${tb[1] === 'Toyota' ? 'JTM' : 'XX' + tb[1][0]}${hash32(c.id + day).toString(36).toUpperCase().padStart(14, '0').slice(0, 14)}`, rego: `${String.fromCharCode(65 + R.int(0, 25))}${String.fromCharCode(65 + R.int(0, 25))}${String.fromCharCode(65 + R.int(0, 25))}${R.int(10, 99)}${String.fromCharCode(65 + R.int(0, 25))}`, make: tb[1], model: tb[2], modelId: MODEL[tb[0]] ? tb[0] : tb[0], year: yr, km: round((2026 - yr) * R.u(9000, 22000) + R.int(500, 8000), 10) }; customerId = c.id; }
     const advisorId = ADVISOR(site); const technicianId = R.pick(TECHS(site));
     const menus = pack.menus.filter((x) => x.modelId === vehicle.modelId);
     const dueInterval = menus.length ? menus.reduce((best, x) => (Math.abs(x.intervalKm - vehicle.km) < Math.abs(best.intervalKm - vehicle.km) ? x : best), menus[0]) : null;

@@ -68,7 +68,7 @@ async function check(name, fn) {
   catch (e) { if (e instanceof Warn) { results.push({ name, ok: true, warn: true, ms: Date.now() - t0, note: redact(e.message) }); return; } results.push({ name, ok: false, ms: Date.now() - t0, note: redact(e instanceof Fail ? e.message : `${e.name}: ${e.message}`) }); }
 }
 const pageOk = (j, where) => { must(j && Array.isArray(j.items) && isNum(j.total) && isNum(j.page) && isNum(j.pageSize), `${where}: not a page {items,total,page,pageSize}`); };
-const USERS = { gm: 'gm@harbourline.demo', sm: 'sm.par@harbourline.demo', sales: 'sales1@harbourline.demo', dxm: 'marketing@harbourline.demo', finance: 'finance@harbourline.demo' };
+const USERS = { gm: 'gm@harbourline.demo', sm: 'sm.par@harbourline.demo', sales: 'sales1@harbourline.demo', dxm: 'marketing@harbourline.demo', finance: 'finance@harbourline.demo', svc: 'service@harbourline.demo', tech: 'tech1@harbourline.demo' };
 const me = {};
 
 async function run() {
@@ -110,7 +110,99 @@ async function run() {
       return `${me[k].role} site=${me[k].siteId || 'all'} staff=${me[k].staffId}`;
     });
   }
-  await check('GET /auth/users (demo logins)', async () => { const r = await call('GET', '/auth/users'); must(r.status === 200 && r.json.users.length === 5, 'users'); });
+  await check('GET /auth/users (demo logins)', async () => { const r = await call('GET', '/auth/users'); must(r.status === 200 && r.json.users.length === 7, 'users'); });
+
+  // ── phase 2: service job cards, suppliers, help desk, errors, onboarding, Infomedia ──
+  let jc = null;
+  await check('GET /job-cards (list, counts, scoping)', async () => {
+    const r = await call('GET', '/job-cards?pageSize=5&open=1', { as: 'svc' }); must(r.status === 200 && r.json.total > 10, `total ${r.json?.total}`);
+    const c = r.json.items[0]; must(/^JC-\d+$/.test(c.id) && isNum(c.memoCount) && isNum(c.imageCount) && isNum(c.documentCount) && isNum(c.total) && c.vehicle?.rego, 'card shape'); jc = c;
+    const sales = await call('GET', '/job-cards', { as: 'sales' }); must(sales.status === 403, `salesperson → ${sales.status}`);
+    const t = await call('GET', '/job-cards?pageSize=500', { as: 'tech' }); must(t.status === 200 && t.json.items.every((x) => x.siteId === 'par'), 'technician is site-scoped');
+    const b = await call('GET', '/job-cards/board', { as: 'svc' }); must(b.status === 200 && b.json.columns.length >= 5, 'board columns');
+    return `${r.json.total} open, ${b.json.columns.length} board columns`;
+  });
+  await check('job card detail, memo, line from Infomedia menu, patch', async () => {
+    const d = await call('GET', `/job-cards/${jc.id}`, { as: 'svc' }); must(d.status === 200 && Array.isArray(d.json.memos) && Array.isArray(d.json.documents) && d.json.customer !== undefined, 'detail shape');
+    const m = await call('POST', `/job-cards/${jc.id}/memos`, { as: 'svc', body: { kind: 'advisor_note', text: 'Smoke memo: customer asked for a call at 3 pm.', pinned: true } }); must(m.status === 201 && m.json.pinned, `memo ${m.status}`);
+    const after = await call('GET', `/job-cards/${jc.id}`, { as: 'svc' }); must(after.json.memos[0].text.startsWith('Smoke memo'), 'pinned memo first');
+    const menu = await call('GET', '/infomedia/menus?model=rav4&interval=30000', { as: 'svc' }); must(menu.status === 200 && menu.json.items.length >= 1, 'menus');
+    const ln = await call('POST', `/job-cards/${jc.id}/lines`, { as: 'svc', body: { menuId: menu.json.items[0].id } }); must(ln.status === 200 && ln.json.added >= 2, `menu lines ${ln.status}`);
+    const p = await call('PATCH', `/job-cards/${jc.id}`, { as: 'svc', body: { status: 'in_progress' } }); must(p.status === 200 && p.json.status === 'in_progress', 'patch status');
+    const bad = await call('PATCH', `/job-cards/${jc.id}`, { as: 'svc', body: { status: 'nope' } }); must(bad.status === 400, `bad status ${bad.status}`);
+    return `${ln.json.added} lines added from ${menu.json.items[0].id}`;
+  });
+  await check('POST /job-cards/:id/documents (image) and /documents/:id/file', async () => {
+    const png = readFileSync(join(ROOT, 'content/dms/samples/images/img-odometer.png'));
+    const r = await call('POST', `/job-cards/${jc.id}/documents`, { as: 'svc', body: { fileName: 'odometer.png', contentType: 'image/png', contentBase64: png.toString('base64'), caption: 'Odometer at check-in', kind: 'image' } }); must(r.status === 201 && r.json.isImage && r.json.jobCardId === jc.id, `upload ${r.status} ${JSON.stringify(r.json).slice(0, 120)}`);
+    const f = await fetch(`${API()}/documents/${r.json.id}/file`, { headers: { authorization: `Bearer ${tokens.svc}` } }); must(f.status === 200 && /image\/png/.test(f.headers.get('content-type') || ''), `file ${f.status}`);
+    const bad = await call('POST', `/job-cards/${jc.id}/documents`, { as: 'svc', body: { fileName: 'x.exe', contentType: 'application/x-msdownload', contentBase64: 'AAAA' } }); must(bad.status === 400, `exe → ${bad.status}`);
+    return `${png.length} bytes`;
+  });
+  if (!QUICK) {
+    await check('POST /job-cards/:id/ask and /job-cards/ask (agent)', async () => {
+      const a = await call('POST', `/job-cards/${jc.id}/ask`, { as: 'svc', body: { question: 'What has been done on this job card and what is outstanding?' } }); must(a.status === 200 && isStr(a.json.answer) && Array.isArray(a.json.trace), `ask one ${a.status}`);
+      const all = await call('POST', '/job-cards/ask', { as: 'svc', body: { question: 'Which job cards are waiting on parts?' } }); must(all.status === 200 && isStr(all.json.answer) && isNum(all.json.cardsConsidered), `ask all ${all.status}`);
+      const sum = await call('POST', `/job-cards/${jc.id}/summary`, { as: 'svc', body: {} }); must(sum.status === 200, `summary ${sum.status}`);
+      return `one ${a.ms} ms, all ${all.ms} ms (${all.json.cardsConsidered} cards)`;
+    });
+    await check('POST /infomedia/quote (deterministic figures, agent text)', async () => {
+      const q = await call('POST', '/infomedia/quote', { as: 'svc', body: { model: 'rav4', year: 2022, km: 58000, interval: 60000, siteId: 'par' } }); must(q.status === 200 && isNum(q.json.total) && q.json.lines.length >= 3 && isStr(q.json.text), `quote ${q.status}`);
+      const sub = q.json.lines.reduce((s, l) => s + l.total, 0); must(Math.abs(sub - q.json.subtotal) < 0.05 && Math.abs(q.json.subtotal * 1.1 - q.json.total) < 0.1, `maths ${sub} ${q.json.subtotal} ${q.json.total}`);
+      return `${q.json.menu.id} total ${q.json.total}`;
+    });
+  }
+  await check('suppliers: list, detail, memo, create, ask-across guard', async () => {
+    const l = await call('GET', '/suppliers?pageSize=50', { as: 'svc' }); must(l.status === 200 && l.json.total >= 20, `suppliers ${l.json?.total}`);
+    const d = await call('GET', `/suppliers/${l.json.items[0].id}`, { as: 'svc' }); must(d.status === 200 && Array.isArray(d.json.memos) && Array.isArray(d.json.invoices), 'detail');
+    const m = await call('POST', `/suppliers/${d.json.id}/memos`, { as: 'svc', body: { kind: 'call', text: 'Smoke: confirmed Thursday delivery.' } }); must(m.status === 201, `memo ${m.status}`);
+    const c = await call('POST', '/suppliers', { as: 'svc', body: { name: 'Smoke Supplies Pty Ltd', category: 'parts' } }); must(c.status === 201 && c.json.status, `create ${c.status}`);
+    const no = await call('GET', '/suppliers', { as: 'sales' }); must(no.status === 403, `salesperson → ${no.status}`);
+    return `${l.json.total} suppliers`;
+  });
+  await check('customers: memo, document link and detail extras', async () => {
+    const cust = (await call('GET', '/customers?pageSize=1', { as: 'gm' })).json.items[0];
+    const m = await call('POST', `/customers/${cust.id}/memos`, { as: 'gm', body: { kind: 'call', text: 'Smoke: prefers SMS.' } }); must(m.status === 201, `memo ${m.status}`);
+    const d = await call('GET', `/customers/${cust.id}`, { as: 'gm' }); must(Array.isArray(d.json.memos) && d.json.memos.some((x) => /Smoke/.test(x.text)) && Array.isArray(d.json.jobCards), 'extras');
+    return cust.id;
+  });
+  await check('help desk: ask, feedback, ticket, deflection', async () => {
+    const a = await call('POST', '/help/ask', { as: 'sales', body: { question: 'How do I create a lead?', page: '#/leads' } }); must(a.status === 200 && isStr(a.json.helpId) && isStr(a.json.answer), `help ask ${a.status}`);
+    const f = await call('POST', '/help/feedback', { as: 'sales', body: { helpId: a.json.helpId, helpful: false } }); must(f.status === 200, `feedback ${f.status}`);
+    const t = await call('POST', '/help/tickets', { as: 'sales', body: { helpId: a.json.helpId, question: 'How do I create a lead?', page: '#/leads' } }); must(t.status === 201 && /^T-/.test(t.json.id || ''), `ticket ${t.status}`);
+    const d = await call('GET', '/help/deflection?days=30', { as: 'gm' }); must(d.status === 200 && isNum(d.json.answers) && Array.isArray(d.json.byPage), 'deflection');
+    const no = await call('GET', '/help/deflection', { as: 'sales' }); must(no.status === 403, `salesperson deflection → ${no.status}`);
+    return `answer ${a.ms} ms, grounded ${a.json.grounded}`;
+  });
+  await check('POST /errors/explain (friendly message, never a stack trace)', async () => {
+    const r = await call('POST', '/errors/explain?wait=1', { as: 'sales', body: { status: 403, endpoint: '/dms/api/domo/datasets', method: 'GET', message: 'forbidden' } }); must(r.status === 200 && isStr(r.json.title) && isStr(r.json.message) && isStr(r.json.nextStep) && isStr(r.json.details), 'shape');
+    must(!/\bat \w+ \(|node_modules|\.mjs:\d+/.test(JSON.stringify(r.json)), 'stack trace leaked');
+    const n = await call('POST', '/errors/explain', { as: 'sales', body: { status: 404, endpoint: '/dms/api/deals/D-00000', method: 'GET', message: 'not found' } }); must(n.status === 200 && isStr(n.json.title), '404');
+    return `${r.json.by}, ${r.ms} ms`;
+  });
+  await check('onboarding: programme, verified step, ask-step guard', async () => {
+    const p = await call('GET', '/onboarding/programme', { as: 'svc' }); must(p.status === 200 && p.json.steps.length >= 4 && p.json.steps.every((s) => isStr(s.id) && isStr(s.route) && s.verify), 'programme');
+    const pr = await call('GET', '/onboarding/progress', { as: 'svc' }); must(pr.status === 200 && isNum(pr.json.total), 'progress');
+    const memoStep = p.json.steps.find((s) => s.verify.kind === 'query'); 
+    if (memoStep) { const c = await call('POST', `/onboarding/steps/${memoStep.id}/complete`, { as: 'svc', body: { how: 'verified' } }); must(c.status === 200 && typeof c.json.ok === 'boolean' && (c.json.checked || c.json.message || c.json.verified !== undefined), `complete ${c.status}`); }
+    const un = await call('POST', '/onboarding/steps/nope/complete', { as: 'svc', body: {} }); must(un.status === 400 || un.status === 404, `unknown step ${un.status}`);
+    const st = await call('GET', '/onboarding/stats', { as: 'gm' }); must(st.status === 200, 'stats');
+    return `${p.json.steps.length} steps by ${p.json.composedBy}`;
+  });
+  await check('manual chapters, Infomedia pack, campaigns, parts', async () => {
+    const m = await call('GET', '/manual/chapters', { as: 'sales' }); must(m.status === 200 && m.json.items.length >= 14, `chapters ${m.json?.items?.length}`);
+    const c = await call('GET', '/manual/chapters/service-job-cards', { as: 'sales' }); must(c.status === 200 && c.json.markdown.length > 500, 'chapter body');
+    const pk = await call('GET', '/infomedia/pack', { as: 'svc' }); must(pk.status === 200 && pk.json.loaded && pk.json.menus > 100, 'pack');
+    const cm = await call('GET', '/infomedia/campaigns?model=hilux&year=2021', { as: 'svc' }); must(cm.status === 200 && cm.json.items.length >= 1, 'campaigns');
+    const pt = await call('GET', '/infomedia/parts?q=oil&model=rav4', { as: 'svc' }); must(pt.status === 200 && pt.json.items.length >= 1, 'parts');
+    return `${m.json.items.length} chapters, ${pk.json.menus} menus`;
+  });
+  await check('search: grouped entities, knowledge, actions; new Domo datasets', async () => {
+    const s = await call('GET', '/search?q=toyota%20job%20card', { as: 'svc' }); must(s.status === 200 && Array.isArray(s.json.entities) && Array.isArray(s.json.knowledge) && Array.isArray(s.json.actions), 'groups');
+    const cat = await call('GET', '/domo/datasets', { as: 'gm' }); const names = cat.json.datasets.map((d) => d.name); for (const n of ['job_cards', 'memos', 'suppliers', 'service_daily', 'job_card_lines', 'support_deflection', 'onboarding_progress']) must(names.includes(n), `dataset ${n} missing`);
+    const csv = await fetch(`${API()}/domo/export/service_daily.csv`, { headers: { authorization: `Bearer ${tokens.gm}` } }); must(csv.status === 200 && (await csv.text()).split('\n').length > 5, 'service_daily csv');
+    return `${s.json.entities.length} entities, ${s.json.knowledge.length} knowledge, ${names.length} datasets`;
+  });
 
   // ── permission matrix ─────────────────────────────────────────────────────
   const deny = [['sales', 'GET', '/domo/datasets'], ['finance', 'GET', '/leads'], ['dxm', 'GET', '/deals'], ['sm', 'POST', '/domo/recompute-signals'], ['sales', 'POST', '/promotions/compose'], ['finance', 'GET', '/dxm/overview'], ['sales', 'GET', '/campaigns']];
@@ -496,7 +588,7 @@ async function run() {
     return `${pat.prefix}… created, used, revoked`;
   });
   await check('GET /mcp/info', async () => {
-    const r = await call('GET', '/mcp/info', { as: 'gm' }); must(r.json.toolCount === toolNames.length && /\/dms\/mcp$/.test(r.json.httpUrl) && r.json.prompts.length === 5 && r.json.resources.length === 7 && /\/mcp$/.test(r.json.kbMcpUrl), 'info shape');
+    const r = await call('GET', '/mcp/info', { as: 'gm' }); must(r.json.toolCount === toolNames.length && /\/dms\/mcp$/.test(r.json.httpUrl) && r.json.prompts.length === 7 && r.json.resources.length === 7 && /\/mcp$/.test(r.json.kbMcpUrl), 'info shape');
     return `${r.json.toolCount} tools · ${r.json.httpUrl}`;
   });
   await check('MCP stdio binary (scripts/dms-mcp-stdio.mjs)', async () => {

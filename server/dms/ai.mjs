@@ -473,12 +473,17 @@ const ERP_SEARCH = [['customers', (r) => `${r.firstName} ${r.lastName}`, (r) => 
   ['leads', (r) => `${r.id} · ${r.interest?.modelId || ''} · ${r.status}`, (r) => `${r.channel || ''} ${r.source || ''}`],
   ['deals', (r) => `${r.id} · ${r.stage}`, (r) => (r.events || []).slice(-1).map((e) => e.note).join(' ')],
   ['vehicles', (r) => `${r.stockNo} · ${r.model} ${r.grade || ''}`, (r) => `${r.status} · ${r.siteId} · ${r.vin}`],
-  ['documents', (r) => `${r.id} · ${r.fileName}`, (r) => `${r.kind} · ${r.status}`]];
+  ['documents', (r) => `${r.id} · ${r.fileName}`, (r) => `${r.kind} · ${r.status}`],
+  ['job_cards', (r) => `${r.id} · ${r.vehicle?.rego || ''} ${r.vehicle?.make || ''} ${r.vehicle?.model || ''} · ${String(r.status).replace(/_/g, ' ')}`, (r) => (r.customerRequests || []).join('; ')],
+  ['suppliers', (r) => `${r.id} · ${r.name}`, (r) => `${r.category} · ${r.terms || ''}`]];
+const ERP_CAP = { job_cards: 'service.read', suppliers: 'suppliers.read' };
+const ACTIONS = [['New job card', '#/job-cards', /job|card|workshop|service/i], ['Workshop board', '#/job-cards?view=board', /board|workshop/i], ['Suppliers', '#/suppliers', /supplier/i], ['Onboarding', '#/onboarding', /onboard|start|new here/i], ['User manual', '#/manual', /manual|help|how/i], ['Leads', '#/leads', /lead/i], ['Deals', '#/deals', /deal|quote/i], ['Stock', '#/stock', /stock|car|vehicle/i], ['Documents', '#/documents', /document|invoice|contract/i], ['Settings and API', '#/settings', /setting|token|api|mcp/i]];
+const searchActions = (q) => ACTIONS.filter(([, , re]) => re.test(q)).map(([title, route]) => ({ title, route }));
 export async function search(q, user, { limit = 30 } = {}) {
   const t0 = Date.now();
   const erp = [];
   for (const [table, title, snip] of ERP_SEARCH) {
-    if (!user.caps.includes(`${table}.read`)) continue;
+    if (!user.caps.includes(ERP_CAP[table] || `${table}.read`)) continue;
     const sc = scopeFor(user, table);
     const hits = db.list(table, { q, where: sc, pageSize: 8, sort: db.TABLES[table].date ? `-${db.TABLES[table].date}` : undefined }).items;
     for (const r of hits) erp.push({ source: 'erp', label: table, table, id: String(r[db.TABLES[table].key]), title: title(r), snippet: snip(r).slice(0, 240) });
@@ -486,13 +491,14 @@ export async function search(q, user, { limit = 30 } = {}) {
   let kbHits = []; let kbError = null;
   if (arag.configured()) {
     try {
-      const hits = await arag.find({ query: q, topK: 15, filterExpression: { field: { or: [topic('manual'), topic('policy'), topic('document')] } } });
+      const hits = await arag.find({ query: q, topK: 15, filterExpression: { field: { or: [topic('manual'), topic('policy'), topic('document'), topic('jobcard'), topic('supplier'), topic('customer'), topic('infomedia'), topic('help')] } } });
       const seen = new Set();
-      kbHits = hits.filter((h) => h.text && !seen.has(h.resourceId) && seen.add(h.resourceId)).map((h) => ({ source: 'kb', label: (h.topic || []).find((t) => ['manual', 'policy', 'document'].includes(t)) || (h.topic || [])[0] || 'kb', resourceId: h.resourceId, title: h.title, snippet: h.text.slice(0, 300), score: Math.round((h.score || 0) * 1e4) / 1e4 }));
+      kbHits = hits.filter((h) => h.text && !seen.has(h.resourceId) && seen.add(h.resourceId)).map((h) => ({ source: 'kb', label: (h.topic || []).find((t) => ['manual', 'policy', 'document', 'jobcard', 'supplier', 'customer', 'infomedia', 'help'].includes(t)) || (h.topic || [])[0] || 'kb', resourceId: h.resourceId, title: h.title, snippet: h.text.slice(0, 300), score: Math.round((h.score || 0) * 1e4) / 1e4 }));
     } catch (e) { kbError = e.message; }
   }
   const merged = []; for (let i = 0; merged.length < limit && (i < kbHits.length || i < erp.length); i++) { if (kbHits[i]) merged.push(kbHits[i]); if (erp[i] && merged.length < limit) merged.push(erp[i]); }
-  return { q, items: merged, kb: kbHits.length, erp: erp.length, ...(kbError ? { kbError: 'knowledge search unavailable' } : {}), ms: Date.now() - t0 };
+  const entities = erp.slice(0, 20); const knowledge = kbHits.slice(0, 15);
+  return { q, items: merged, entities, knowledge, actions: searchActions(q), kb: kbHits.length, erp: erp.length, ...(kbError ? { kbError: 'knowledge search unavailable' } : {}), ms: Date.now() - t0 };
 }
 
 // ── status ───────────────────────────────────────────────────────────────────

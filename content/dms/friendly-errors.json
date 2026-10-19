@@ -1,0 +1,194 @@
+{
+ "note": "Fallback catalogue for POST /errors/explain; the agent composes a version grounded in the manual when available.",
+ "items": [
+  {
+   "id": "generic",
+   "status": 500,
+   "title": "Something went wrong on our side",
+   "message": "That did not go through, and it was not anything you did.",
+   "cause": "The server hit an unexpected problem.",
+   "nextStep": "Try once more. If it fails again, open Help and raise a ticket so the team can look.",
+   "manualRoute": "#/manual/help-and-onboarding"
+  },
+  {
+   "id": "validation",
+   "status": 400,
+   "title": "One of the fields needs another look",
+   "message": "The form could not be saved as it is.",
+   "cause": "A required field is empty or in the wrong format.",
+   "nextStep": "Check the fields marked required, fix them and save again.",
+   "manualRoute": null
+  },
+  {
+   "id": "validation-email",
+   "status": 400,
+   "title": "That email address does not look right",
+   "message": "We could not save the contact.",
+   "cause": "The email is missing an @ or a domain.",
+   "nextStep": "Correct the email, for example name@example.com, and save again.",
+   "manualRoute": null,
+   "match": "email"
+  },
+  {
+   "id": "validation-promised",
+   "status": 400,
+   "title": "Pick a promised time that is a real date and time",
+   "message": "The job card was not updated.",
+   "cause": "The promised time could not be read as a date and time.",
+   "nextStep": "Choose the date and time from the picker rather than typing it.",
+   "manualRoute": "#/manual/service-job-cards",
+   "match": "promisedAt"
+  },
+  {
+   "id": "auth-401",
+   "status": 401,
+   "title": "Please sign in again",
+   "message": "Your session has ended.",
+   "cause": "Sessions expire after a period of inactivity or when the demo restarts.",
+   "nextStep": "Sign in again; your work on this page is not lost.",
+   "manualRoute": "#/manual/getting-started"
+  },
+  {
+   "id": "forbidden-403",
+   "status": 403,
+   "title": "Your role cannot do that",
+   "message": "This action is not part of your role.",
+   "cause": "Each role sees its own pages and actions; this one needs a different permission.",
+   "nextStep": "Ask your general manager to do it, or to change your role. Help can tell you who can.",
+   "manualRoute": "#/manual/settings-api-mcp"
+  },
+  {
+   "id": "forbidden-domo",
+   "status": 403,
+   "title": "The dataset catalogue is for managers",
+   "message": "The Domo datasets are not available to your role.",
+   "cause": "Only general managers, sales managers, finance and digital experience users can read the datasets.",
+   "nextStep": "Ask a manager to pull the dataset for you, or use the dashboard figures.",
+   "manualRoute": "#/manual/insights-domo",
+   "endpoint": "/domo"
+  },
+  {
+   "id": "forbidden-recompute",
+   "status": 403,
+   "title": "Only the general manager can recompute signals",
+   "message": "Signals were not recomputed.",
+   "cause": "Recomputing dealer signals changes what the website promotes, so it is limited to the general manager.",
+   "nextStep": "Ask the general manager to run it, or use Preview first.",
+   "manualRoute": "#/manual/insights-domo",
+   "endpoint": "recompute"
+  },
+  {
+   "id": "notfound-404",
+   "status": 404,
+   "title": "We could not find that record",
+   "message": "It may have been moved, merged, or is at a site you cannot see.",
+   "cause": "The identifier does not exist, or it belongs to another site.",
+   "nextStep": "Go back to the list and search again, or ask Help to find it.",
+   "manualRoute": null
+  },
+  {
+   "id": "notfound-jobcard",
+   "status": 404,
+   "title": "That job card is not available to you",
+   "message": "We could not open it.",
+   "cause": "Technicians see their own cards; the card may be assigned to someone else or be at another site.",
+   "nextStep": "Check the number, or ask your service manager.",
+   "manualRoute": "#/manual/service-job-cards",
+   "endpoint": "/job-cards"
+  },
+  {
+   "id": "notfound-deal",
+   "status": 404,
+   "title": "That deal is not in your pipeline",
+   "message": "We could not open it.",
+   "cause": "Salespeople see their own deals; the deal may belong to a colleague.",
+   "nextStep": "Search for the customer in Deals, or ask your sales manager.",
+   "manualRoute": "#/manual/deals-pipeline",
+   "endpoint": "/deals"
+  },
+  {
+   "id": "conflict-409",
+   "status": 409,
+   "title": "Someone got there first",
+   "message": "The change was not saved.",
+   "cause": "The record changed, or is already on hold or reserved.",
+   "nextStep": "Refresh the page to see the latest, then try again.",
+   "manualRoute": null
+  },
+  {
+   "id": "conflict-hold",
+   "status": 409,
+   "title": "That car is already on hold",
+   "message": "The hold was not placed.",
+   "cause": "Another hold exists on this stock unit.",
+   "nextStep": "Choose another unit, or ask the holder to release it.",
+   "manualRoute": "#/manual/stock",
+   "match": "hold"
+  },
+  {
+   "id": "too-large-413",
+   "status": 413,
+   "title": "That file is too big",
+   "message": "The upload was not accepted.",
+   "cause": "Files must be 6 MB or smaller.",
+   "nextStep": "Reduce the photo size or split the document and upload again.",
+   "manualRoute": "#/manual/documents"
+  },
+  {
+   "id": "bad-type",
+   "status": 400,
+   "title": "We can only take PDF, PNG, JPEG or text files",
+   "message": "The upload was not accepted.",
+   "cause": "The file type is not supported.",
+   "nextStep": "Convert the file, for example save the photo as JPEG, and try again.",
+   "manualRoute": "#/manual/documents",
+   "match": "only PDF"
+  },
+  {
+   "id": "ratelimit-429",
+   "status": 429,
+   "title": "The assistant is busy",
+   "message": "Too many requests came in at once.",
+   "cause": "Answers are rate limited to protect the knowledge box.",
+   "nextStep": "Wait ten seconds and ask again.",
+   "manualRoute": null
+  },
+  {
+   "id": "kb-502",
+   "status": 502,
+   "title": "The knowledge box did not answer",
+   "message": "Your question could not be answered just now.",
+   "cause": "The knowledge box was unreachable or slow.",
+   "nextStep": "Try again in a moment. The manual chapter on this page is still available.",
+   "manualRoute": "#/manual"
+  },
+  {
+   "id": "kb-503",
+   "status": 503,
+   "title": "The service is warming up",
+   "message": "The system is starting.",
+   "cause": "The server was restarted.",
+   "nextStep": "Wait a few seconds and refresh.",
+   "manualRoute": null
+  },
+  {
+   "id": "processing-504",
+   "status": 504,
+   "title": "The document is still being read",
+   "message": "It has not finished processing.",
+   "cause": "Large PDFs can take longer than one request allows.",
+   "nextStep": "Press Process again in about 30 seconds; it picks up where it left off.",
+   "manualRoute": "#/manual/documents",
+   "endpoint": "process"
+  },
+  {
+   "id": "timeout-504",
+   "status": 504,
+   "title": "That took too long",
+   "message": "The request was cancelled.",
+   "cause": "The answer needed more time than allowed.",
+   "nextStep": "Try a shorter question or try again.",
+   "manualRoute": null
+  }
+ ]
+}

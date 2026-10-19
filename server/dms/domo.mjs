@@ -109,13 +109,17 @@ const DERIVED = {
   funnel_weekly: { description: 'Leads → contacted → test drives → deals → delivered / lost by ISO week and site.', build: inlineFunnelWeekly },
   configurator_events: { description: 'First-party configurator events (finder answers, builds, offer views/clicks, asks, bookings); no PII.', build: inlineConfiguratorEvents },
   deal_events: { description: 'One row per deal timeline event (stage changes, calls, finance, documents).', build: () => db.all('deals').flatMap((d) => (d.events || []).map((e) => ({ dealId: d.id, siteId: d.siteId, at: e.at, type: e.type, staffId: e.staffId || null, note: e.note || '' }))) },
+  service_daily: { description: 'Workshop activity by day and site: cards opened and completed, labour hours, labour and parts revenue (from job_cards).', build: async () => (await import('./service.mjs')).serviceDaily() },
+  job_card_lines: { description: 'One row per job card line (labour, part, sublet, menu) with source and approval.', build: async () => (await import('./service.mjs')).jobCardLines() },
+  support_deflection: { description: 'Help desk log: one row per help answer, feedback and ticket, for call-deflection reporting.', build: async () => (await import('./help.mjs')).supportDeflectionRows() },
+  onboarding_progress: { description: 'One row per user and onboarding step with completion time and how it was verified.', build: async () => (await import('./help.mjs')).onboardingRows() },
   dealer_signals: { description: 'Domo Intelligence output per model: units in stock, 90-day sales, days of supply, allocation, target gap, age, incentive headroom. Recomputed from the DMS tables.', build: () => signalsFile().rows || [] },
 };
 const TABLE_DESC = {
   sites: 'Dealer sites and monthly unit targets.', staff: 'Sales staff and managers.', customers: 'Customers (CRM).', vehicles: 'Stock and sold-vehicle history (one row per VIN).',
   leads: 'Sales leads incl. configurator first-party data.', test_drives: 'Test drives with pre-drive questions and handover.', deals: 'Deals from quote to delivery with gross.',
   trade_ins: 'Trade-in appraisals.', finance_apps: 'Finance applications by lender.', promotions: 'Promotions (Domo-selected, ARAG-composed) and history.',
-  campaigns: 'Marketing campaigns and their performance.', documents: 'Deal documents and ARAG extraction status.', targets: 'Monthly unit and gross targets per site.',
+  campaigns: 'Marketing campaigns and their performance.', job_cards: 'Workshop job cards: vehicle, requests, findings, lines, status history.', memos: 'Memos on job cards, customers and suppliers (kind, text, pinned).', suppliers: 'Supplier register with terms, rating and spend.', support_tickets: 'Support tickets raised from the help bubble.', documents: 'Deal documents and ARAG extraction status.', targets: 'Monthly unit and gross targets per site.',
 };
 
 const cache = new Map(); // name → {v, rows}

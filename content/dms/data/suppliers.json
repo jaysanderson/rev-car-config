@@ -13,9 +13,9 @@
   "terms": "30 days",
   "rating": 5,
   "status": "active",
-  "spend12m": 43100,
-  "openInvoices": 1,
-  "createdAt": "2025-10-29T22:00:00+11:00",
+  "spend12m": 169900,
+  "openInvoices": 4,
+  "createdAt": "2025-05-28T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -32,9 +32,9 @@
   "terms": "30 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 111300,
+  "spend12m": 167700,
   "openInvoices": 1,
-  "createdAt": "2025-03-29T22:00:00+11:00",
+  "createdAt": "2026-03-23T22:00:00+11:00",
   "seed": "service-v1"
  },
  {
@@ -51,9 +51,9 @@
   "terms": "14 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 94700,
-  "openInvoices": 3,
-  "createdAt": "2025-09-20T22:00:00+10:00",
+  "spend12m": 160700,
+  "openInvoices": 5,
+  "createdAt": "2025-03-03T22:00:00+11:00",
   "seed": "service-v1"
  },
  {
@@ -70,9 +70,9 @@
   "terms": "30 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 39100,
-  "openInvoices": 5,
-  "createdAt": "2026-02-02T22:00:00+11:00",
+  "spend12m": 25800,
+  "openInvoices": 3,
+  "createdAt": "2025-11-06T22:00:00+11:00",
   "seed": "service-v1"
  },
  {
@@ -89,9 +89,9 @@
   "terms": "14 days",
   "rating": 3,
   "status": "active",
-  "spend12m": 22500,
-  "openInvoices": 0,
-  "createdAt": "2024-05-21T22:00:00+10:00",
+  "spend12m": 93900,
+  "openInvoices": 5,
+  "createdAt": "2025-04-10T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -108,9 +108,9 @@
   "terms": "7 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 35200,
-  "openInvoices": 0,
-  "createdAt": "2024-05-18T22:00:00+10:00",
+  "spend12m": 178600,
+  "openInvoices": 1,
+  "createdAt": "2026-03-18T22:00:00+11:00",
   "seed": "service-v1"
  },
  {
@@ -127,9 +127,9 @@
   "terms": "30 days",
   "rating": 5,
   "status": "active",
-  "spend12m": 143000,
-  "openInvoices": 5,
-  "createdAt": "2025-01-28T22:00:00+11:00",
+  "spend12m": 151700,
+  "openInvoices": 4,
+  "createdAt": "2024-10-03T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -146,9 +146,9 @@
   "terms": "30 days",
   "rating": 3,
   "status": "active",
-  "spend12m": 96700,
+  "spend12m": 157500,
   "openInvoices": 4,
-  "createdAt": "2024-07-24T22:00:00+10:00",
+  "createdAt": "2024-09-14T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -165,9 +165,9 @@
   "terms": "14 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 16000,
+  "spend12m": 40900,
   "openInvoices": 2,
-  "createdAt": "2024-09-18T22:00:00+10:00",
+  "createdAt": "2025-05-17T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -183,10 +183,10 @@
   "address": "Liverpool NSW",
   "terms": "14 days",
   "rating": 3,
-  "status": "on_hold",
-  "spend12m": 123100,
-  "openInvoices": 0,
-  "createdAt": "2025-05-07T22:00:00+10:00",
+  "status": "active",
+  "spend12m": 112400,
+  "openInvoices": 5,
+  "createdAt": "2025-09-20T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -203,9 +203,9 @@
   "terms": "30 days",
   "rating": 5,
   "status": "active",
-  "spend12m": 6200,
-  "openInvoices": 0,
-  "createdAt": "2024-06-17T22:00:00+10:00",
+  "spend12m": 26600,
+  "openInvoices": 3,
+  "createdAt": "2025-04-28T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -222,9 +222,9 @@
   "terms": "30 days",
   "rating": 3,
   "status": "active",
-  "spend12m": 132600,
-  "openInvoices": 1,
-  "createdAt": "2024-06-18T22:00:00+10:00",
+  "spend12m": 107900,
+  "openInvoices": 4,
+  "createdAt": "2025-04-21T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -241,9 +241,9 @@
   "terms": "30 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 131400,
-  "openInvoices": 6,
-  "createdAt": "2025-04-14T22:00:00+10:00",
+  "spend12m": 145800,
+  "openInvoices": 5,
+  "createdAt": "2025-08-22T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -260,9 +260,9 @@
   "terms": "30 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 5800,
-  "openInvoices": 5,
-  "createdAt": "2025-09-11T22:00:00+10:00",
+  "spend12m": 76400,
+  "openInvoices": 6,
+  "createdAt": "2024-06-19T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -279,9 +279,9 @@
   "terms": "7 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 81300,
-  "openInvoices": 5,
-  "createdAt": "2026-02-25T22:00:00+11:00",
+  "spend12m": 151600,
+  "openInvoices": 2,
+  "createdAt": "2024-07-02T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -298,9 +298,9 @@
   "terms": "14 days",
   "rating": 3,
   "status": "on_hold",
-  "spend12m": 147900,
-  "openInvoices": 4,
-  "createdAt": "2024-05-16T22:00:00+10:00",
+  "spend12m": 17900,
+  "openInvoices": 0,
+  "createdAt": "2024-10-27T22:00:00+11:00",
   "seed": "service-v1"
  },
  {
@@ -317,9 +317,9 @@
   "terms": "30 days",
   "rating": 5,
   "status": "active",
-  "spend12m": 5800,
-  "openInvoices": 2,
-  "createdAt": "2026-02-06T22:00:00+11:00",
+  "spend12m": 79900,
+  "openInvoices": 1,
+  "createdAt": "2025-06-04T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -336,9 +336,9 @@
   "terms": "30 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 77700,
-  "openInvoices": 3,
-  "createdAt": "2024-12-17T22:00:00+11:00",
+  "spend12m": 147800,
+  "openInvoices": 5,
+  "createdAt": "2025-05-05T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -355,9 +355,9 @@
   "terms": "14 days",
   "rating": 3,
   "status": "active",
-  "spend12m": 95100,
-  "openInvoices": 3,
-  "createdAt": "2024-06-19T22:00:00+10:00",
+  "spend12m": 123100,
+  "openInvoices": 4,
+  "createdAt": "2024-09-30T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -374,9 +374,9 @@
   "terms": "30 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 160600,
-  "openInvoices": 6,
-  "createdAt": "2025-06-25T22:00:00+10:00",
+  "spend12m": 67700,
+  "openInvoices": 1,
+  "createdAt": "2025-07-24T22:00:00+10:00",
   "seed": "service-v1"
  },
  {
@@ -393,9 +393,9 @@
   "terms": "7 days",
   "rating": 4,
   "status": "active",
-  "spend12m": 113500,
-  "openInvoices": 5,
-  "createdAt": "2025-01-06T22:00:00+11:00",
+  "spend12m": 78600,
+  "openInvoices": 4,
+  "createdAt": "2025-03-14T22:00:00+11:00",
   "seed": "service-v1"
  },
  {
@@ -411,10 +411,10 @@
   "address": "Parramatta NSW",
   "terms": "30 days",
   "rating": 3,
-  "status": "active",
-  "spend12m": 45600,
+  "status": "on_hold",
+  "spend12m": 59000,
   "openInvoices": 3,
-  "createdAt": "2024-11-14T22:00:00+11:00",
+  "createdAt": "2024-11-23T22:00:00+11:00",
   "seed": "service-v1"
  }
 ]

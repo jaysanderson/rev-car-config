@@ -10,7 +10,7 @@
 //
 // Exports: default router, leadFromBooking(booking) (the configurator bridge hook).
 import express from 'express';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from '../env.mjs';
 import * as db from './db.mjs';
@@ -25,6 +25,9 @@ import { createReadStream } from 'node:fs';
 import { basename } from 'node:path';
 import * as arag from '../arag.mjs';
 import { openapi, DOCS_HTML } from './openapi.mjs';
+import * as svc from './service.mjs';
+import * as help from './help.mjs';
+import * as infomedia from './infomedia.mjs';
 import * as mcpCore from './mcp-core.mjs';
 import { MCP_URL as KB_MCP_URL } from './kb.mjs';
 
@@ -41,7 +44,7 @@ startup();
 db.onLoad(startup);
 
 // ── helpers ──────────────────────────────────────────────────────────────────
-const RESERVED = new Set(['q', 'siteId', 'status', 'from', 'to', 'sort', 'page', 'pageSize', 'token', 'month', 'mine']);
+const RESERVED = new Set(['q', 'siteId', 'status', 'from', 'to', 'sort', 'page', 'pageSize', 'token', 'month', 'mine', 'open']);
 const nf = (res, what = 'not found') => res.status(404).json({ error: what });
 const bad = (res, msg) => res.status(400).json({ error: msg });
 const str = (v, max = 200) => (typeof v === 'string' ? v.trim().slice(0, max) : undefined);
@@ -148,7 +151,7 @@ route('post', '/customers', { tag: 'Customers', summary: 'Create a customer', ca
 route('get', '/customers/:id', { tag: 'Customers', summary: 'Customer with leads, deals, test drives and documents', cap: 'customers.read', table: 'customers' }, (req, res) => {
   const c = getScoped(req, res, 'customers', req.params.id); if (!c) return;
   const u = req.user; const sc = (t) => auth.scopeFor(u, t);
-  res.json({ ...c, leads: db.by('leads', 'customerId', c.id).filter(sc('leads')), deals: db.by('deals', 'customerId', c.id).filter(sc('deals')), testDrives: db.by('test_drives', 'customerId', c.id).filter(sc('test_drives')), documents: db.by('documents', 'customerId', c.id).filter(sc('documents')).map(docs.pubDoc), tradeIns: db.by('trade_ins', 'customerId', c.id) });
+  res.json({ ...c, leads: db.by('leads', 'customerId', c.id).filter(sc('leads')), deals: db.by('deals', 'customerId', c.id).filter(sc('deals')), testDrives: db.by('test_drives', 'customerId', c.id).filter(sc('test_drives')), documents: db.by('documents', 'customerId', c.id).filter(sc('documents')).map(docs.pubDoc), tradeIns: db.by('trade_ins', 'customerId', c.id), ...svc.customerExtras(c) });
 });
 function customerFrom(b, partial = false) {
   const v = {};
@@ -452,7 +455,120 @@ route('get', '/mcp/info', { tag: 'MCP', summary: 'MCP endpoints, tool catalogue,
 });
 
 // Tags name the resource each route belongs to (they drive the MCP tool names).
-const TAGS = [[/^\/auth/, 'Auth'], [/^\/sites/, 'Sites'], [/^\/staff/, 'Staff'], [/^\/customers/, 'Customers'], [/^\/leads/, 'Leads'], [/^\/test-drives/, 'Test drives'], [/^\/deals/, 'Deals'], [/^\/vehicles/, 'Stock'], [/^\/trade-ins/, 'Trade-ins'], [/^\/finance-apps/, 'Finance'], [/^\/campaigns/, 'Campaigns'], [/^\/promotions/, 'Promotions'], [/^\/documents/, 'Documents'], [/^\/kpi/, 'KPI'], [/^\/domo/, 'Domo'], [/^\/dxm/, 'DXM'], [/^\/(ask|agent|search|arag)/, 'Assistant'], [/^\/access-tokens/, 'Access tokens'], [/^\/mcp/, 'MCP'], [/^\/(health|openapi|docs)/, 'System']];
+// ── phase 2: service job cards, memos, suppliers, help desk, errors, onboarding, Infomedia ──
+const jobScope = (req, res, id) => getScoped(req, res, 'job_cards', id);
+const techCanWrite = (req, c) => req.user.role !== 'technician' || c.technicianId === req.user.staffId || !c.technicianId;
+const answerOr = (res, p) => p.then((r) => (r && r.error ? res.status(r.status || 400).json({ error: r.error }) : res.json(r)));
+route('get', '/job-cards', { tag: 'Service', summary: 'List job cards (items carry memoCount, imageCount, documentCount, daysOpen)', cap: 'service.read', list: true, query: ['technicianId', 'advisorId', 'open', 'vin', 'rego'] }, (req, res) => {
+  const q = req.query; const req2 = Object.create(req); req2.query = { ...q }; delete req2.query.vin; delete req2.query.rego; const r = listTable('job_cards', { base: () => db.all('job_cards').filter((c) => (q.open === '1' ? svc.OPEN_STATUSES.includes(c.status) : true) && (!q.vin || c.vehicle?.vin === q.vin) && (!q.rego || String(c.vehicle?.rego).toLowerCase() === String(q.rego).toLowerCase())) })(req);
+  res.json({ ...r, items: r.items.map(svc.cardView) });
+});
+route('get', '/job-cards/board', { tag: 'Service', summary: 'Workshop board: cards by status column', cap: 'service.read', query: ['siteId'] }, (req, res) => res.json(svc.board(auth.forcedSite(req.user) || str(req.query.siteId), auth.scopeFor(req.user, 'job_cards'))));
+route('post', '/job-cards/ask', { tag: 'Service', summary: 'Ask across all job cards (topic/jobcard retrieval + structured summary)', cap: 'service.read', arag: true, rate: true, body: S({ question: sStr(), lang: LANG, filters: { type: 'object' } }, ['question']) }, async (req, res) => {
+  if (!str(req.body?.question)) return bad(res, 'question is required');
+  res.json(await svc.askCards({ question: str(req.body.question, 600), lang: ai.langOf(req.body.lang), filters: req.body.filters || {} }, req.user));
+});
+route('post', '/job-cards', { tag: 'Service', summary: 'Create a job card', cap: 'service.write', body: S({ customerId: sStr(), vehicle: { type: 'object' }, siteId: sStr(), advisorId: sStr(), promisedAt: sStr(), customerRequests: { type: 'array', items: { type: 'string' } }, loanCar: { type: 'boolean' }, waiting: { type: 'boolean' } }, ['vehicle']) }, (req, res) => {
+  const r = svc.createCard(req.body || {}, req.user); if (r.error) return bad(res, r.error); res.status(201).json(svc.cardView(r.value));
+});
+route('get', '/job-cards/:id', { tag: 'Service', summary: 'Job card with customer, people, memos, documents and images, vehicle history, KB resource id', cap: 'service.read', table: 'job_cards' }, (req, res) => { const c = jobScope(req, res, req.params.id); if (c) res.json(svc.cardDetail(c)); });
+route('patch', '/job-cards/:id', { tag: 'Service', summary: 'Update status, technician, promised time, findings, lines', cap: 'service.write', table: 'job_cards' }, (req, res) => {
+  const c = jobScope(req, res, req.params.id); if (!c) return; if (!techCanWrite(req, c)) return res.status(403).json({ error: 'this job card belongs to another technician' });
+  const r = svc.patchCard(c, req.body || {}, req.user); if (r.error) return bad(res, r.error); svc.scheduleSync('job_card', c.id); res.json(svc.cardView(r.value));
+});
+route('post', '/job-cards/:id/lines', { tag: 'Service', summary: 'Add a line, or {menuId} to expand an Infomedia menu into labour and parts lines', cap: 'service.write', table: 'job_cards', body: S({ menuId: sStr(), type: sStr(null, svc.LINE_TYPES), code: sStr(), desc: sStr() }) }, (req, res) => {
+  const c = jobScope(req, res, req.params.id); if (!c) return; if (!techCanWrite(req, c)) return res.status(403).json({ error: 'this job card belongs to another technician' });
+  const r = svc.addLines(c, req.body || {}); if (r.error) return bad(res, r.error); svc.scheduleSync('job_card', c.id); res.json({ ...svc.cardView(r.value), added: r.added, menu: r.menu });
+});
+route('post', '/job-cards/:id/memos', { tag: 'Service', summary: 'Add a memo to a job card', cap: 'service.write', table: 'job_cards', body: S({ kind: sStr(null, svc.MEMO_KINDS), text: sStr(), pinned: { type: 'boolean' } }, ['text']) }, (req, res) => {
+  const c = jobScope(req, res, req.params.id); if (!c) return; const r = svc.addMemo('job_card', c.id, req.body || {}, req.user); if (r.error) return bad(res, r.error); res.status(201).json(r.value);
+});
+route('post', '/job-cards/:id/documents', { tag: 'Service', summary: 'Attach a photo or document (base64 JSON, ≤ 8 MB body)', cap: 'service.write', table: 'job_cards', body: S({ fileName: sStr(), contentType: sStr(), contentBase64: sStr(), kind: sStr(), caption: sStr() }, ['fileName', 'contentBase64']) }, (req, res) => {
+  const c = jobScope(req, res, req.params.id); if (!c) return; const r = svc.attach({ jobCardId: c.id, customerId: c.customerId }, req.body, req.user); if (r.error) return res.status(r.status || 400).json({ error: r.error }); res.status(201).json(r.value);
+});
+route('post', '/job-cards/:id/ask', { tag: 'Service', summary: 'Ask about this job card (resource-scoped, memos and attachments included)', cap: 'service.read', arag: true, rate: true, table: 'job_cards', body: S({ question: sStr(), lang: LANG }, ['question']) }, async (req, res) => {
+  const c = jobScope(req, res, req.params.id); if (!c) return; if (!str(req.body?.question)) return bad(res, 'question is required');
+  res.json(await svc.askCard(c, { question: str(req.body.question, 600), lang: ai.langOf(req.body.lang) }));
+});
+route('post', '/job-cards/:id/summary', { tag: 'Service', summary: 'Agent-written handover note for the customer', cap: 'service.read', arag: true, rate: true, table: 'job_cards', body: S({ lang: LANG }) }, async (req, res) => {
+  const c = jobScope(req, res, req.params.id); if (!c) return; res.json(await svc.handoverNote(c, { lang: ai.langOf(req.body?.lang) }));
+});
+route('post', '/job-cards/:id/sync-kb', { tag: 'Service', summary: 'Upsert this card (text, memos, images) as a knowledge-box resource', cap: 'service.write', arag: true, rate: true, table: 'job_cards' }, async (req, res) => {
+  const c = jobScope(req, res, req.params.id); if (!c) return; res.json(await svc.syncEntity('job_card', c.id));
+});
+route('get', '/memos', { tag: 'Service', summary: 'List memos for an entity (entity=job_card|customer|supplier & entityId)', cap: 'service.read', query: ['entity', 'entityId'] }, (req, res) => {
+  const { entity, entityId } = req.query; if (!entity || !entityId) return bad(res, 'entity and entityId are required');
+  res.json({ items: svc.memosOf(String(entity), String(entityId)).filter(svc.memoVisible(req.user)) });
+});
+route('patch', '/memos/:id', { tag: 'Service', summary: 'Pin, unpin or edit a memo (no delete)', cap: 'service.write', body: S({ pinned: { type: 'boolean' }, text: sStr() }) }, (req, res) => {
+  const m = db.get('memos', req.params.id); if (!m || !svc.memoVisible(req.user)(m)) return nf(res); const r = svc.patchMemo(m, req.body || {}); if (r.error) return bad(res, r.error); res.json(r.value);
+});
+// suppliers
+route('get', '/suppliers', { tag: 'Suppliers', summary: 'List suppliers', cap: 'suppliers.read', list: true, query: ['category'] }, (req, res) => { const r = listTable('suppliers')(req); res.json({ ...r, items: r.items.map(svc.supplierView) }); });
+route('post', '/suppliers/ask', { tag: 'Suppliers', summary: 'Ask across all suppliers', cap: 'suppliers.read', arag: true, rate: true, body: S({ question: sStr(), lang: LANG }, ['question']) }, async (req, res) => {
+  if (!str(req.body?.question)) return bad(res, 'question is required'); res.json(await svc.askSuppliers({ question: str(req.body.question, 600), lang: ai.langOf(req.body.lang) }));
+});
+route('post', '/suppliers', { tag: 'Suppliers', summary: 'Create a supplier', cap: 'suppliers.write', body: S({ name: sStr(), category: sStr(null, svc.SUPPLIER_CATEGORIES), abn: sStr(), terms: sStr() }, ['name', 'category']) }, (req, res) => {
+  const r = svc.supplierFrom(req.body || {}); if (r.error) return bad(res, r.error); res.status(201).json(svc.supplierView(db.insert('suppliers', r.value)));
+});
+route('get', '/suppliers/:id', { tag: 'Suppliers', summary: 'Supplier with memos, invoices and documents', cap: 'suppliers.read', table: 'suppliers' }, (req, res) => { const s = db.get('suppliers', req.params.id); if (!s) return nf(res); res.json(svc.supplierDetail(s)); });
+route('patch', '/suppliers/:id', { tag: 'Suppliers', summary: 'Update a supplier (status, terms, rating, contact)', cap: 'suppliers.write', table: 'suppliers' }, (req, res) => {
+  const s = db.get('suppliers', req.params.id); if (!s) return nf(res); const r = svc.supplierFrom(req.body || {}, s); if (r.error) return bad(res, r.error); svc.scheduleSync('supplier', s.id); res.json(svc.supplierView(db.patch('suppliers', s.id, r.value)));
+});
+route('post', '/suppliers/:id/memos', { tag: 'Suppliers', summary: 'Add a memo to a supplier', cap: 'suppliers.write', table: 'suppliers', body: S({ kind: sStr(null, svc.MEMO_KINDS), text: sStr(), pinned: { type: 'boolean' } }, ['text']) }, (req, res) => {
+  const s = db.get('suppliers', req.params.id); if (!s) return nf(res); const r = svc.addMemo('supplier', s.id, req.body || {}, req.user); if (r.error) return bad(res, r.error); res.status(201).json(r.value);
+});
+route('post', '/suppliers/:id/documents', { tag: 'Suppliers', summary: 'Attach an invoice or document to a supplier (base64 JSON)', cap: 'suppliers.write', table: 'suppliers', body: S({ fileName: sStr(), contentType: sStr(), contentBase64: sStr(), kind: sStr(), caption: sStr() }, ['fileName', 'contentBase64']) }, (req, res) => {
+  const s = db.get('suppliers', req.params.id); if (!s) return nf(res); const r = svc.attach({ supplierId: s.id }, req.body, req.user); if (r.error) return res.status(r.status || 400).json({ error: r.error }); res.status(201).json(r.value);
+});
+route('post', '/suppliers/:id/ask', { tag: 'Suppliers', summary: 'Ask about this supplier', cap: 'suppliers.read', arag: true, rate: true, table: 'suppliers', body: S({ question: sStr(), lang: LANG }, ['question']) }, async (req, res) => {
+  const s = db.get('suppliers', req.params.id); if (!s) return nf(res); if (!str(req.body?.question)) return bad(res, 'question is required'); res.json(await svc.askSupplier(s, { question: str(req.body.question, 600), lang: ai.langOf(req.body.lang) }));
+});
+// customers: memos, documents, ask
+route('post', '/customers/ask', { tag: 'Customers', summary: 'Ask across customers (memos, documents, job cards)', cap: 'customers.read', arag: true, rate: true, body: S({ question: sStr(), lang: LANG }, ['question']) }, async (req, res) => {
+  if (!str(req.body?.question)) return bad(res, 'question is required'); res.json(await svc.askCustomers({ question: str(req.body.question, 600), lang: ai.langOf(req.body.lang) }, req.user));
+});
+route('post', '/customers/:id/memos', { tag: 'Customers', summary: 'Add a memo to a customer', cap: 'customers.write', table: 'customers', body: S({ kind: sStr(null, svc.MEMO_KINDS), text: sStr(), pinned: { type: 'boolean' } }, ['text']) }, (req, res) => {
+  const c = getScoped(req, res, 'customers', req.params.id); if (!c) return; const r = svc.addMemo('customer', c.id, req.body || {}, req.user); if (r.error) return bad(res, r.error); res.status(201).json(r.value);
+});
+route('post', '/customers/:id/documents', { tag: 'Customers', summary: 'Attach a photo or document to a customer (base64 JSON)', cap: 'documents.write', table: 'customers', body: S({ fileName: sStr(), contentType: sStr(), contentBase64: sStr(), kind: sStr(), caption: sStr() }, ['fileName', 'contentBase64']) }, (req, res) => {
+  const c = getScoped(req, res, 'customers', req.params.id); if (!c) return; const r = svc.attach({ customerId: c.id }, req.body, req.user); if (r.error) return res.status(r.status || 400).json({ error: r.error }); res.status(201).json(r.value);
+});
+route('post', '/customers/:id/ask', { tag: 'Customers', summary: 'Ask about this customer', cap: 'customers.read', arag: true, rate: true, table: 'customers', body: S({ question: sStr(), lang: LANG }, ['question']) }, async (req, res) => {
+  const c = getScoped(req, res, 'customers', req.params.id); if (!c) return; if (!str(req.body?.question)) return bad(res, 'question is required'); res.json(await svc.askCustomer(c, { question: str(req.body.question, 600), lang: ai.langOf(req.body.lang) }));
+});
+// help desk, friendly errors, onboarding
+route('post', '/help/ask', { tag: 'Help', summary: 'Help bubble: software help from the manual, or the business via the ERP agent', cap: 'help', arag: true, rate: true, body: S({ question: sStr(), page: sStr(), lang: LANG, mode: sStr(null, ['software', 'business']) }, ['question']) }, async (req, res) => {
+  if (!str(req.body?.question)) return bad(res, 'question is required');
+  res.json(await help.helpAsk({ question: str(req.body.question, 600), page: str(req.body.page, 80), lang: ai.langOf(req.body.lang), mode: req.body.mode === 'business' ? 'business' : 'software' }, req.user));
+});
+route('post', '/help/feedback', { tag: 'Help', summary: 'Thumbs up or down on a help answer', cap: 'help', body: S({ helpId: sStr(), helpful: { type: 'boolean' } }, ['helpId', 'helpful']) }, (req, res) => res.json(help.feedback({ helpId: str(req.body?.helpId, 40), helpful: Boolean(req.body?.helpful) }, req.user)));
+route('post', '/help/tickets', { tag: 'Help', summary: 'Raise a support ticket from a help answer', cap: 'help', body: S({ helpId: sStr(), question: sStr(), page: sStr() }, ['question']) }, (req, res) => { if (!str(req.body?.question)) return bad(res, 'question is required'); const r = help.createTicket({ helpId: str(req.body.helpId, 40), question: str(req.body.question, 600), page: str(req.body.page, 80) }, req.user); if (r.error) return bad(res, r.error); res.status(201).json(r.value); });
+route('get', '/help/tickets', { tag: 'Help', summary: 'Support tickets (managers)', cap: 'help.manage', list: true }, (req, res) => res.json(listTable('support_tickets')(req)));
+route('get', '/help/deflection', { tag: 'Help', summary: 'Call deflection: answers, helpful, tickets, rate, by page, top questions', cap: 'help.manage', query: ['days'] }, (req, res) => res.json(help.deflection(Math.min(365, Math.max(1, Number(req.query.days) || 30)))));
+route('post', '/errors/explain', { tag: 'Help', summary: 'Turn an API error into a friendly title, message, cause and next step (agent, cached; catalogue fallback)', cap: 'help', body: S({ status: { type: 'integer' }, endpoint: sStr(), method: sStr(), message: sStr(), code: sStr(), page: sStr() }, ['status']) }, async (req, res) => res.json(await help.explainError({ ...(req.body || {}), role: req.user.role }, { wait: req.query.wait === '1' })));
+route('get', '/onboarding/programme', { tag: 'Onboarding', summary: 'Onboarding steps for your role, composed from the manual', cap: 'help', query: ['role'] }, async (req, res) => res.json(await help.programme(req.user.role, { refresh: req.query.refresh === '1' })));
+route('get', '/onboarding/progress', { tag: 'Onboarding', summary: 'Your progress, verified against live data', cap: 'help' }, async (req, res) => res.json(await help.progress(req.user)));
+route('get', '/onboarding/stats', { tag: 'Onboarding', summary: 'Completion by role (managers)', cap: 'help.manage' }, (req, res) => res.json(help.onboardingSummary()));
+route('post', '/onboarding/steps/:id/complete', { tag: 'Onboarding', summary: 'Mark a step done (how: verified checks live data)', cap: 'help', body: S({ how: sStr(null, ['verified', 'manual']) }) }, (req, res) => answerOr(res, help.completeStep(req.params.id, req.body || {}, req.user).then((r) => (r.error ? r : r.value))));
+route('post', '/onboarding/steps/:id/ask', { tag: 'Onboarding', summary: 'Ask about this step (cited, scoped to its manual chapter)', cap: 'help', arag: true, rate: true, body: S({ question: sStr(), lang: LANG }, ['question']) }, (req, res) => answerOr(res, help.askStep(req.params.id, { question: str(req.body?.question, 600), lang: ai.langOf(req.body?.lang) }, req.user).then((r) => (r.error ? r : r.value))));
+route('post', '/onboarding/reset', { tag: 'Onboarding', summary: 'Start the onboarding again', cap: 'help' }, (req, res) => res.json(help.resetProgress(req.user)));
+route('get', '/manual/chapters', { tag: 'Help', summary: 'User manual chapters', cap: 'help' }, (req, res) => res.json({ items: manualChapters() }));
+route('get', '/manual/chapters/:slug', { tag: 'Help', summary: 'One manual chapter as markdown', cap: 'help' }, (req, res) => { const c = manualChapters(true).find((x) => x.slug === req.params.slug); if (!c) return nf(res); res.json(c); });
+// Infomedia (simulated data pack)
+route('get', '/infomedia/pack', { tag: 'Infomedia', summary: 'Pack summary: menus by model, parts, labour rates, campaigns', cap: 'service.read' }, (req, res) => res.json(infomedia.packSummary()));
+route('get', '/infomedia/menus', { tag: 'Infomedia', summary: 'Service menus for a model (and interval)', cap: 'service.read', query: ['model', 'interval', 'year'] }, (req, res) => res.json({ items: infomedia.menusFor({ model: str(req.query.model, 40), interval: req.query.interval, year: req.query.year }) }));
+route('post', '/infomedia/quote', { tag: 'Infomedia', summary: 'Customer-ready service quote from the menu pack (hours × site rate + parts + GST), cited', cap: 'service.read', arag: true, rate: true, body: S({ vin: sStr(), model: sStr(), year: { type: 'integer' }, km: { type: 'integer' }, interval: { type: 'integer' }, extras: { type: 'array', items: { type: 'string' } }, siteId: sStr() }) }, async (req, res) => answerOr(res, infomedia.quote(req.body || {})));
+route('post', '/infomedia/ask', { tag: 'Infomedia', summary: 'Ask over the data pack (cited)', cap: 'service.read', arag: true, rate: true, body: S({ question: sStr(), lang: LANG, model: sStr() }, ['question']) }, async (req, res) => { if (!str(req.body?.question)) return bad(res, 'question is required'); res.json(await infomedia.ask({ question: str(req.body.question, 600), lang: ai.langOf(req.body.lang), model: str(req.body.model, 40) })); });
+route('get', '/infomedia/campaigns', { tag: 'Infomedia', summary: 'Open campaigns and recalls for a VIN or model', cap: 'service.read', query: ['vin', 'model', 'year'] }, (req, res) => res.json({ items: infomedia.campaignsFor({ vin: str(req.query.vin, 30), model: str(req.query.model, 40), year: Number(req.query.year) || undefined }) }));
+route('get', '/infomedia/parts', { tag: 'Infomedia', summary: 'Parts search over the price file', cap: 'service.read', query: ['q', 'model'] }, (req, res) => res.json({ items: infomedia.partsSearch(str(req.query.q, 80) || '', str(req.query.model, 40)) }));
+
+function manualChapters(withBody = false) {
+  const dir = join(ROOT, 'content', 'dms-kb'); let files = []; try { files = readdirSync(dir).filter((f) => /^manual-.*\.md$/.test(f)).sort(); } catch { /* none */ }
+  return files.map((f) => { const raw = readFileSync(join(dir, f), 'utf8'); const m = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/); const body = (m ? m[2] : raw).trim(); const title = (m && /title:\s*(.+)/.exec(m[1]))?.[1]?.replace(/^["']|["']$/g, '') || f; const summary = body.split(/\n\s*\n/).find((p) => p && !p.startsWith('#'))?.replace(/\s+/g, ' ').slice(0, 220) || ''; return withBody ? { slug: f.replace(/^manual-|\.md$/g, ''), title, topic: 'manual', markdown: body } : { slug: f.replace(/^manual-|\.md$/g, ''), title, topic: 'manual', summary }; });
+}
+
+const TAGS = [[/^\/auth/, 'Auth'], [/^\/sites/, 'Sites'], [/^\/staff/, 'Staff'], [/^\/customers/, 'Customers'], [/^\/leads/, 'Leads'], [/^\/test-drives/, 'Test drives'], [/^\/deals/, 'Deals'], [/^\/vehicles/, 'Stock'], [/^\/trade-ins/, 'Trade-ins'], [/^\/finance-apps/, 'Finance'], [/^\/campaigns/, 'Campaigns'], [/^\/promotions/, 'Promotions'], [/^\/documents/, 'Documents'], [/^\/kpi/, 'KPI'], [/^\/domo/, 'Domo'], [/^\/dxm/, 'DXM'], [/^\/(ask|agent|search|arag)/, 'Assistant'], [/^\/access-tokens/, 'Access tokens'], [/^\/mcp/, 'MCP'], [/^\/(job-cards|memos)/, 'Service'], [/^\/suppliers/, 'Suppliers'], [/^\/(help|errors|manual)/, 'Help'], [/^\/onboarding/, 'Onboarding'], [/^\/infomedia/, 'Infomedia'], [/^\/(health|openapi|docs)/, 'System']];
 for (const r of R) r.tag = TAGS.find(([re]) => re.test(r.path))?.[1] || r.tag;
 
 // ── router ───────────────────────────────────────────────────────────────────
@@ -467,7 +583,7 @@ router.use((req, res, next) => {
   next();
 });
 const small = express.json({ limit: '64kb' }); const big = express.json({ limit: '8mb' });
-router.use((req, res, next) => (req.method === 'POST' && req.path === '/documents' ? big : small)(req, res, next));
+router.use((req, res, next) => (req.method === 'POST' && /^\/(documents|(job-cards|suppliers|customers)\/[^/]+\/documents)$/.test(req.path) ? big : small)(req, res, next));
 
 const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch((e) => {
   console.error(`[dms ${req.method} ${req.path}] ${e.stack || e.message}`);

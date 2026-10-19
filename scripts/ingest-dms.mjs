@@ -26,7 +26,7 @@ import { req, upsert, waitFor, parseFrontmatter } from './ingest.mjs';
 const args = process.argv.slice(2);
 const WAIT = !args.includes('--no-wait');
 const DIR = join(ROOT, 'content', 'dms-kb');
-const DMS_TOPICS = ['manual', 'policy', 'document'];
+const DMS_TOPICS = ['manual', 'policy', 'document', 'help', 'jobcard', 'supplier', 'customer', 'infomedia'];
 
 const list = (v) => (Array.isArray(v) ? v : v == null || v === '' ? [] : [v]).map(String).map((s) => s.trim()).filter(Boolean);
 const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 180);

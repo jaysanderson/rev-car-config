@@ -201,6 +201,24 @@ export const PROMPTS = [
       '3. For each draft check: the value is within headroom and policy (`assistant_ask` scope policy, incentive approval), the copy never mentions age, margin or targets, and the dates are sensible.',
       '4. Recommend publish / hold for each with a reason. Only call `promotions_publish` after the user confirms.'].join('\n'),
   },
+  {
+    name: 'service-morning-huddle', description: 'Workshop morning huddle: today\'s board, cards waiting on parts or approval, overdue promises, open campaigns.',
+    arguments: [{ name: 'siteId', description: 'Optional site id (par, hor, pen, liv).', required: false }],
+    render: ({ siteId }) => [`Prepare the service huddle${siteId ? ` for site ${siteId}` : ''}.`, '',
+      `1. \`service_list_board\` (or \`service_list_job_cards\` with query.open=1${siteId ? `, siteId=${siteId}` : ''}) for every open card by status.`,
+      '2. Call `service_ask` (ask across job cards): "Which cards are waiting on parts or approval, and which promised times are overdue?"',
+      '3. `infomedia_list_campaigns` (query.model, year) for open recalls on vehicles booked today.',
+      '4. Output: cards by status, the five at most risk of missing their promise with the reason, parts to chase (supplier from the memos), approvals to phone, and campaigns to add to cards. Propose, do not execute, status changes.'].join('\n'),
+  },
+  {
+    name: 'supplier-review', description: 'Review a supplier: terms, open invoices, late deliveries and credits from the memos.',
+    arguments: [{ name: 'supplierId', description: 'Supplier id, e.g. SUP-104; all suppliers when omitted.', required: false }],
+    render: ({ supplierId }) => [`Review ${supplierId ? `supplier ${supplierId}` : 'the supplier base'}.`, '',
+      supplierId ? `1. \`suppliers_get_suppliers\` with path.id=${supplierId} for terms, rating, memos, invoices and documents.` : '1. `suppliers_list_suppliers` for the register, sorted by spend.',
+      supplierId ? `2. \`suppliers_ask\` with path.id=${supplierId}: "Summarise late deliveries, credits and quality problems and what we agreed."` : '2. Call `suppliers_ask` (ask across suppliers): "Which suppliers have repeated late deliveries or open credits?"',
+      '3. Check policy with `assistant_ask` (scope policy): approved suppliers, 30-day terms and the three-quote rule above $2,000.',
+      '4. Output a short verdict per supplier (keep, watch, escalate), the evidence with memo dates, and one next action.'].join('\n'),
+  },
 ];
 
 // ── server ───────────────────────────────────────────────────────────────────
