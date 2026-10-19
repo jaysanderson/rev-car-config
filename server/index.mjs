@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { ROOT } from './env.mjs';
 import * as arag from './arag.mjs';
 import { catalog, catalogPath, stock, stockPublic, stockSummary, offers, domoMode, modelsMentioned, modelById } from './data.mjs';
-import { askAssistant, finderNext, cleanAnswers } from './assistant.mjs';
+import { askAssistant, finderNext, finderExplain, cleanAnswers } from './assistant.mjs';
 import { canon } from './finder-fallback.mjs';
 import { forYou } from './foryou.mjs';
 import imagesRouter from './images.mjs';
@@ -84,7 +84,7 @@ function limiter({ capacity, perMin }) {
 const rateLimit = limiter({ capacity: Number(process.env.RATE_BURST || 30), perMin: Number(process.env.RATE_PER_MIN || 20) });
 // First-party events are cheap but must not be a write amplifier: own, larger bucket.
 const eventsLimit = limiter({ capacity: Number(process.env.EVENTS_BURST || 120), perMin: Number(process.env.EVENTS_PER_MIN || 90) });
-app.use(['/api/ask', '/api/finder/next', '/api/foryou', '/api/find', '/api/testdrive/book', '/api/testdrive/answers', '/api/testdrive/handover', '/api/promotions/refresh', '/api/used/ask', '/api/used/match', '/api/used/foryou', '/api/used/comments/refresh', '/api/used/watch'], rateLimit);
+app.use(['/api/ask', '/api/finder/next', '/api/foryou', '/api/find', '/api/testdrive/book', '/api/testdrive/answers', '/api/testdrive/handover', '/api/promotions/refresh', '/api/used/ask', '/api/used/match', '/api/finder/explain', '/api/used/foryou', '/api/used/comments/refresh', '/api/used/watch'], rateLimit);
 app.use('/api/used/:stockNo/ask', rateLimit);
 app.use('/api/used/:stockNo/enquiry', rateLimit);
 app.post('/api/events', eventsLimit);
@@ -223,6 +223,12 @@ app.post('/api/finder/next', wrap(async (req, res) => {
     if (last) events.logServer(sid, 'finder_answer', { questionId: last.id, value: canon(last) }, s);
     if (out.done) events.logServer(sid, 'finder_result', { recommended: out.recommendations.map((r) => r.modelId) }, s);
   }
+  res.json(out);
+}));
+
+app.post('/api/finder/explain', wrap(async (req, res) => {
+  const out = await finderExplain(req.body || {}, await stock());
+  if (out.error) return res.status(400).json(out);
   res.json(out);
 }));
 

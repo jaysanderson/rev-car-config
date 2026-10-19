@@ -68,7 +68,7 @@
       // phase 1: new-car finder
       const askNew = async () => {
         if (!HL.online) { box.innerHTML = ''; box.appendChild(HL.ui.empty(t('offline', 'The finder needs the API: the agent writes each question from your previous answers.'), t('browse', 'Browse instead'), () => HL.go('#/browse'))); return; }
-        wait(t('thinking', 'Choosing the next question from what you have told us…'));
+        // instant: no loading screen
         let res; try { res = await fetchNext(st.answers, false); } catch (e) { box.innerHTML = ''; box.appendChild(HL.ui.empty(`${t('err', 'The finder did not answer')}: ${e.message}`, t('retry', 'Try again'), askNew)); return; }
         if (res.done) { st.results = res; st.trace = res.trace || []; HL.journey({ answers: st.answers }); return askUsed(); }
         st.question = res.question; st.step = res.step || st.answers.length + 1;

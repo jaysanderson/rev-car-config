@@ -24,6 +24,8 @@ export const KB_ID = env.ARAG_KB_ID || env.NUCLIA_KB_ID || '';
 const TOKEN = clean(env.ARAG_API_KEY || env.NUCLIA_SERVICEACCOUNT);
 const KB_URL = KB_ID ? `https://${ZONE}.rag.progress.cloud/api/v1/kb/${KB_ID}` : '';
 const GENERATIVE_MODEL = env.ARAG_GENERATIVE_MODEL || ''; // empty → KB default model
+/** Cheap, fast model for short structured jobs (finder summaries, help). Measured 17 Oct: all models cost ~4.5 s per /ask (retrieval is ~0.1 s), so speed comes from not calling the model on the critical path. */
+export const FAST_MODEL = env.ARAG_FAST_MODEL || 'chatgpt-azure-5-mini';
 
 export const configured = () => Boolean(KB_URL && TOKEN);
 
@@ -67,22 +69,24 @@ export async function kbStatus() {
  * Synchronous /ask. Returns { answer, json, status, sources[] } where sources are
  * de-duplicated resources in best-match order: {resourceId,title,model[],topic[],text}.
  */
-export async function ask({ query, system, extraContext = [], jsonSchema, history = [], filterExpression, timeoutMs = 25000, topK = 15 }) {
+export async function ask({ query, system, extraContext = [], jsonSchema, history = [], filterExpression, timeoutMs = 25000, topK = 15, model, light = false }) {
   const body = {
     query,
     top_k: topK,
     features: ['keyword', 'semantic'],
     show: ['basic', 'extra'],
-    rag_strategies: [{ name: 'neighbouring_paragraphs', before: 1, after: 1 }],
+    rag_strategies: light ? undefined : [{ name: 'neighbouring_paragraphs', before: 1, after: 1 }],
     prompt: system ? { system } : undefined,
     extra_context: extraContext.length ? extraContext : undefined,
     chat_history: history.length ? history : undefined,
     citations: jsonSchema ? false : true,
     answer_json_schema: jsonSchema || undefined,
-    generative_model: GENERATIVE_MODEL || undefined,
+    generative_model: model || GENERATIVE_MODEL || undefined,
     filter_expression: filterExpression || undefined,
   };
-  const j = await call('/ask', { method: 'POST', body, timeoutMs, headers: { 'X-Synchronous': 'true' } });
+  let j;
+  try { j = await call('/ask', { method: 'POST', body, timeoutMs, headers: { 'X-Synchronous': 'true' } }); }
+  catch (e) { if (model && e.status === 530) { console.warn(`[arag] model ${model} rejected; using the default`); j = await call('/ask', { method: 'POST', body: { ...body, generative_model: GENERATIVE_MODEL || undefined }, timeoutMs, headers: { 'X-Synchronous': 'true' } }); } else throw e; }
   const sources = sourcesFrom(j.retrieval_results, j.retrieval_best_matches, j.citations);
   return { answer: j.answer || '', json: j.answer_json || null, status: j.status || 'unknown', sources };
 }

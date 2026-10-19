@@ -49,11 +49,11 @@ const ASK_SYSTEM = (lang) => `You are the Harbourline Toyota DMS assistant for d
 Answer only from the retrieved Harbourline DMS operating manual and dealer policies. Be concise and practical: a direct answer, then the steps or the rule, citing the policy or manual section by name.
 If the documents do not cover the question, say so plainly and suggest who to ask (sales manager or business manager). Never invent a policy, a threshold or an approval limit.
 ${langLine(lang)}`;
-export async function ask({ question, scope = 'all', context, lang = 'en' }) {
+export async function ask({ question, scope = 'all', context, lang = 'en', fast = false }) {
   const t0 = Date.now();
   const sc = SCOPES[scope] ? scope : 'all';
   if (!arag.configured()) return { answer: 'The knowledge base is not configured on this server.', status: 'not_configured', scope: sc, lang, citations: [], ms: 0 };
-  const r = await arag.ask({ query: question, system: ASK_SYSTEM(lang), extraContext: context ? [`Context from the screen the user is on:\n${String(context).slice(0, 4000)}`] : [], filterExpression: SCOPES[sc], timeoutMs: 30000, topK: 12 });
+  const r = await arag.ask({ query: question, system: ASK_SYSTEM(lang), extraContext: context ? [`Context from the screen the user is on:\n${String(context).slice(0, 4000)}`] : [], filterExpression: SCOPES[sc], timeoutMs: 30000, topK: fast ? 8 : 12, ...(fast ? { model: arag.FAST_MODEL, light: true } : {}) });
   return { answer: r.answer, status: r.status, grounded: !SOFT_FAIL.has(r.status), scope: sc, lang, citations: sourcesOut(r.sources), ms: Date.now() - t0 };
 }
 

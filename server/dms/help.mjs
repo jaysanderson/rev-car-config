@@ -62,7 +62,7 @@ export async function helpAsk({ question, page, lang = 'en', mode = 'software' }
     out = { helpId, mode, answer: r.answer, grounded: r.answerer === 'arag', evidence: r.evidence, followups: r.followups, kpis: r.kpis, plan: r.plan, citations: [], suggestedPages: suggestPages(question), ms: Date.now() - t0 };
   } else {
     let r;
-    try { r = await ai.ask({ question, scope: 'all', context: `${pageCtx(page)} Answer as the product's help desk: name the exact page, button or field, then the steps. If the manual does not cover it, say so and offer to raise a ticket.`, lang }); }
+    try { r = await ai.ask({ fast: true, question, scope: 'all', context: `${pageCtx(page)} Answer as the product's help desk: name the exact page, button or field, then the steps. If the manual does not cover it, say so and offer to raise a ticket.`, lang }); }
     catch (e) { r = { answer: 'The help desk could not reach the knowledge box just now. Try again in a moment, or raise a ticket and a person will reply.', status: 'error', grounded: false, citations: [] }; }
     out = { helpId, mode, answer: r.answer, grounded: Boolean(r.grounded), status: r.status, citations: r.citations, suggestedPages: [...new Map([...suggestPages(r.answer), ...suggestPages(question)].map((p) => [p.route, p])).values()].slice(0, 4), manualChapter: PAGES[pageKey(page)]?.chapter || null, ms: Date.now() - t0 };
   }
@@ -119,7 +119,7 @@ const inflight = new Map();
 async function composeError(e, sig) {
   if (inflight.has(sig)) return inflight.get(sig);
   const p = (async () => {
-    const r = await kb.askJson({ query: `Explain this error to a dealership user and tell them what to do next: ${e.method || 'GET'} ${e.endpoint || ''} returned ${e.status} "${e.message || ''}"${e.code ? ` (code ${e.code})` : ''}. The user is a ${e.role || 'staff member'}${e.page ? ` on the ${e.page} page` : ''}.`, jsonSchema: ERR_SCHEMA, filterExpression: ai.SCOPES.all, timeoutMs: 15000, topK: 6, system: 'You are the Harbourline DMS help desk. Rewrite technical API errors as calm, specific, friendly guidance grounded in the DMS manual: name the page, button or field the user should use. Never show stack traces, status codes or JSON. Never blame the user. If the error means a permission is missing, say who can do it instead.' });
+    const r = await kb.askJson({ model: arag.FAST_MODEL, query: `Explain this error to a dealership user and tell them what to do next: ${e.method || 'GET'} ${e.endpoint || ''} returned ${e.status} "${e.message || ''}"${e.code ? ` (code ${e.code})` : ''}. The user is a ${e.role || 'staff member'}${e.page ? ` on the ${e.page} page` : ''}.`, jsonSchema: ERR_SCHEMA, filterExpression: ai.SCOPES.all, timeoutMs: 15000, topK: 6, system: 'You are the Harbourline DMS help desk. Rewrite technical API errors as calm, specific, friendly guidance grounded in the DMS manual: name the page, button or field the user should use. Never show stack traces, status codes or JSON. Never blame the user. If the error means a permission is missing, say who can do it instead.' });
     const j = r.json;
     if (j && typeof j.message === 'string' && j.message.trim()) {
       const v = { title: String(j.title || '').slice(0, 60) || 'Something did not work', message: String(j.message).slice(0, 300), cause: String(j.cause || '').slice(0, 200), nextStep: String(j.nextStep || '').slice(0, 300), manualRoute: /^#\/[a-z-]+$/.test(j.manualRoute || '') ? j.manualRoute : null, by: 'agent', generatedAt: now() };
@@ -172,7 +172,7 @@ export async function programme(role, { refresh = false } = {}) {
   let out = { role: r, steps: normaliseProgramme(cat, r), composedBy: 'catalogue', generatedAt: now() };
   if (arag.configured()) {
     try {
-      const resp = await kb.askJson({ query: `Design an onboarding programme of 6 to 9 steps for a new ${ROLE_LABEL[r] || r} learning the Harbourline DMS, from the manual.`, jsonSchema: PROG_SCHEMA, filterExpression: ai.SCOPES.manual, timeoutMs: 30000, topK: 14, system: `You design onboarding for dealership software from its operating manual. Each step must point at a real page (hash routes: ${Object.values(PAGES).map((p) => p.route).join(', ')}), give one concrete task using the manual's exact button names, and say how we can verify it: verifyKind "query" with verifyTable in (leads, customers, test_drives, deals, job_cards, memos, documents, support_tickets) when the task creates a record (ask the user to tag or note "onboarding"), "ask" when the task is to ask the help desk something, "manual" otherwise. Order from sign-in basics to the role's daily work. Only use features the manual describes.` });
+      const resp = await kb.askJson({ model: arag.FAST_MODEL, query: `Design an onboarding programme of 6 to 9 steps for a new ${ROLE_LABEL[r] || r} learning the Harbourline DMS, from the manual.`, jsonSchema: PROG_SCHEMA, filterExpression: ai.SCOPES.manual, timeoutMs: 30000, topK: 14, system: `You design onboarding for dealership software from its operating manual. Each step must point at a real page (hash routes: ${Object.values(PAGES).map((p) => p.route).join(', ')}), give one concrete task using the manual's exact button names, and say how we can verify it: verifyKind "query" with verifyTable in (leads, customers, test_drives, deals, job_cards, memos, documents, support_tickets) when the task creates a record (ask the user to tag or note "onboarding"), "ask" when the task is to ask the help desk something, "manual" otherwise. Order from sign-in basics to the role's daily work. Only use features the manual describes.` });
       const steps = normaliseProgramme(resp.json, r);
       if (steps.length >= 4) out = { role: r, steps, composedBy: 'agent', generatedAt: now() };
     } catch (e) { console.warn(`[dms onboarding] ${e.message}`); }
@@ -215,7 +215,7 @@ export async function completeStep(stepId, { how = 'manual' } = {}, user) {
 export async function askStep(stepId, { question, lang = 'en' }, user) {
   const prog = await programme(user.role); const s = prog.steps.find((x) => x.id === stepId); if (!s) return { error: 'unknown step' };
   const p = progressAll()[user.email] || { role: user.role, startedAt: now(), steps: {}, questions: 0 }; p.questions = (p.questions || 0) + 1; saveProgress(user.email, p);
-  const r = await ai.ask({ question, scope: 'manual', context: `Onboarding step "${s.title}" for a ${ROLE_LABEL[user.role] || user.role}: ${s.task}. Page ${s.route}. Manual chapter: ${s.manualRef}. Answer with the exact steps on that page.`, lang });
+  const r = await ai.ask({ fast: true, question, scope: 'manual', context: `Onboarding step "${s.title}" for a ${ROLE_LABEL[user.role] || user.role}: ${s.task}. Page ${s.route}. Manual chapter: ${s.manualRef}. Answer with the exact steps on that page.`, lang });
   return { value: { stepId, ...r } };
 }
 export function resetProgress(user) { const all = progressAll(); delete all[user.email]; writeState('_onboarding_progress.json', all); return { ok: true }; }

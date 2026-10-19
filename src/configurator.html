@@ -464,6 +464,26 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink-950);color:#fff;padding:10px 16px;border-radius:var(--radius);font-size:.88rem;opacity:0;pointer-events:none;transition:.25s;z-index:90;max-width:calc(100vw - 32px);box-shadow:var(--shadow)}
 .toast.show{opacity:1;transform:translateX(-50%)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* find-the-right-car: instant, rich */
+.fprog{height:6px;border-radius:999px;background:var(--border);overflow:hidden}.fprog i{display:block;height:100%;background:linear-gradient(90deg,var(--brand-600),var(--accent-500));border-radius:999px;transition:width .35s cubic-bezier(.2,.8,.2,1)}
+.fopts.rich{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.fopts.rich .fopt{padding:18px 18px 16px;gap:6px;border-radius:16px;min-height:132px;position:relative;animation:foptin .25s both}
+.fopts.rich .fopt:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,18,60,.12)}
+.ficon{font-size:1.9rem;line-height:1;margin-bottom:4px;filter:saturate(.9)}
+@keyframes foptin{from{opacity:0;transform:translateY(6px)}}
+.shortlist{border:1px dashed var(--border);border-radius:14px;padding:12px 14px;background:var(--surface)}
+.sl-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;margin-bottom:8px}.sl-h b{font-size:.86rem}.sl-h span{font-size:.76rem;color:var(--muted)}
+.sl-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.sl-card{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:12px;background:var(--raised);animation:foptin .3s both}.sl-card.lead{border-color:var(--accent-500)}
+.sl-pic{width:84px;flex:none}.sl-pic svg,.sl-pic img{width:100%;height:auto;border-radius:8px;display:block}
+.sl-t{display:flex;flex-direction:column;min-width:0}.sl-t b{font-size:.88rem}.sl-t span{font-size:.74rem;color:var(--muted)}.sl-s.ok{color:var(--accent-fg);font-weight:600}
+.fsummary{font-size:1.02rem;color:var(--text);max-width:70ch;margin:0;transition:opacity .4s}.fsummary.swap,.rreason.swap{animation:foptin .5s both}
+.recs.rich .rec{grid-template-columns:200px minmax(0,1fr) auto;padding:18px 20px;border-radius:16px;gap:8px 22px}
+.fitbar{height:5px;border-radius:999px;background:var(--border);overflow:hidden;max-width:260px}.fitbar i{display:block;height:100%;background:var(--accent-500)}
+.rreason{margin:0;font-size:.92rem;line-height:1.45}
+@media (max-width:720px){.recs.rich .rec{grid-template-columns:1fr}}
+.recs.rich .rec{display:grid;grid-template-columns:220px minmax(0,1fr);align-items:start}.recs.rich .rec .pic{grid-row:1;grid-column:1;align-self:center}.recs.rich .rbody{grid-row:1;grid-column:2}.recs.rich .rbody{display:flex;flex-direction:column;gap:8px;min-width:0}.recs.rich .rec .ract{grid-row:2!important;grid-column:1/-1!important;justify-self:stretch;display:flex;justify-content:center;margin-top:6px}.recs.rich .rec .ract .btn{min-width:260px;padding:10px 22px;font-size:.95rem}
 </style>
 
 <header class="band">
@@ -892,37 +912,41 @@ body.drawer-open .backdrop{opacity:1;pointer-events:auto}
   let finderOpen=false;
   function openFinder(){finderOpen=true;$('stageView').style.display='none';const v=$('finderView');v.hidden=false;renderFinderStep();v.scrollIntoView({behavior:'smooth',block:'start'});}
   function closeFinder(){finderOpen=false;showStage();}
+  const FICON=[[/family|kids|school|seven|more/,'👨‍👩‍👧'],[/commute|city|under30|short/,'🏙️'],[/tow|caravan|boat|camper|heavy/,'🚐'],[/work|tools|site|ute|tray/,'🛻'],[/adventure|offroad|off-road|touring|gravel/,'⛰️'],[/ev|electric/,'⚡'],[/hybrid|economy|efficien/,'🍃'],[/diesel/,'🛢️'],[/safety/,'🛡️'],[/tech/,'📱'],[/space|comfort/,'🛋️'],[/budget|under|b\d|\$/,'💰'],[/now|week|soon/,'⏱️'],[/summer|holiday|dec/,'🏖️'],[/sealed|bitumen|road/,'🛣️'],[/client|visit/,'🤝'],[/four|five|4|5|two|couple|solo|just/,'🧑‍🤝‍🧑'],[/long|over80|distance/,'🧭']];
+  const ficon=o=>{const k=(o.id+' '+o.label).toLowerCase();const f=FICON.find(([re])=>re.test(k));return f?f[1]:'✦';};
+  function shortlistHtml(){if(!finder.answers.length)return `<div class="shortlist"><div class="sl-h"><b>The whole range</b><span>${CAT.models.length} Toyotas to choose from. Answer a question and watch this narrow down.</span></div></div>`;
+    const r=localRecs(finder.answers);const top=r.recommendations.slice(0,3);
+    return `<div class="shortlist"><div class="sl-h"><b>Leading so far</b><span>Updates with every answer</span></div><div class="sl-row">${top.map((x,i)=>{const m=by(CAT.models,x.modelId);const hex=COL(m.colours.includes(cfg.colour)?cfg.colour:m.colours[0])?.hex||'#888';const av=x.availability||availabilityOf(m.id);return `<div class="sl-card ${i===0?'lead':''}"><div class="sl-pic">${carPic(m.id,m.silhouette,hex,'var(--raised)','sl'+i,{thumb:true,alt:m.name})}</div><div class="sl-t"><b>${esc(m.name)}</b><span>${x.fit}% fit · from ${fmt(m.fromPrice)}</span><span class="sl-s ${av.onLot?'ok':''}">${av.onLot?av.onLot+' on the lot':av.inTransit?'Arriving soon':'Factory order'}</span></div></div>`;}).join('')}</div></div>`;}
+  function fHead(kick,title,why){return `<div class="fhead"><div><div class="kick">${kick}</div><h2>${esc(title)}</h2>${why?`<p class="why">${esc(why)}</p>`:''}</div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div>`;}
   async function renderFinderStep(){const v=$('finderView');const n=finder.answers.length;
-    v.innerHTML=`<div class="fhead"><div><div class="kick">Find the right car · ${n<5?'question '+(n+1)+' of 5':'your matches'}</div><h2>Choosing the next question…</h2></div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div><div class="fwork" id="fwork"></div>`;
-    v.querySelector('#finderClose').onclick=closeFinder;
-    const steps=n<5?['Reading finder guide and spec sheets','Checking what the last answer rules out','Checking stock for the shortlist','Writing question '+(n+1)]:['Scoring every model against your answers','Matching grades to your budget','Checking stock and factory ETAs','Ranking the top three'];
-    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const box=v.querySelector('#fwork');steps.forEach((s,i)=>setTimeout(()=>box&&box.appendChild(el('div','step',s)),reduce?0:220*i));
-    const t0=Date.now();const res=await finderNext();await new Promise(r=>setTimeout(r,reduce?0:Math.max(0,220*steps.length+200-(Date.now()-t0))));
-    if(res.done){finder.done=true;finder.recs=res.recommendations;finder.summary=res.summary;logEvent('finder_result',{modelIds:res.recommendations.map(r=>r.modelId)});renderFinderResults(res);}else renderFinderQuestion(res);}
+    const res=await finderNext();
+    if(res.done){finder.done=true;finder.recs=res.recommendations;finder.summary=res.summary;logEvent('finder_result',{modelIds:res.recommendations.map(r=>r.modelId)});renderFinderResults(res);explainFinder(res);}else renderFinderQuestion(res);}
   function answersChips(){return finder.answers.map((a,i)=>`<span class="chip" data-back="${i}" title="Change this answer">${esc(a.label)}</span>`).join('');}
   function renderFinderQuestion(res){const v=$('finderView');const q=res.question;const n=res.step-1;
-    v.innerHTML=`<div class="fhead"><div><div class="kick">Find the right car · question ${res.step} of ${res.of}</div><h2>${esc(q.text)}</h2><p class="why">${esc(q.why||'')}</p></div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div>
-      <div class="dots">${[0,1,2,3,4].map(i=>`<i class="${i<n?'done':i===n?'cur':''}"></i>`).join('')}</div>
-      <div class="fopts">${q.options.map(o=>`<button class="fopt" data-opt="${esc(o.id)}" data-label="${esc(o.label)}"><b>${esc(o.label)}</b>${o.sub?`<span>${esc(o.sub)}</span>`:''}${o.note?`<span class="note">${esc(o.note)}</span>`:''}</button>`).join('')}</div>
-      <div class="fnav"><div class="answers">${answersChips()}</div><div>${n>0?'<button class="btn ghost sm" id="finderBack">Back</button>':''}</div></div>
-      <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">${API?'ARAG · /ask · answer_json_schema':'local rule engine (offline) · same JSON contract'}</span></div>
-      <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
+    v.innerHTML=`${fHead('Find the right car · question '+res.step+' of '+res.of,q.text,q.why)}
+      <div class="fprog"><i style="width:${Math.round(n/res.of*100)}%"></i></div>
+      <div class="fopts rich">${q.options.map(o=>`<button class="fopt" data-opt="${esc(o.id)}" data-label="${esc(o.label)}"><span class="ficon" aria-hidden="true">${ficon(o)}</span><b>${esc(o.label)}</b>${o.sub?`<span>${esc(o.sub)}</span>`:''}${o.note?`<span class="note">${esc(o.note)}</span>`:''}</button>`).join('')}</div>
+      ${shortlistHtml()}
+      <div class="fnav"><div class="answers">${answersChips()}</div><div>${n>0?'<button class="btn ghost sm" id="finderBack">Back</button>':''}</div></div>`;
     v.querySelector('#finderClose').onclick=closeFinder;const bk=v.querySelector('#finderBack');if(bk)bk.onclick=()=>{finder.answers.pop();renderFinderStep();};
     v.querySelectorAll('.fopt').forEach(b=>b.onclick=()=>{finder.answers.push({id:q.id,value:b.dataset.opt,label:b.dataset.label});logEvent('finder_answer',{questionId:q.id,value:b.dataset.opt});renderFinderStep();});
-    prefetchOptions(q);
     v.querySelectorAll('[data-back]').forEach(c=>c.onclick=()=>{finder.answers=finder.answers.slice(0,+c.dataset.back);renderFinderStep();});}
+  // The written summary and one reason per car come from the agent (cheap model, knowledge box only) and fade in after the instant result.
+  async function explainFinder(res){if(!API)return;const key=JSON.stringify(finder.answers.map(a=>[a.id,a.value]));try{const r=await fetch('/api/finder/explain',{method:'POST',headers:H(),body:JSON.stringify({answers:finder.answers})});if(!r.ok)return;const j=await r.json();if(JSON.stringify(finder.answers.map(a=>[a.id,a.value]))!==key||!finder.done)return;
+      const h=document.querySelector('#finderView .fsummary');if(h&&j.summary&&j.by==='agent'){h.textContent=j.summary;h.classList.add('swap');}
+      (j.reasons||[]).forEach(x=>{const li=document.querySelector('#finderView [data-reason="'+x.modelId+'"]');if(li){li.textContent=x.line;li.classList.add('swap');}});}catch(e){}}
   function renderFinderResults(res){const v=$('finderView');
-    v.innerHTML=`<div class="fhead"><div><div class="kick">Find the right car · your matches</div><h2>${esc(res.summary||'Your best matches')}</h2></div><button class="btn ghost sm" id="finderClose">Back to the configurator</button></div>
-      <div class="dots">${[0,1,2,3,4].map(()=>'<i class="done"></i>').join('')}</div>
-      <div class="recs">${res.recommendations.map((r,i)=>{const m=by(CAT.models,r.modelId);if(!m)return '';const g=by(m.grades,r.gradeId)||m.grades[0];const hex=COL(m.colours.includes(cfg.colour)?cfg.colour:m.colours[0])?.hex||'#888';const av=r.availability||availabilityOf(m.id);
+    v.innerHTML=`${fHead('Find the right car · your matches','Your best matches','')}<p class="fsummary">${esc(res.summary||'')}</p>
+      <div class="fprog"><i style="width:100%"></i></div>
+      <div class="recs rich">${res.recommendations.map((r,i)=>{const m=by(CAT.models,r.modelId);if(!m)return '';const g=by(m.grades,r.gradeId)||m.grades[0];const hex=COL(m.colours.includes(cfg.colour)?cfg.colour:m.colours[0])?.hex||'#888';const av=r.availability||availabilityOf(m.id);
         return`<div class="rec ${i===0?'best':''}"><div class="pic">${carPic(m.id,m.silhouette,hex,i===0?'var(--accent-soft)':'var(--raised)','r'+i,{thumb:true,alt:m.name})}</div>
-          <div class="rh"><span class="chip ${i===0?'good':'dms'}">${i===0?'Best match':'#'+(i+1)}</span><b>${esc(m.name)} ${esc(g.name)}</b><span class="fit">fit ${r.fit}% · from ${fmt(g.price)}</span></div>
-          <ul>${(r.why||[]).map(w=>`<li>${esc(w)}</li>`).join('')}</ul>${(r.watch||[]).length?`<ul class="watch">${r.watch.map(w=>`<li>${esc(w)}</li>`).join('')}</ul>`:''}${r.nudge?`<div class="nudge">${esc(r.nudge.reason)} <span class="ann domo">Domo · dealer_priorities · +${r.dealerFactor}</span></div>`:''}
-          <div class="ravail">${av.onLot?av.onLot+' on the lot · ':''}${av.nearby?av.nearby+' nearby · ':''}${av.inTransit?av.inTransit+' in transit · ':''}${esc(av.soonest||'')}</div>
-          <div class="ract"><button class="btn ${i===0?'':'secondary'} sm" data-rec="${m.id}:${g.id}">Configure this car</button></div></div>`;}).join('')}</div>
-      <div class="fnav"><div class="answers">${answersChips()}</div><button class="btn ghost sm" id="finderReset">Start over</button></div>
-      <div class="trace">${(res.trace||[]).map(t=>`<span class="tr ${t.kind}">${esc(t.label)}</span>`).join('')}<span class="ann kb">${API?'ARAG · /ask · answer_json_schema':'local rule engine (offline) · same JSON contract'}</span></div>
-      <pre class="json">${esc(JSON.stringify(res,null,2))}</pre>`;
+          <div class="rbody"><div class="rh"><span class="chip ${i===0?'good':'dms'}">${i===0?'Best match':'#'+(i+1)}</span><b>${esc(m.name)} ${esc(g.name)}</b><span class="fit">${r.fit}% fit · from ${fmt(g.price)}</span></div>
+          <div class="fitbar"><i style="width:${r.fit}%"></i></div>
+          <p class="rreason" data-reason="${m.id}">${esc((r.why||[])[0]||m.blurb)}</p>
+          <ul>${(r.why||[]).slice(1).map(w=>`<li>${esc(w)}</li>`).join('')}</ul>${(r.watch||[]).length?`<ul class="watch">${r.watch.map(w=>`<li>${esc(w)}</li>`).join('')}</ul>`:''}${r.nudge?`<div class="nudge">${esc(r.nudge.reason)}</div>`:''}
+          <div class="ravail">${av.onLot?av.onLot+' on the lot · ':''}${av.nearby?av.nearby+' nearby · ':''}${av.inTransit?av.inTransit+' in transit · ':''}${esc(av.soonest||'')}</div></div>
+          <div class="ract"><button class="btn ${i===0?'':'secondary'}" data-rec="${m.id}:${g.id}">Configure this car</button></div></div>`;}).join('')}</div>
+      <div class="fnav"><div class="answers">${answersChips()}</div><button class="btn ghost sm" id="finderReset">Start over</button></div>`;
     v.querySelector('#finderClose').onclick=closeFinder;v.querySelector('#finderReset').onclick=()=>{finder.answers=[];finder.done=false;finder.recs=null;finderCache.clear();renderFinderStep();};
     v.querySelectorAll('[data-back]').forEach(c=>c.onclick=()=>{finder.answers=finder.answers.slice(0,+c.dataset.back);finder.done=false;renderFinderStep();});
     v.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>{const [mid,gid]=b.dataset.rec.split(':');cfg.model=mid;cfg.grade=gid;const real=units().filter(u=>u.model===mid&&u.grade===gid).sort((a,b)=>(a.transit?2:a.site==='par'?0:1)-(b.transit?2:b.site==='par'?0:1))[0];if(real){cfg.colour=real.colour;cfg.interior=real.interior;cfg.packs=(real.packs||[]).slice();}const a=Object.fromEntries(finder.answers.map(x=>[x.id,x.value]));if((a.towing||a.use==='tow')&&by(CAT.models,mid).accessories.includes('tow')&&!cfg.packs.includes('tow'))cfg.packs.push('tow');normalise();closeFinder();update();
