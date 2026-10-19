@@ -6,14 +6,15 @@ Read this first when resuming. Everything live is at https://harbourline-configu
 
 - Configurator, Harbourline Used, Harbourline One concept experience, DMS phase 1, the Domo access guide (`docs/DMS-DOMO-ACCESS.md`, shared doc https://claude.ai/code/artifact/8f2c88de-ebbe-49ca-a7cb-3aedb61e8e58), platform thesis (`docs/PLATFORM.md`), parity research doc.
 
-## DMS phase 2 (committed, NOT yet deployed)
+## DMS phase 2 and SmartCenter theme (DEPLOYED 19 Oct; live smoke 49/49 and DMS 78/78 quick)
 
 Spec: `docs/DMS-PHASE2-SPEC.md`. Status on 19 Oct (later that day):
 
 - Done and tested locally: seed (598 job cards, 37 open this week, 2.5k memos, 22 suppliers, 12 sample photos, simulated Infomedia pack), all routes wired in `server/dms/index.mjs`, knowledge box ingested (`node scripts/ingest-dms-phase2.mjs`: manual chapters, FAQ, 31 Infomedia resources, 22 suppliers, 120 recent job cards, 120 customers with memos; ids in `content/dms/kb-index-phase2.json`), fallback catalogues (`node scripts/dms-seed-catalogues.mjs`), four Domo datasets, grouped `/search`, MCP prompts, DMS smoke 83/83 (full) and 78/78 (quick). Help, ask-one, ask-across and Infomedia answers verified grounded with citations.
 - SPA pages written by agents U1 and U2 (job cards and board, suppliers, customer extras, help bubble, palette, onboarding, manual, friendly-error hook). U1's job-card fixture fallback in `service.js` is now dead code; remove it. Pages have only been checked headlessly.
 - **SmartCenter restyle**: a theme agent was started to restyle `public/dms` (dark bar, open-screens tab strip, tile home on a road-at-sunrise scene, Options tree, dense forms, bottom action bar with hotkeys, login). Check `git status` for its files; if it did not finish, re-brief from the description above.
-- Not done: deploy (`node scripts/build.mjs && fly deploy --ha=false`, then both live smoke suites), screenshot pass of the new pages, update `docs/DMS-DEMO-SCRIPT.md` screenshots, ingest of the remaining job cards if wanted (`--max=600`).
+- The SmartCenter theme landed (dark bar, open-screen tab strip, sunrise tile home, Options tree, bottom action bar with N/S/R/H hotkeys, login). Partial: sunrise is a drawn scene not a photo; left menu is an overlay; Options tree comes from page headings.
+- Not done: a visual pass over every page and phone width, demo-script screenshots, ingest of remaining job cards (`--max=600`), removing the dead fixture fallback in `service.js`.
 
 ## Resume checklist
 
