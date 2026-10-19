@@ -159,7 +159,7 @@ async function maybeBanner() {
   let dismissed = false; try { dismissed = SS?.getItem('dms.ob.dismissed') === '1'; } catch {}
   if (dismissed) return;
   if (!bannerChecked) { const r = await api('/onboarding/progress', { timeout: 8000 }); bannerChecked = true; if (!r.ok || (r.data && (r.data.startedAt || (r.data.done && r.data.done > 0)))) { if (r.ok) try { SS?.setItem('dms.ob.dismissed', '1'); } catch {} return; } }
-  const main = document.getElementById('main'); const view = document.getElementById('view'); if (!main || !view) return;
+  const main = document.getElementById('main'); const view = document.getElementById('view'); if (!main || !view || document.getElementById('obBanner') || pageOf() !== page) return;
   const b = document.createElement('div'); b.id = 'obBanner'; b.className = 'ob-banner';
   b.innerHTML = `<span>${icon('assistant')}</span><div><b>New here?</b> Start the 20-minute onboarding: it points you at each page, sets a task and checks what you did.</div><a class="btn sm" href="#/onboarding">Start onboarding</a><button class="btn ghost sm" id="obDismiss" aria-label="Dismiss">✕</button>`;
   main.insertBefore(b, view);

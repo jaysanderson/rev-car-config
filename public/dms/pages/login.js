@@ -35,6 +35,7 @@ export default async function login(root, { query }) {
         <div class="label" style="margin-top:6px">Demo accounts · password demo1234 ${ann('POST /dms/api/auth/login')}</div>
         <div class="demo" id="demo">${DEMO.map(d => `<button type="button" data-email="${d.email}"><span class="av">${esc(d.who.split(/[ ,]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase())}</span><span><b>${esc(d.who)}</b><span>${esc(d.scope)}</span></span><span class="r">${esc(d.email.split('@')[0])}</span></button>`).join('')}</div>
       </form>
+      <div class="brandnote">Harbourline Toyota · sales and service back office · ${tagArag()} ${tagDomo()}<br>Prototype with synthetic data, prepared for Revolution Software. Nothing here is a real customer.</div>
     </section>
   </div>`;
   const em = root.querySelector('#em'), pw = root.querySelector('#pw'), err = root.querySelector('#lerr'), btn = root.querySelector('#lbtn');

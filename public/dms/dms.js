@@ -33,6 +33,7 @@ export const NAV = [
   { id: 'onboarding', label: 'Onboarding', ic: 'assistant', roles: ALL, badge: 'ai' },
 ];
 const PAGES = {
+  home: () => import('./pages/home.js'),
   login: () => import('./pages/login.js'),
   dashboard: () => import('./pages/dashboard.js'),
   leads: () => import('./pages/leads.js'),
@@ -54,7 +55,7 @@ const PAGES = {
   onboarding: () => import('./pages/onboarding.js'),
 };
 export const canSee = (id, role = state.user?.role) => { const n = NAV.find(x => x.id === id); return !n || !role || n.roles.includes(role); };
-const homeFor = role => (NAV.find(n => n.id && n.roles.includes(role)) || { id: 'assistant' }).id;
+const homeFor = () => 'home';
 
 const $ = s => document.querySelector(s);
 const view = $('#view');
@@ -78,7 +79,7 @@ function renderShell() {
 
 function markNav(id) { document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')); }
 
-let navSeq = 0;
+let navSeq = 0; let curRoute = { page: '', params: [], raw: '' };
 async function route() {
   const seq = ++navSeq;
   const raw = location.hash.replace(/^#\/?/, '');
@@ -86,10 +87,12 @@ async function route() {
   const parts = pathPart.split('/').filter(Boolean).map(decodeURIComponent);
   let page = parts[0] || '';
   const query = Object.fromEntries(new URLSearchParams(qs || ''));
-  closeDrawer(); document.body.classList.remove('rail-open');
+  closeDrawer(); document.body.classList.remove('rail-open'); view.querySelector('.page')?._optOff?.();
   if (!state.token || !state.user) { if (page !== 'login') { location.replace('#/login' + (page ? '?next=' + encodeURIComponent(raw) : '')); return; } }
   else if (!page || page === 'login') { location.replace('#/' + homeFor(state.user.role)); return; }
   renderShell(); markNav(page);
+  document.body.classList.toggle('is-home', page === 'home'); document.body.classList.toggle('is-login', page === 'login'); document.body.classList.toggle('is-anon', !state.user);
+  curRoute = { page, params: parts.slice(1), raw };
   if (state.user) { try { initHelp(); initPalette(); } catch (e) { console.warn('help/palette init', e); } }
   const root = document.createElement('div'); root.className = 'page page-' + page;
   view.replaceChildren(root);
@@ -101,7 +104,7 @@ async function route() {
     const label = (NAV.find(n => n.id === page) || {}).label || (page === 'login' ? 'Sign in' : page);
     document.title = `${label} · Harbourline DMS`;
     await mod.default(root, { params: parts.slice(1), query, page, rerender: () => route() });
-    if (seq === navSeq) view.focus({ preventScroll: true });
+    if (seq === navSeq) { view.focus({ preventScroll: true }); afterRender(root, page, parts.slice(1), label, raw); }
   } catch (e) {
     console.error(e);
     if (seq === navSeq) root.innerHTML = empty({ ic: 'alert', error: true, title: 'This page failed to render', body: esc(e.message || String(e)), actions: '<button class="btn secondary sm" onclick="location.reload()">Reload</button>' });
@@ -114,6 +117,83 @@ export function signedIn(token, user) {
 }
 export function logout() { api('/auth/logout', { method: 'POST' }); setSession(null, null); clearCache(); location.hash = '#/login'; }
 setUnauthorisedHandler(() => { if (state.token) { setSession(null, null); toast('Your session ended (the server may have restarted). Sign in again.'); const cur = location.hash.replace(/^#\/?/, ''); location.hash = '#/login' + (cur && !cur.startsWith('login') ? '?next=' + encodeURIComponent(cur) : ''); } });
+
+
+// ---------- SmartCenter chrome: open-screen tabs, Options tree, action bar, hotkeys ----------
+const TABKEY = 'dms.tabs.v1'; const MAXTABS = 8;
+let tabs = []; try { tabs = JSON.parse(sessionStorage.getItem(TABKEY) || '[]'); } catch {}
+const saveTabs = () => { try { sessionStorage.setItem(TABKEY, JSON.stringify(tabs)); } catch {} };
+const TAB_ICON = Object.fromEntries(NAV.filter(n => n.id).map(n => [n.id, n.ic]));
+function tabKey(page, params) { return page === 'home' ? 'home' : [page, ...params].join('/'); }
+function renderTabs(activeKey) {
+  const el = $('#tabsList'); if (!el) return;
+  const homeTab = `<a class="tab home ${activeKey === 'home' ? 'on' : ''}" href="#/home">Home</a>`;
+  el.innerHTML = homeTab + tabs.map(t => `<a class="tab ${t.key === activeKey ? 'on' : ''}" href="#/${t.raw}" data-key="${esc(t.key)}">${t.ic ? icon(t.ic) : ''}<span>${esc(t.title)}${t.count != null ? ` (${esc(t.count)})` : ''}</span><button class="x" data-close="${esc(t.key)}" aria-label="Close ${esc(t.title)}"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8"/></svg></button></a>`).join('');
+}
+function openTab(page, params, title, raw) {
+  if (page === 'home' || page === 'login') { renderTabs(page === 'home' ? 'home' : ''); return; }
+  const key = tabKey(page, params); let t = tabs.find(x => x.key === key);
+  if (!t) { t = { key, raw: raw.split('?')[0], title, ic: TAB_ICON[page] || null, count: null }; tabs.push(t); if (tabs.length > MAXTABS) tabs.shift(); }
+  else t.raw = raw.split('?')[0] + (raw.includes('?') && !params.length ? '?' + raw.split('?')[1] : '');
+  saveTabs(); renderTabs(key); return t;
+}
+window.dmsTab = { set({ count, title } = {}) { const t = tabs.find(x => x.key === tabKey(curRoute.page, curRoute.params)); if (!t) return; if (count !== undefined) t.count = count; if (title) t.title = title; saveTabs(); renderTabs(t.key); } };
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-close]'); if (!c) return;
+  e.preventDefault(); e.stopPropagation();
+  const key = c.dataset.close; const i = tabs.findIndex(t => t.key === key); if (i < 0) return;
+  const wasActive = tabKey(curRoute.page, curRoute.params) === key; tabs.splice(i, 1); saveTabs();
+  if (wasActive) location.hash = tabs.length ? '#/' + tabs[Math.max(0, i - 1)].raw : '#/home'; else renderTabs(tabKey(curRoute.page, curRoute.params));
+});
+function autoCount(root, page, params) {
+  if (params.length || page === 'home') return;
+  const read = () => { const c = root.querySelector('.filterbar .count, .pager .count, [data-count]'); const m = c && /([\d,]+)/.exec(c.textContent || ''); if (m) window.dmsTab.set({ count: m[1] }); return Boolean(m); };
+  if (!read()) { let n = 0; const iv = setInterval(() => { if (read() || ++n > 12 || tabKey(curRoute.page, curRoute.params) !== tabKey(page, params)) clearInterval(iv); }, 500); }
+}
+const DETAIL_PAGES = new Set(['job-cards', 'customers', 'deals', 'suppliers', 'leads', 'stock', 'test-drives', 'documents']);
+function buildOptions(root, page, params, label) {
+  if (!params.length || !DETAIL_PAGES.has(page) || root.querySelector('.options')) return;
+  const cards = [...root.querySelectorAll(':scope > section.card, :scope > .card, :scope > .split > section.card, :scope > .split > div > section.card, :scope > .stack > section.card, :scope > div > section.card')].filter(c => c.querySelector(':scope > .chead h3, :scope > h3'));
+  if (cards.length < 2) return;
+  const opts = cards.map((c, i) => { const h = c.querySelector(':scope > .chead h3, :scope > h3'); c.id = c.id || `opt-${i}`; c.classList.add('opt-target'); return { id: c.id, text: h.textContent.replace(/\s*\(?\d+\)?\s*$/, '').trim() || `Section ${i + 1}` }; }).filter((o, i, a) => o.text && a.findIndex(x => x.text === o.text) === i).slice(0, 14);
+  const aside = document.createElement('aside'); aside.className = 'options'; aside.setAttribute('aria-label', 'Options');
+  aside.innerHTML = `<div class="otitle">Options</div><a class="oitem hd" href="#/${esc(page)}">‹ ${esc(label)}</a><div class="ogroup">${esc(params[0])}</div>` + opts.map((o, i) => `<button class="oitem ${i === 0 ? 'on' : ''}" data-target="${esc(o.id)}">${esc(o.text)}</button>`).join('');
+  root.classList.add('has-options'); root.prepend(aside);
+  const items = [...aside.querySelectorAll('[data-target]')];
+  const mark = id => items.forEach(b => b.classList.toggle('on', b.dataset.target === id));
+  items.forEach(b => b.onclick = () => { const t = document.getElementById(b.dataset.target); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'start' }); mark(b.dataset.target); } });
+  const onScroll = () => { let cur = items[0]?.dataset.target; for (const b of items) { const t = document.getElementById(b.dataset.target); if (t && t.getBoundingClientRect().top < 140) cur = b.dataset.target; } mark(cur); };
+  window.addEventListener('scroll', onScroll, { passive: true }); root._optOff = () => window.removeEventListener('scroll', onScroll);
+}
+function afterRender(root, page, params, label, raw) {
+  const t = openTab(page, params, params.length ? `${label} ${params[0]}` : label, raw);
+  try { buildOptions(root, page, params, label); } catch (e) { console.warn('options', e); }
+  autoCount(root, page, params); updateActionBar();
+}
+const NEW_RE = /^\s*\+?\s*(New|Add|Create|Book|Upload|Raise)\b/i;
+function pageNewButton() { return [...document.querySelectorAll('#view .pagehead .actions .btn, #view .pagehead .actions button')].find(b => NEW_RE.test(b.textContent || '') && !b.disabled) || null; }
+function drawerSubmit() { const d = document.getElementById('drawer'); if (!d || d.getAttribute('aria-hidden') === 'true') return null; return d.querySelector('button[type=submit], form .btn:not(.ghost):not(.secondary)'); }
+function updateActionBar() {
+  const nb = pageNewButton(); const abNew = $('#abNew'), abSave = $('#abSave');
+  if (nb) { abNew.hidden = false; abNew.querySelector('span').textContent = `${(nb.textContent || 'New').replace(/^\s*\+\s*/, '').trim()} (N)`; } else abNew.hidden = true;
+  const ds = drawerSubmit(); abSave.hidden = !ds; $('#ibNew').style.display = nb ? '' : 'none';
+}
+new MutationObserver(() => updateActionBar()).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+const typing = () => { const a = document.activeElement; return a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable); };
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey || typing()) return;
+  const k = e.key.toLowerCase();
+  if (k === 'n') { const b = pageNewButton(); if (b) { e.preventDefault(); b.click(); } }
+  else if (k === 's') { const b = drawerSubmit(); if (b) { e.preventDefault(); b.click(); } }
+  else if (k === 'r') { e.preventDefault(); route(); }
+  else if (k === 'h') { e.preventDefault(); window.hlHelp?.open?.({}); }
+});
+$('#abNew').onclick = () => pageNewButton()?.click(); $('#ibNew').onclick = () => pageNewButton()?.click();
+$('#abSave').onclick = () => drawerSubmit()?.click();
+$('#abRefresh').onclick = $('#ibRefresh').onclick = () => route();
+$('#ibHelp').onclick = () => window.hlHelp?.open?.({});
+$('#ibNote').onclick = () => { location.hash = '#/home'; };
+$('#ibFull').onclick = () => { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); };
 
 // ---------- band ----------
 const revealBtn = $('#reveal');
