@@ -1,0 +1,98 @@
+[
+ {
+  "id": "img-odometer",
+  "caption": "Odometer at check-in",
+  "kind": "odometer",
+  "file": "img-odometer.png",
+  "svg": "img-odometer.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-front-bumper",
+  "caption": "Front bumper scratch, left corner",
+  "kind": "damage",
+  "file": "img-front-bumper.png",
+  "svg": "img-front-bumper.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-dash-warning",
+  "caption": "Dash warning light (check engine)",
+  "kind": "dash",
+  "file": "img-dash-warning.png",
+  "svg": "img-dash-warning.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-tyre-tread",
+  "caption": "Tyre tread depth, left rear",
+  "kind": "tyre",
+  "file": "img-tyre-tread.png",
+  "svg": "img-tyre-tread.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-brake-pads",
+  "caption": "Front brake pads before replacement",
+  "kind": "before",
+  "file": "img-brake-pads.png",
+  "svg": "img-brake-pads.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-brake-pads-new",
+  "caption": "Front brake pads after replacement",
+  "kind": "after",
+  "file": "img-brake-pads-new.png",
+  "svg": "img-brake-pads-new.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-underbody",
+  "caption": "Underbody oil seep at sump plug",
+  "kind": "damage",
+  "file": "img-underbody.png",
+  "svg": "img-underbody.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-windscreen-chip",
+  "caption": "Windscreen chip, passenger side",
+  "kind": "damage",
+  "file": "img-windscreen-chip.png",
+  "svg": "img-windscreen-chip.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-battery-test",
+  "caption": "Battery load test printout",
+  "kind": "report",
+  "file": "img-battery-test.png",
+  "svg": "img-battery-test.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-alloy-rash",
+  "caption": "Kerb rash, front-left alloy",
+  "kind": "damage",
+  "file": "img-alloy-rash.png",
+  "svg": "img-alloy-rash.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-cargo",
+  "caption": "Cargo area at check-in",
+  "kind": "condition",
+  "file": "img-cargo.png",
+  "svg": "img-cargo.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ },
+ {
+  "id": "img-engine-bay",
+  "caption": "Engine bay inspection",
+  "kind": "condition",
+  "file": "img-engine-bay.png",
+  "svg": "img-engine-bay.svg",
+  "note": "Generated sample photo, not a real vehicle"
+ }
+]

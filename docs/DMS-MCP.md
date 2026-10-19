@@ -226,3 +226,18 @@ MCP never touches the tables directly. Every tool call goes through the REST end
 
 Tests: `node tests/dms-smoke.mjs` covers initialize, the 401 path, tools/list (≥ 30), a read
 call, a write call, a 403 → `isError`, resources, prompts, PATs and the stdio binary.
+
+---
+
+## Phase 2 tool groups and prompts (19 Oct 2026)
+
+New route groups become tools automatically: **service** (`service_list_job-cards`, `service_get_board`, `service_get_job-cards`, `service_create_job-cards`, `service_patch_job-cards`, `service_create_lines`, `service_create_memos`, `service_create_documents`, `service_ask` for one card, `service_ask` across cards, `service_summary`, `service_sync-kb`), **suppliers** (`suppliers_list_suppliers`, `suppliers_get_suppliers`, `suppliers_create_suppliers`, `suppliers_patch_suppliers`, `suppliers_create_memos`, `suppliers_create_documents`, `suppliers_ask`), **customers** additions (`customers_create_memos`, `customers_create_documents`, `customers_ask`), **memos** (`memos_list_memos`, `memos_patch_memos`), **help** (`help_ask`, `help_feedback`, `help_create_tickets`, `help_list_tickets`, `help_list_deflection`), **errors** (`errors_explain`), **onboarding** (`onboarding_list_programme`, `onboarding_list_progress`, `onboarding_complete`, `onboarding_ask`, `onboarding_reset`), **infomedia** (`infomedia_list_pack`, `infomedia_list_menus`, `infomedia_quote`, `infomedia_ask`, `infomedia_list_campaigns`, `infomedia_list_parts`). Exact names come from the OpenAPI document; `GET /dms/api/mcp/info` is authoritative.
+
+Two prompts are added:
+
+| Prompt | Arguments | What it drives |
+|---|---|---|
+| `service-morning-huddle` | `siteId`, `date?` | Open cards by status and technician, overdue promises, cards awaiting parts with the supplier and expected date, waiting customers, campaigns to mention at check-in |
+| `supplier-review` | `supplierId`, `period?` | Spend, open invoices, SLA and credit memos, rating history, a recommendation to keep active or place on hold |
+
+Resources added: `harbourline-dms://job-card/{id}` and `harbourline-dms://supplier/{id}`.

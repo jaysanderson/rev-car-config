@@ -46,6 +46,26 @@ export async function uploadFile({ slug, title, fileName, contentType, base64, l
   });
   return { id: j.uuid || j.id, created: true };
 }
+/**
+ * Upsert a resource by slug with text fields, labels, metadata and optional files
+ * ({fieldId: {filename, contentType, base64}}). Returns {id, created}.
+ */
+export async function upsertResource({ slug, title, summary, labels = [], metadata = {}, texts = {}, files = {} }) {
+  const body = {
+    title, icon: 'text/markdown', ...(summary ? { summary } : {}),
+    usermetadata: { classifications: labels.map(([labelset, label]) => ({ labelset, label })) },
+    origin: { metadata: Object.fromEntries(Object.entries(metadata).map(([k, v]) => [k, String(v ?? '')])) },
+    extra: { metadata: { topic: labels.filter(([ls]) => ls === 'topic').map(([, l]) => l), model: labels.filter(([ls]) => ls === 'model').map(([, l]) => l), ...metadata } },
+    texts: Object.fromEntries(Object.entries(texts).map(([k, v]) => [k, { body: String(v), format: 'MARKDOWN' }])),
+  };
+  const fileFields = Object.entries(files).filter(([, f]) => f && f.base64);
+  if (fileFields.length) body.files = Object.fromEntries(fileFields.map(([k, f]) => [k, { file: { filename: f.filename, content_type: f.contentType, payload: f.base64 } }]));
+  let existing = null;
+  try { existing = await call(`/slug/${encodeURIComponent(slug)}?show=basic`, { timeoutMs: 8000 }); } catch (e) { if (e.status && e.status !== 404) throw e; }
+  if (existing?.id) { await call(`/slug/${encodeURIComponent(slug)}`, { method: 'PATCH', timeoutMs: 40000, body }); return { id: existing.id, created: false }; }
+  const j = await call('/resources', { method: 'POST', timeoutMs: 40000, body: { slug, ...body } });
+  return { id: j.uuid || j.id, created: true };
+}
 export async function resourceStatus(id) {
   const j = await call(`/resource/${id}?show=basic`, { timeoutMs: 8000 });
   return j?.metadata?.status || 'UNKNOWN';

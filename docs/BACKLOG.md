@@ -121,3 +121,15 @@ Deferred from `docs/USED-SPEC.md` (out of scope for the first iteration) plus it
 | BL-U-08 | P2 | Privacy | Session questions are free text kept 30 days against a session id | Privacy notice on the page, retention job, keep out of Domo exports (already by design), forget endpoint surfaced in the UI | BE + US |
 | BL-U-09 | P2 | Pricing | Market position uses a Domo stand-in dataset | RedBook or carsales valuation feed; show the sample size and date | BE |
 | BL-U-10 | P2 | Finance | Finance Enquiry is a lead only | Payment calculator and Toyota Access explainer on the VDP (Iteration 2 in `docs/PLATFORM.md`) | US + BE |
+
+## Phase 2 (service, help desk, onboarding, Infomedia) — deferred
+
+| ID | Pri | Area | What is missing | Suggested fix | Owner |
+|---|---|---|---|---|---|
+| BL-S-01 | P1 | Infomedia | The data pack is simulated (`content/dms/infomedia/`); no live menus, prices or campaigns | Connect DMSi or the Superservice Order API; keep the simulated pack as the offline fixture | BE |
+| BL-S-02 | P1 | Images | Photos are attached and captioned but not read; the agent relies on captions | OCR and image description at ingest (odometer, dash lights, tyre tread) so the agent can cite the image itself | BE |
+| BL-S-03 | P1 | Workshop | No technician mobile view; memos and photos are added from the desktop page | A phone-width card view with camera capture and voice memos | FE |
+| BL-S-04 | P2 | SLA | Overdue is a badge; no timers or escalation | Promised-time countdowns, escalation to the service manager, a Domo alert | BE + Domo |
+| BL-S-05 | P2 | Capacity | The board shows cards, not workshop capacity | Bays and technician hours per site, a capacity view across sites, booking against capacity | BE + FE |
+| BL-S-06 | P2 | Help desk | Tickets are answered by a person in the queue; the manual is updated by hand | Draft the chapter change from answered tickets and propose it for review | BE |
+| BL-S-07 | P2 | Onboarding | Verification covers create and read actions; not every step is verifiable | More verify rules (documents processed, memos written) and a manager sign-off step | BE |

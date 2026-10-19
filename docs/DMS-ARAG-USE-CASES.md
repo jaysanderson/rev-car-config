@@ -86,3 +86,22 @@ Filter expressions used below (shape verified against `/find` and `/ask`, as in 
 ## KB state after ingest (14 Oct 2026)
 
 `node scripts/ingest-dms.mjs`: 22 upserted, 22 PROCESSED. KB counters 69 resources. By label: `topic/manual` 13, `topic/policy` 9, `topic/document` 0. Re-running is idempotent (PATCH by slug).
+
+## Phase 2 use cases (19 Oct 2026)
+
+Labels added: `topic/jobcard` (one resource per job card, text fields card + memos + findings, images and documents as files), `topic/supplier`, `topic/customer` (customers with memos, documents or more than one deal), `topic/infomedia` (menus per model, the parts file, campaigns), `topic/help` (the FAQ). Loaded by `scripts/ingest-dms-phase2.mjs`; job card and supplier resources are re-synced by the server when they change.
+
+| # | Capability | DMS endpoint | ARAG call and scope | Schema | Fallback |
+|---|---|---|---|---|---|
+| P2-1 | Ask one job card | `POST /job-cards/:id/ask` | `/ask`, filter `{resource: <card rid>}` OR `topic/policy`; extra_context = the card rendered as text with pinned memos first | `{answer, citations, memosUsed}` | Scripted answer from the card's fields (findings, outstanding lines, waiting flag) |
+| P2-2 | Ask across job cards | `POST /job-cards/ask` | `/find` then `/ask` over `topic/jobcard` (site-scoped by metadata), extra_context = structured summary of the filtered cards | `{answer, evidence:[{id, why}]}` | Deterministic summary (counts, overdue list, awaiting-parts list) |
+| P2-3 | Handover note | `POST /job-cards/:id/summary` | `/ask` on the card resource, `answer_json_schema` {done[], found[], notDone[], watch[], text} | validated against the card's lines and findings | Template from the card |
+| P2-4 | Ask one / across suppliers; one / across customers | `/suppliers/:id/ask`, `/suppliers/ask`, `/customers/:id/ask`, `/customers/ask` | as P2-1 and P2-2 with `topic/supplier`, `topic/customer` and the supplier terms policy | same | same |
+| P2-5 | Help with the software | `POST /help/ask` mode software | `/ask` over `topic/manual` + `topic/policy` + `topic/help`, extra_context = the page the user is on and the manual chapter for it | `{answer, citations, suggestedPages}` | FAQ keyword match |
+| P2-6 | Ask the business | `POST /help/ask` mode business | delegates to `/agent/query` (plan → tools → answer) with the new tools | existing | existing |
+| P2-7 | Friendly error | `POST /errors/explain` | `/ask` over `topic/manual` with extra_context = {status, method, endpoint, message, role}; schema {title, message, cause, nextStep, manualRoute}; cached by signature; 1 s budget | validated: no stack traces, manualRoute must exist | Catalogue of 30 common errors |
+| P2-8 | Onboarding programme | `GET /onboarding/programme` | `/ask` over `topic/manual` with schema {steps:[{id,title,why,route,task,verify,manualRef,estimatedMinutes}]} per role; cached a day; routes and manualRefs validated against the page list | validated | Catalogue programme per role |
+| P2-9 | Ask about a step | `POST /onboarding/steps/:id/ask` | `/ask` filtered to the step's manual chapter | `{answer, citations}` | FAQ |
+| P2-10 | Infomedia quote | `POST /infomedia/quote` | figures computed from the pack by the DMS; `/ask` on the menu resource with schema {includes[], checks[], replaces[], text}; figures in the text must equal the computed ones | validated | Template text |
+| P2-11 | Ask the pack | `POST /infomedia/ask` | `/ask` over `topic/infomedia` with model label when a model is named | `{answer, citations}` | Menu lookup |
+| P2-12 | System-wide search | `GET /search` | `/find` over all DMS topics merged with table text search; groups entities, knowledge, actions | n/a | Table search only |

@@ -22,21 +22,28 @@ export const DEMO_USERS = [
   { email: 'sales1@harbourline.demo', role: 'salesperson', siteId: 'par', title: 'Salesperson, Parramatta', name: 'Salesperson' },
   { email: 'marketing@harbourline.demo', role: 'dxm', siteId: null, title: 'Digital experience manager', name: 'Digital Experience Manager' },
   { email: 'finance@harbourline.demo', role: 'finance', siteId: null, title: 'Business manager, F&I', name: 'Business Manager' },
+  { email: 'service@harbourline.demo', role: 'service_manager', siteId: null, title: 'Service manager', name: 'Service Manager' },
+  { email: 'tech1@harbourline.demo', role: 'technician', siteId: 'par', title: 'Technician, Parramatta', name: 'Technician' },
 ];
 
 const ALL = ['test_drives.write', 'vehicles.hold', 'vehicles.transfer', 'leads.read', 'leads.write', 'deals.read', 'deals.write', 'test_drives.read', 'customers.read', 'customers.write', 'vehicles.read',
   'promotions.read', 'promotions.compose', 'promotions.publish', 'campaigns.read', 'trade_ins.read', 'finance_apps.read', 'documents.read', 'documents.write',
-  'staff.read', 'sites.read', 'kpi.read', 'domo.read', 'domo.recompute', 'dxm.read', 'assistant', 'search', 'arag.read'];
-const REF = ['sites.read', 'staff.read', 'vehicles.read', 'kpi.read', 'domo.read', 'search', 'arag.read', 'assistant'];
+  'staff.read', 'sites.read', 'kpi.read', 'domo.read', 'domo.recompute', 'dxm.read', 'assistant', 'search', 'arag.read',
+  'service.read', 'service.write', 'suppliers.read', 'suppliers.write', 'help', 'help.manage'];
+const REF = ['sites.read', 'staff.read', 'vehicles.read', 'kpi.read', 'domo.read', 'search', 'arag.read', 'assistant', 'help'];
 export const CAPS = {
   gm: new Set(ALL),
   sales_manager: new Set(ALL.filter((c) => c !== 'domo.recompute')),
   salesperson: new Set(['test_drives.write', 'vehicles.hold', 'leads.read', 'leads.write', 'deals.read', 'deals.write', 'test_drives.read', 'customers.read', 'customers.write', 'promotions.read',
     'trade_ins.read', 'finance_apps.read', 'documents.read', 'documents.write', ...REF.filter((c) => c !== 'domo.read')]),
   dxm: new Set(['dxm.read', 'promotions.read', 'promotions.compose', 'promotions.publish', 'campaigns.read', 'documents.read', 'documents.write', 'leads.read', 'customers.read', 'test_drives.read', ...REF]),
-  finance: new Set(['deals.read', 'deals.write', 'finance_apps.read', 'trade_ins.read', 'documents.read', 'documents.write', 'customers.read', ...REF]),
+  finance: new Set(['deals.read', 'deals.write', 'finance_apps.read', 'trade_ins.read', 'documents.read', 'documents.write', 'customers.read', 'suppliers.read', ...REF]),
+  service_manager: new Set(['service.read', 'service.write', 'suppliers.read', 'suppliers.write', 'customers.read', 'customers.write', 'documents.read', 'documents.write', 'help.manage', ...REF]),
+  technician: new Set(['service.read', 'service.write', 'customers.read', 'documents.read', 'documents.write', ...REF.filter((c) => !['domo.read', 'kpi.read'].includes(c))]),
 };
-const SITE_SCOPED = new Set(['sales_manager', 'salesperson']);
+// dxm and the general manager see the help desk queue too.
+CAPS.dxm.add('help.manage');
+const SITE_SCOPED = new Set(['sales_manager', 'salesperson', 'technician']);
 
 /** Resolve the demo user to a staff record (by email, else by role + site). */
 function staffFor(u) {
@@ -138,12 +145,17 @@ export function scopeFor(user, table) {
     case 'customers': return (r) => customerOk(user, r.id);
     case 'vehicles': return () => true; // stock is visible group-wide (transfers)
     case 'targets': return (r) => r.siteId === site;
+    case 'job_cards': return (r) => r.siteId === site; // technicians see every card at their site; writes are limited to their own in the route
+    case 'memos': return (r) => (r.entity === 'job_card' ? (db.get('job_cards', r.entityId)?.siteId === site) : true);
+    case 'suppliers': return () => true;
+    case 'support_tickets': return (r) => r.userEmail === user.email;
     default: return () => true;
   }
 }
 function customerOk(user, id) {
   return db.by('leads', 'customerId', id).some(scopeFor(user, 'leads')) || db.by('deals', 'customerId', id).some(scopeFor(user, 'deals'))
-    || (user.role === 'sales_manager' && db.get('customers', id)?.siteId === user.siteId);
+    || (user.role === 'sales_manager' && db.get('customers', id)?.siteId === user.siteId)
+    || (user.role === 'technician' && db.by('job_cards', 'customerId', id).some((c) => c.siteId === user.siteId));
 }
 /** Site filter forced for site-scoped roles (null = any). */
 export const forcedSite = (user) => (SITE_SCOPED.has(user?.role) ? user.siteId : null);

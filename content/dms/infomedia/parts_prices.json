@@ -1,0 +1,2053 @@
+{
+ "pack": "Simulated Microcat EPC price file",
+ "refreshedAt": "2026-10-01",
+ "currency": "AUD",
+ "parts": [
+  {
+   "partNo": "04152-03179",
+   "desc": "Oil filter cartridge, Yaris Cross",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-03180",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-03181",
+   "desc": "Cabin air filter, Yaris Cross",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-03182",
+   "desc": "Engine air filter, Yaris Cross",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-03183",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-03184",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-03185",
+   "desc": "Wiper blade set, Yaris Cross",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-03187",
+   "desc": "Super long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-03188",
+   "desc": "Front brake pad set, Yaris Cross",
+   "supersedes": null,
+   "rrp": 189,
+   "dealerPrice": 128.5,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "G9252-03189",
+   "desc": "Hybrid battery cooling filter",
+   "supersedes": null,
+   "rrp": 36,
+   "dealerPrice": 24.5,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "hybrid"
+  },
+  {
+   "partNo": "89904-03190",
+   "desc": "Smart key, Yaris Cross (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-03191",
+   "desc": "Weather shields, Yaris Cross, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "yaris-cross"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-05316",
+   "desc": "Oil filter cartridge, Corolla",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "corolla"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-05317",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "corolla"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-05318",
+   "desc": "Cabin air filter, Corolla",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "corolla"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-05319",
+   "desc": "Engine air filter, Corolla",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "corolla"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-05320",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "corolla"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-05321",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "corolla"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-05322",
+   "desc": "Wiper blade set, Corolla",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "corolla"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-05324",
+   "desc": "Super long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "corolla"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-05325",
+   "desc": "Front brake pad set, Corolla",
+   "supersedes": null,
+   "rrp": 189,
+   "dealerPrice": 128.5,
+   "fits": [
+    "corolla"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "G9252-05326",
+   "desc": "Hybrid battery cooling filter",
+   "supersedes": null,
+   "rrp": 36,
+   "dealerPrice": 24.5,
+   "fits": [
+    "corolla"
+   ],
+   "category": "hybrid"
+  },
+  {
+   "partNo": "89904-05327",
+   "desc": "Smart key, Corolla (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "corolla"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-05328",
+   "desc": "Weather shields, Corolla, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "corolla"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-01963",
+   "desc": "Oil filter cartridge, Corolla Cross",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-01964",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-01965",
+   "desc": "Cabin air filter, Corolla Cross",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-01966",
+   "desc": "Engine air filter, Corolla Cross",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-01967",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-01968",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-01969",
+   "desc": "Wiper blade set, Corolla Cross",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-01971",
+   "desc": "Super long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-01972",
+   "desc": "Front brake pad set, Corolla Cross",
+   "supersedes": null,
+   "rrp": 189,
+   "dealerPrice": 128.5,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "G9252-01973",
+   "desc": "Hybrid battery cooling filter",
+   "supersedes": null,
+   "rrp": 36,
+   "dealerPrice": 24.5,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "hybrid"
+  },
+  {
+   "partNo": "89904-01974",
+   "desc": "Smart key, Corolla Cross (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-01975",
+   "desc": "Weather shields, Corolla Cross, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "corolla-cross"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-05248",
+   "desc": "Oil filter cartridge, C-HR",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-05249",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-05250",
+   "desc": "Cabin air filter, C-HR",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-05251",
+   "desc": "Engine air filter, C-HR",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-05252",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-05253",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-05254",
+   "desc": "Wiper blade set, C-HR",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-05256",
+   "desc": "Super long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-05257",
+   "desc": "Front brake pad set, C-HR",
+   "supersedes": null,
+   "rrp": 189,
+   "dealerPrice": 128.5,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "G9252-05258",
+   "desc": "Hybrid battery cooling filter",
+   "supersedes": null,
+   "rrp": 36,
+   "dealerPrice": 24.5,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "hybrid"
+  },
+  {
+   "partNo": "89904-05259",
+   "desc": "Smart key, C-HR (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-05260",
+   "desc": "Weather shields, C-HR, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "c-hr"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-01634",
+   "desc": "Oil filter cartridge, Camry",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "camry"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-01635",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "camry"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-01636",
+   "desc": "Cabin air filter, Camry",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "camry"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-01637",
+   "desc": "Engine air filter, Camry",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "camry"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-01638",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "camry"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-01639",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "camry"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-01640",
+   "desc": "Wiper blade set, Camry",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "camry"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-01642",
+   "desc": "Super long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "camry"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-01643",
+   "desc": "Front brake pad set, Camry",
+   "supersedes": null,
+   "rrp": 189,
+   "dealerPrice": 128.5,
+   "fits": [
+    "camry"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "G9252-01644",
+   "desc": "Hybrid battery cooling filter",
+   "supersedes": null,
+   "rrp": 36,
+   "dealerPrice": 24.5,
+   "fits": [
+    "camry"
+   ],
+   "category": "hybrid"
+  },
+  {
+   "partNo": "89904-01645",
+   "desc": "Smart key, Camry (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "camry"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-01646",
+   "desc": "Weather shields, Camry, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "camry"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-06599",
+   "desc": "Oil filter cartridge, RAV4",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "rav4"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-06600",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "rav4"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-06601",
+   "desc": "Cabin air filter, RAV4",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "rav4"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-06602",
+   "desc": "Engine air filter, RAV4",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "rav4"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-06603",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "rav4"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-06604",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "rav4"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-06605",
+   "desc": "Wiper blade set, RAV4",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "rav4"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-06607",
+   "desc": "Super long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "rav4"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-06608",
+   "desc": "Front brake pad set, RAV4",
+   "supersedes": null,
+   "rrp": 189,
+   "dealerPrice": 128.5,
+   "fits": [
+    "rav4"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "G9252-06609",
+   "desc": "Hybrid battery cooling filter",
+   "supersedes": null,
+   "rrp": 36,
+   "dealerPrice": 24.5,
+   "fits": [
+    "rav4"
+   ],
+   "category": "hybrid"
+  },
+  {
+   "partNo": "89904-06610",
+   "desc": "Smart key, RAV4 (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "rav4"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-06611",
+   "desc": "Weather shields, RAV4, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "rav4"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-05594",
+   "desc": "Oil filter cartridge, Kluger",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "kluger"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-05595",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "kluger"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-05596",
+   "desc": "Cabin air filter, Kluger",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "kluger"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-05597",
+   "desc": "Engine air filter, Kluger",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "kluger"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-05598",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "kluger"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-05599",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "kluger"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-05600",
+   "desc": "Wiper blade set, Kluger",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "kluger"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-05602",
+   "desc": "Super long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "kluger"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-05603",
+   "desc": "Front brake pad set, Kluger",
+   "supersedes": null,
+   "rrp": 189,
+   "dealerPrice": 128.5,
+   "fits": [
+    "kluger"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "G9252-05604",
+   "desc": "Hybrid battery cooling filter",
+   "supersedes": null,
+   "rrp": 36,
+   "dealerPrice": 24.5,
+   "fits": [
+    "kluger"
+   ],
+   "category": "hybrid"
+  },
+  {
+   "partNo": "89904-05605",
+   "desc": "Smart key, Kluger (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "kluger"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-05606",
+   "desc": "Weather shields, Kluger, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "kluger"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-01568",
+   "desc": "Oil filter cartridge, LandCruiser Prado",
+   "supersedes": null,
+   "rrp": 38.5,
+   "dealerPrice": 26,
+   "fits": [
+    "prado"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-01569",
+   "desc": "Engine oil 5W-30 diesel, 7 L",
+   "supersedes": null,
+   "rrp": 112,
+   "dealerPrice": 76,
+   "fits": [
+    "prado"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-01570",
+   "desc": "Cabin air filter, LandCruiser Prado",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "prado"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-01571",
+   "desc": "Engine air filter, LandCruiser Prado",
+   "supersedes": null,
+   "rrp": 64,
+   "dealerPrice": 43.5,
+   "fits": [
+    "prado"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08823-01573",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "prado"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-01574",
+   "desc": "Wiper blade set, LandCruiser Prado",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "prado"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "23390-01575",
+   "desc": "Fuel filter, LandCruiser Prado diesel",
+   "supersedes": null,
+   "rrp": 89,
+   "dealerPrice": 60.5,
+   "fits": [
+    "prado"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08889-01576",
+   "desc": "Long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "prado"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-01577",
+   "desc": "Front brake pad set, LandCruiser Prado",
+   "supersedes": null,
+   "rrp": 156,
+   "dealerPrice": 106,
+   "fits": [
+    "prado"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "89904-01579",
+   "desc": "Smart key, LandCruiser Prado (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "prado"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-01580",
+   "desc": "Weather shields, LandCruiser Prado, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "prado"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-04328",
+   "desc": "Oil filter cartridge, LandCruiser 300",
+   "supersedes": null,
+   "rrp": 38.5,
+   "dealerPrice": 26,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-04329",
+   "desc": "Engine oil 5W-30 diesel, 7 L",
+   "supersedes": null,
+   "rrp": 112,
+   "dealerPrice": 76,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-04330",
+   "desc": "Cabin air filter, LandCruiser 300",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-04331",
+   "desc": "Engine air filter, LandCruiser 300",
+   "supersedes": null,
+   "rrp": 64,
+   "dealerPrice": 43.5,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08823-04333",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-04334",
+   "desc": "Wiper blade set, LandCruiser 300",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "23390-04335",
+   "desc": "Fuel filter, LandCruiser 300 diesel",
+   "supersedes": null,
+   "rrp": 89,
+   "dealerPrice": 60.5,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08889-04336",
+   "desc": "Long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-04337",
+   "desc": "Front brake pad set, LandCruiser 300",
+   "supersedes": null,
+   "rrp": 156,
+   "dealerPrice": 106,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "89904-04339",
+   "desc": "Smart key, LandCruiser 300 (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-04340",
+   "desc": "Weather shields, LandCruiser 300, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "landcruiser-300"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-01613",
+   "desc": "Oil filter cartridge, Fortuner",
+   "supersedes": null,
+   "rrp": 38.5,
+   "dealerPrice": 26,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-01614",
+   "desc": "Engine oil 5W-30 diesel, 7 L",
+   "supersedes": null,
+   "rrp": 112,
+   "dealerPrice": 76,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-01615",
+   "desc": "Cabin air filter, Fortuner",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-01616",
+   "desc": "Engine air filter, Fortuner",
+   "supersedes": null,
+   "rrp": 64,
+   "dealerPrice": 43.5,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08823-01618",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-01619",
+   "desc": "Wiper blade set, Fortuner",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "23390-01620",
+   "desc": "Fuel filter, Fortuner diesel",
+   "supersedes": null,
+   "rrp": 89,
+   "dealerPrice": 60.5,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08889-01621",
+   "desc": "Long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-01622",
+   "desc": "Front brake pad set, Fortuner",
+   "supersedes": null,
+   "rrp": 156,
+   "dealerPrice": 106,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "89904-01624",
+   "desc": "Smart key, Fortuner (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-01625",
+   "desc": "Weather shields, Fortuner, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "fortuner"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-07872",
+   "desc": "Oil filter cartridge, HiLux",
+   "supersedes": null,
+   "rrp": 38.5,
+   "dealerPrice": 26,
+   "fits": [
+    "hilux"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-07873",
+   "desc": "Engine oil 5W-30 diesel, 7 L",
+   "supersedes": null,
+   "rrp": 112,
+   "dealerPrice": 76,
+   "fits": [
+    "hilux"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-07874",
+   "desc": "Cabin air filter, HiLux",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "hilux"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-07875",
+   "desc": "Engine air filter, HiLux",
+   "supersedes": null,
+   "rrp": 64,
+   "dealerPrice": 43.5,
+   "fits": [
+    "hilux"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08823-07877",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "hilux"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-07878",
+   "desc": "Wiper blade set, HiLux",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "hilux"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "23390-07879",
+   "desc": "Fuel filter, HiLux diesel",
+   "supersedes": null,
+   "rrp": 89,
+   "dealerPrice": 60.5,
+   "fits": [
+    "hilux"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08889-07880",
+   "desc": "Long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "hilux"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-07881",
+   "desc": "Front brake pad set, HiLux",
+   "supersedes": null,
+   "rrp": 156,
+   "dealerPrice": 106,
+   "fits": [
+    "hilux"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "89904-07883",
+   "desc": "Smart key, HiLux (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "hilux"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-07884",
+   "desc": "Weather shields, HiLux, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "hilux"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "87139-07652",
+   "desc": "Cabin air filter, bZ4X",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "bz4x"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08823-07655",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "bz4x"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-07656",
+   "desc": "Wiper blade set, bZ4X",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "bz4x"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-07658",
+   "desc": "Super long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "bz4x"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-07659",
+   "desc": "Front brake pad set, bZ4X",
+   "supersedes": null,
+   "rrp": 156,
+   "dealerPrice": 106,
+   "fits": [
+    "bz4x"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "89904-07661",
+   "desc": "Smart key, bZ4X (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "bz4x"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-07662",
+   "desc": "Weather shields, bZ4X, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "bz4x"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-02694",
+   "desc": "Oil filter cartridge, GR Yaris",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-02695",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-02696",
+   "desc": "Cabin air filter, GR Yaris",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-02697",
+   "desc": "Engine air filter, GR Yaris",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-02698",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-02699",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-02700",
+   "desc": "Wiper blade set, GR Yaris",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-02702",
+   "desc": "Long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-02703",
+   "desc": "Front brake pad set, GR Yaris",
+   "supersedes": null,
+   "rrp": 156,
+   "dealerPrice": 106,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "89904-02705",
+   "desc": "Smart key, GR Yaris (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-02706",
+   "desc": "Weather shields, GR Yaris, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "gr-yaris"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-05422",
+   "desc": "Oil filter cartridge, GR Corolla",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-05423",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-05424",
+   "desc": "Cabin air filter, GR Corolla",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-05425",
+   "desc": "Engine air filter, GR Corolla",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-05426",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-05427",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-05428",
+   "desc": "Wiper blade set, GR Corolla",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-05430",
+   "desc": "Long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-05431",
+   "desc": "Front brake pad set, GR Corolla",
+   "supersedes": null,
+   "rrp": 156,
+   "dealerPrice": 106,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "89904-05433",
+   "desc": "Smart key, GR Corolla (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-05434",
+   "desc": "Weather shields, GR Corolla, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "gr-corolla"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "04152-07063",
+   "desc": "Oil filter cartridge, GR86",
+   "supersedes": null,
+   "rrp": 24.9,
+   "dealerPrice": 17,
+   "fits": [
+    "gr86"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "08880-07064",
+   "desc": "Engine oil 0W-20 full synthetic, 4.5 L",
+   "supersedes": null,
+   "rrp": 78,
+   "dealerPrice": 53,
+   "fits": [
+    "gr86"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "87139-07065",
+   "desc": "Cabin air filter, GR86",
+   "supersedes": null,
+   "rrp": 42,
+   "dealerPrice": 28.5,
+   "fits": [
+    "gr86"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "17801-07066",
+   "desc": "Engine air filter, GR86",
+   "supersedes": null,
+   "rrp": 46,
+   "dealerPrice": 31.5,
+   "fits": [
+    "gr86"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "90919-07067",
+   "desc": "Iridium spark plugs, set of 4",
+   "supersedes": null,
+   "rrp": 168,
+   "dealerPrice": 114,
+   "fits": [
+    "gr86"
+   ],
+   "category": "ignition"
+  },
+  {
+   "partNo": "08823-07068",
+   "desc": "Brake fluid DOT 4, 1 L",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "gr86"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "85212-07069",
+   "desc": "Wiper blade set, GR86",
+   "supersedes": null,
+   "rrp": 58,
+   "dealerPrice": 39.5,
+   "fits": [
+    "gr86"
+   ],
+   "category": "wipers"
+  },
+  {
+   "partNo": "08889-07071",
+   "desc": "Long life coolant, pre-mixed 5 L",
+   "supersedes": null,
+   "rrp": 54,
+   "dealerPrice": 36.5,
+   "fits": [
+    "gr86"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "04465-07072",
+   "desc": "Front brake pad set, GR86",
+   "supersedes": null,
+   "rrp": 156,
+   "dealerPrice": 106,
+   "fits": [
+    "gr86"
+   ],
+   "category": "brakes"
+  },
+  {
+   "partNo": "89904-07074",
+   "desc": "Smart key, GR86 (cut and programmed)",
+   "supersedes": null,
+   "rrp": 420,
+   "dealerPrice": 285.5,
+   "fits": [
+    "gr86"
+   ],
+   "category": "keys"
+  },
+  {
+   "partNo": "PZQ70-07075",
+   "desc": "Weather shields, GR86, set of 4",
+   "supersedes": null,
+   "rrp": 237,
+   "dealerPrice": 161,
+   "fits": [
+    "gr86"
+   ],
+   "category": "accessories"
+  },
+  {
+   "partNo": "GEN-OF-04454",
+   "desc": "Oil filter, Mazda CX-5",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "mazda-cx-5"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-EO-04455",
+   "desc": "Engine oil 5W-30, 5 L",
+   "supersedes": null,
+   "rrp": 82,
+   "dealerPrice": 56,
+   "fits": [
+    "mazda-cx-5"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "GEN-CF-04456",
+   "desc": "Cabin filter, Mazda CX-5",
+   "supersedes": null,
+   "rrp": 39,
+   "dealerPrice": 26.5,
+   "fits": [
+    "mazda-cx-5"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-OF-06118",
+   "desc": "Oil filter, Ford Ranger",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "ford-ranger"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-EO-06119",
+   "desc": "Engine oil 5W-30, 5 L",
+   "supersedes": null,
+   "rrp": 82,
+   "dealerPrice": 56,
+   "fits": [
+    "ford-ranger"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "GEN-CF-06120",
+   "desc": "Cabin filter, Ford Ranger",
+   "supersedes": null,
+   "rrp": 39,
+   "dealerPrice": 26.5,
+   "fits": [
+    "ford-ranger"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-OF-07708",
+   "desc": "Oil filter, Hyundai i30",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "hyundai-i30"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-EO-07709",
+   "desc": "Engine oil 5W-30, 5 L",
+   "supersedes": null,
+   "rrp": 82,
+   "dealerPrice": 56,
+   "fits": [
+    "hyundai-i30"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "GEN-CF-07710",
+   "desc": "Cabin filter, Hyundai i30",
+   "supersedes": null,
+   "rrp": 39,
+   "dealerPrice": 26.5,
+   "fits": [
+    "hyundai-i30"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-OF-03678",
+   "desc": "Oil filter, Kia Sportage",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "kia-sportage"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-EO-03679",
+   "desc": "Engine oil 5W-30, 5 L",
+   "supersedes": null,
+   "rrp": 82,
+   "dealerPrice": 56,
+   "fits": [
+    "kia-sportage"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "GEN-CF-03680",
+   "desc": "Cabin filter, Kia Sportage",
+   "supersedes": null,
+   "rrp": 39,
+   "dealerPrice": 26.5,
+   "fits": [
+    "kia-sportage"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-OF-02138",
+   "desc": "Oil filter, Subaru Forester",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "subaru-forester"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-EO-02139",
+   "desc": "Engine oil 5W-30, 5 L",
+   "supersedes": null,
+   "rrp": 82,
+   "dealerPrice": 56,
+   "fits": [
+    "subaru-forester"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "GEN-CF-02140",
+   "desc": "Cabin filter, Subaru Forester",
+   "supersedes": null,
+   "rrp": 39,
+   "dealerPrice": 26.5,
+   "fits": [
+    "subaru-forester"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-OF-04077",
+   "desc": "Oil filter, Mitsubishi Outlander",
+   "supersedes": null,
+   "rrp": 29,
+   "dealerPrice": 19.5,
+   "fits": [
+    "mitsubishi-outlander"
+   ],
+   "category": "filters"
+  },
+  {
+   "partNo": "GEN-EO-04078",
+   "desc": "Engine oil 5W-30, 5 L",
+   "supersedes": null,
+   "rrp": 82,
+   "dealerPrice": 56,
+   "fits": [
+    "mitsubishi-outlander"
+   ],
+   "category": "fluids"
+  },
+  {
+   "partNo": "GEN-CF-04079",
+   "desc": "Cabin filter, Mitsubishi Outlander",
+   "supersedes": null,
+   "rrp": 39,
+   "dealerPrice": 26.5,
+   "fits": [
+    "mitsubishi-outlander"
+   ],
+   "category": "filters"
+  }
+ ]
+}

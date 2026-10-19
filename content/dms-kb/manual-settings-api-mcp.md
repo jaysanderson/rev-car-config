@@ -78,3 +78,15 @@ The **Roles** card lists the five roles and what each can do. The **Demo logins*
 ## Audit
 
 Every change made through the API (and so through the UI) records the user id and time. Deal events, document verifications, approvals and promotion publishing are visible in the relevant timelines.
+
+## Phase 2 additions: datasets, tools, prompts, help desk and onboarding numbers
+
+**Domo datasets** added to the catalogue (`GET /dms/api/domo/datasets`): `job_cards`, `job_card_lines`, `memos`, `suppliers`, `support_deflection`, `onboarding_progress` and `service_daily` (date × site: cards opened, completed, hours, labour and parts revenue). Each has a CSV export at `/dms/api/domo/export/<name>.csv`.
+
+**MCP tools** are generated from the new routes automatically, in the same naming scheme: `service_list_job-cards`, `service_get_job-cards`, `service_create_job-cards`, `service_patch_job-cards`, `service_create_lines`, `service_create_memos`, `service_ask` (across cards) and `service_get_board`; `suppliers_list_suppliers`, `suppliers_get_suppliers`, `suppliers_create_memos`, `suppliers_ask`; `customers_ask`; `help_ask`, `help_feedback`, `help_create_tickets`, `help_list_tickets`, `help_list_deflection`; `errors_explain`; `onboarding_list_programme`, `onboarding_list_progress`, `onboarding_complete`, `onboarding_ask`; `infomedia_list_pack`, `infomedia_list_menus`, `infomedia_quote`, `infomedia_ask`, `infomedia_list_campaigns`, `infomedia_list_parts`. Two prompts are added: `service-morning-huddle` (open cards, overdue promises, parts waiting, by technician) and `supplier-review` (SLA and credit memos, spend and open invoices for one supplier). `GET /dms/api/mcp/info` lists the live catalogue.
+
+**Help desk** on this page shows: answers given by the Help bubble in the last 30 days, the share marked helpful, tickets raised, the deflection rate, the ten questions asked most and the pages they came from. The ticket queue lets a manager answer or close tickets. The same numbers are the `support_deflection` dataset.
+
+**Onboarding** on this page shows completion by role: how many users started, how many steps are verified, the average time to complete, and which steps are most often left undone.
+
+**Infomedia pack** on this page shows the pack summary (menus by model, parts in the price file, labour rates per site, open campaigns, last refresh) and a stand-alone quote tool. The pack is simulated demo data.

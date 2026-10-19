@@ -28,6 +28,9 @@ export default async function settings(root, ctx) {
       <li><span><b>AI and data.</b> Progress Agentic RAG answers, drafts and extracts server-side; Domo pulls CSV exports and returns dealer signals.</span></li>
     </ol></div></section>
     <section class="card"><div class="chead"><h3>Roles</h3></div><div class="cbody"><dl class="kv">${ROLES.map(([r, d]) => `<dt>${esc(ROLE_LABEL[r])}</dt><dd style="font-size:.84rem">${esc(d)}${state.user?.role === r ? ' <span class="chip good">You</span>' : ''}</dd>`).join('')}</dl></div></section>
+    <section class="card" id="helpdesk"><div class="chead"><h3>Help desk · call deflection</h3>${tagArag()}<div class="r">${ann('GET /dms/api/help/deflection?days=30')}</div></div><div class="cbody" id="hd">${loading(4)}</div></section>
+    <section class="card" id="obstats"><div class="chead"><h3>Onboarding</h3>${tagArag()}<div class="r">${ann('GET /dms/api/onboarding/stats · /progress')}</div></div><div class="cbody" id="ob">${loading(3)}</div></section>
+    <section class="card" id="infomedia"><div class="chead"><h3>Infomedia data pack</h3>${tagArag()}<div class="r">${ann('GET /dms/api/infomedia/pack')}</div></div><div class="cbody" id="im">${loading(3)}</div></section>
     <section class="card"><div class="chead"><h3>Demo logins</h3><span class="sub">prototype only · password demo1234</span><div class="r">${ann('GET /dms/api/auth/users')}</div></div><div class="cbody" id="demo">${loading(4)}</div></section>
   </div>`;
   root.querySelector('#tok').onclick = () => state.token ? copy(state.token) : toast('No token in this session');
@@ -39,6 +42,7 @@ export default async function settings(root, ctx) {
   const [h, o, s, u, mi] = await Promise.all([api('/health'), api('/openapi.json'), api('/arag/status'), api('/auth/users'), api('/mcp/info')]);
   renderMcp(root.querySelector('#mcp'), mi, abs);
   renderPats(root.querySelector('#pat'));
+  renderPhase2(root);
   root.querySelector('#hl').innerHTML = h.ok ? `<span class="chip good">ok</span> <span class="subtle" style="font-size:.78rem">${h.data?.version ? 'v' + esc(h.data.version) + ' · ' : ''}${h.data?.loadedAt ? 'data loaded ' + dateTime(h.data.loadedAt) : ''}</span>` : `<span class="chip bad">${h.status || 'down'}</span>`;
   root.querySelector('#rc').textContent = o.ok ? `${Object.values(o.data.paths || {}).reduce((n, p) => n + Object.keys(p).length, 0)} operations · OpenAPI ${o.data.openapi || ''}` : '—';
   const ab = root.querySelector('#arag');
@@ -94,4 +98,41 @@ async function renderPats(box) {
     box.querySelector('#patcopy').onclick = () => copy(raw);
   };
   box.querySelectorAll('[data-revoke]').forEach(b => b.onclick = async () => { const y = await api('/access-tokens/' + encodeURIComponent(b.dataset.revoke), { method: 'DELETE' }); toast(y.ok ? 'Token revoked' : `Couldn’t revoke: ${y.error}`); if (y.ok) renderPats(box); });
+}
+
+
+// ── phase 2 cards: help-desk deflection, onboarding completion, Infomedia pack ──
+async function renderPhase2(root) {
+  const hd = root.querySelector('#hd'), ob = root.querySelector('#ob'), im = root.querySelector('#im');
+  const notYet = (ep, what) => empty({ inline: true, ic: 'plug', title: `${what} not in this build yet`, body: `When <code>${ep}</code> is available this card fills in.` });
+  const [d, o, p, me] = await Promise.all([api('/help/deflection', { query: { days: 30 }, quiet: true }), api('/onboarding/stats', { quiet: true }), api('/infomedia/pack', { quiet: true }), api('/onboarding/progress', { quiet: true })]);
+  if (!d.ok) hd.innerHTML = d.status === 404 ? notYet('GET /dms/api/help/deflection', 'Deflection statistics') : failState(d, { what: 'deflection statistics', inline: true });
+  else {
+    const x = d.data || {}; const rate = x.deflectionRate != null ? Math.round(x.deflectionRate * 100) + '%' : '—';
+    hd.innerHTML = `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px">
+      ${[['Answered', x.answers], ['Helpful', x.helpful], ['Unhelpful', x.unhelpful], ['Tickets raised', x.tickets], ['Resolved without a call', rate]].map(([l, v]) => `<div class="panel" style="padding:10px 12px"><div class="label">${esc(l)}</div><div style="font-size:1.3rem;font-weight:700" class="num">${typeof v === 'number' ? num(v) : esc(v ?? '—')}</div></div>`).join('')}</div>
+      ${(x.topQuestions || []).length ? `<div class="label" style="margin:12px 0 6px">Top questions</div><ol style="margin:0;padding-left:18px;font-size:.84rem">${x.topQuestions.slice(0, 6).map((q) => `<li>${esc(q.question || q.q || q)}${q.n ? ` <span class="muted">· ${num(q.n)}</span>` : ''}</li>`).join('')}</ol>` : ''}
+      ${(x.byPage || []).length ? `<div class="label" style="margin:12px 0 6px">By page</div><div class="row">${x.byPage.slice(0, 8).map((b) => `<span class="chip dms">${esc(b.page)} · ${num(b.answers ?? b.n ?? 0)}</span>`).join('')}</div>` : ''}
+      <p class="subtle" style="font-size:.74rem;margin-top:10px">Every answer from the Help bubble is logged; thumbs down offers a ticket. The same figures are the Domo dataset <span class="mono">support_deflection</span>.</p>`;
+  }
+  if (o.ok) {
+    const x = o.data || {};
+    ob.innerHTML = `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px">${[['Started', x.started], ['Completed', x.completed], ['Completion', x.completionRate != null ? Math.round(x.completionRate * 100) + '%' : '—']].map(([l, v]) => `<div class="panel" style="padding:10px 12px"><div class="label">${esc(l)}</div><div style="font-size:1.3rem;font-weight:700" class="num">${typeof v === 'number' ? num(v) : esc(v ?? '—')}</div></div>`).join('')}</div>
+      ${(x.byRole || []).length ? `<div class="label" style="margin:12px 0 6px">By role</div><div class="row">${x.byRole.map((r) => `<span class="chip dms">${esc(ROLE_LABEL[r.role] || r.role)} · ${num(r.completed ?? 0)}/${num(r.started ?? 0)}</span>`).join('')}</div>` : ''}
+      <div class="row" style="margin-top:10px"><a class="btn secondary sm" href="#/onboarding">Open my onboarding</a></div>`;
+  } else if (me.ok) {
+    const x = me.data || {};
+    ob.innerHTML = `<p style="font-size:.86rem">Your programme: <b>${num(x.done || 0)}</b> of <b>${num(x.total || 0)}</b> steps done${x.startedAt ? `, started ${esc(String(x.startedAt).slice(0, 10))}` : ''}.</p><p class="subtle" style="font-size:.74rem;margin-top:6px">Group completion by role arrives with <span class="mono">GET /onboarding/stats</span>.</p><div class="row" style="margin-top:10px"><a class="btn secondary sm" href="#/onboarding">Open my onboarding</a></div>`;
+  } else ob.innerHTML = me.status === 404 ? notYet('GET /dms/api/onboarding/progress', 'Onboarding') : failState(me, { what: 'onboarding progress', inline: true });
+  if (!p.ok) im.innerHTML = p.status === 404 ? notYet('GET /dms/api/infomedia/pack', 'The Infomedia pack') : failState(p, { what: 'the Infomedia pack', inline: true });
+  else {
+    const x = p.data || {}; const menus = x.menus || x.menuCount; const models = Array.isArray(x.models) ? x.models : x.byModel ? Object.keys(x.byModel) : [];
+    im.innerHTML = `<dl class="kv"><dt>Status</dt><dd><span class="chip ${x.simulated === false ? 'good' : 'warn'}">${x.simulated === false ? 'Live feed' : 'Simulated pack'}</span></dd>
+      <dt>Service menus</dt><dd>${esc(String(typeof menus === 'object' && menus ? (menus.length ?? menus.count ?? '') : (menus ?? '—')))}${models.length ? ` across ${models.length} models` : ''}</dd>
+      <dt>Parts price file</dt><dd>${esc(String(x.parts?.count ?? x.partsCount ?? x.parts ?? '—'))} part numbers</dd>
+      <dt>Labour rates</dt><dd>${esc(String(x.labourRates ? (Array.isArray(x.labourRates) ? x.labourRates.map((r) => `${r.siteId || r.site || ''} ${r.rate ? '$' + r.rate + '/h' : ''}`).join(', ') : JSON.stringify(x.labourRates)) : '—'))}</dd>
+      <dt>Campaigns</dt><dd>${esc(String(x.campaigns?.count ?? x.campaignCount ?? (Array.isArray(x.campaigns) ? x.campaigns.length : x.campaigns ?? '—')))}</dd>
+      <dt>Last refresh</dt><dd>${x.refreshedAt || x.lastRefresh ? dateTime(x.refreshedAt || x.lastRefresh) : '—'}</dd></dl>
+      <p class="subtle" style="font-size:.74rem;margin-top:10px">${esc(x.source || x.note || 'VIN-specific service menus, parts prices, labour times and campaigns, ingested into the knowledge box so the agent can quote and answer over them.')}</p>`;
+  }
 }

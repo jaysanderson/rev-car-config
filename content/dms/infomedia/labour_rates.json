@@ -1,0 +1,29 @@
+{
+ "gst": 0.1,
+ "rates": [
+  {
+   "siteId": "par",
+   "rate": 189,
+   "effectiveFrom": "2026-07-01",
+   "currency": "AUD"
+  },
+  {
+   "siteId": "hor",
+   "rate": 185,
+   "effectiveFrom": "2026-07-01",
+   "currency": "AUD"
+  },
+  {
+   "siteId": "pen",
+   "rate": 179,
+   "effectiveFrom": "2026-07-01",
+   "currency": "AUD"
+  },
+  {
+   "siteId": "liv",
+   "rate": 182,
+   "effectiveFrom": "2026-07-01",
+   "currency": "AUD"
+  }
+ ]
+}

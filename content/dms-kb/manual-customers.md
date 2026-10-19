@@ -71,3 +71,23 @@ If a customer asks what information Harbourline holds about them, or asks for it
 ## Marketing consent
 
 The **Marketing** toggle on the customer record shows whether the customer has agreed to receive marketing. Customers without consent are excluded from campaign audiences automatically. Service and transactional messages (for example "your car is ready") do not need marketing consent.
+
+## Memos, documents, photos and job cards (phase 2)
+
+A customer record now carries everything the dealership knows about the person beyond their deals.
+
+- **Memos**: click **Add memo** on the customer. Kinds are customer_note (preferences, how they like to be contacted), call (a call or message and its outcome) and credit (anything owed either way). Memos cannot be deleted; **Pin** keeps one at the top. The agent reads pinned memos first.
+- **Documents and photos**: **Upload document** attaches licences, insurance certificates, authorisations and correspondence; **Add photo** attaches an image with a caption. Both follow the document pipeline in the Documents chapter.
+- **Job cards**: every service visit for a vehicle the customer owns is listed with its status and findings, linking to the card.
+
+### Asking about one customer
+
+Click **Ask about this customer**. Examples: "What has this customer asked us about before?", "Which cars do they own and when is the next service due?", "Is there anything outstanding on their last job card?". The answer is grounded in this customer's record, memos, document summaries, deals and job cards, and cites what it used. The DMS calls `POST /dms/api/customers/:id/ask`.
+
+### Asking across customers
+
+On the Customers page click **Ask across customers**. Examples: "Which customers with a RAV4 bought in 2024 have not had a service in twelve months?", "Who has an open credit memo?". The DMS calls `POST /dms/api/customers/ask`; retrieval runs over the customer resources in the knowledge box (customers with memos, documents or more than one deal) and the agent is given a summary of the filtered list. Customers outside your role's site scope are not visible.
+
+### Rules
+
+- Do not write licence numbers, card numbers or health information in a memo. Record the last four digits of a licence only where a policy requires it.

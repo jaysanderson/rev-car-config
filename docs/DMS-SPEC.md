@@ -68,3 +68,13 @@ The DMS follows MaintenanceOS exactly: **API-first** (every screen and every age
 - Resources (`harbourline-dms://openapi`, `://dashboard`, `://deal/{id}`, `://lead/{id}`, `://customer/{id}`, `://stock/{stockNo}`, `://domo/signals`) and prompts (`triage-lead`, `prep-test-drive`, `daily-sales-briefing`, `stuck-deals-review`, `compose-promotions-review`).
 - Auth: the same bearer token as REST; personal access tokens at `/dms/api/access-tokens` for long-lived integrations. `GET /dms/api/mcp/info` feeds the settings page. The knowledge box's own MCP endpoint is shown alongside.
 - Docs: `docs/DMS-MCP.md` mirrors the reference `docs/MCP.md`.
+
+## 7. Phase 2 (added 19 Oct 2026)
+
+Specified in `docs/DMS-PHASE2-SPEC.md`: the service module (job cards with memos, photos and documents, each a knowledge-box resource; ask one card or ask across all), suppliers and customers with the same memo, document and ask patterns, the Help bubble over the manual (call deflection, tickets, deflection dataset), friendly error messages written by the agent from the manual, a per-role onboarding programme composed from the manual and verified against live data, the simulated Infomedia data pack with a quote function, and system-wide search and chat (command palette, Help bubble modes).
+
+- New tables: `job_cards`, `memos`, `suppliers`; `documents` gains `jobCardId`, `supplierId` and image kinds; state files `support_tickets`, `support_log`, `onboarding_progress`, `friendly_errors` cache. Content: `content/dms/infomedia/`.
+- New roles and demo logins: `service_manager` (`service@harbourline.demo`) and `technician` (`tech1@harbourline.demo`); capabilities `service.read`, `service.write`, `suppliers.read`, `suppliers.write`.
+- New route groups under `/dms/api`: `/job-cards`, `/memos`, `/suppliers`, customer memo/document/ask routes, `/help/*`, `/errors/explain`, `/onboarding/*`, `/infomedia/*`; `/search` extended. All become MCP tools; prompts `service-morning-huddle` and `supplier-review`.
+- New pages: `#/service`, `#/suppliers`, `#/onboarding`, `#/manual`; the Help bubble and the command palette on every page; friendly errors in `core.js`.
+- New manual chapters: service job cards, suppliers, help and onboarding, Infomedia; policies: workshop promised times, supplier terms; `help-faq.md` (topic `help`).

@@ -1,0 +1,420 @@
+[
+ {
+  "id": "SUP-101",
+  "name": "Toyota Motor Corporation Australia, Parts",
+  "abn": "64 009 686 097",
+  "category": "parts",
+  "contact": {
+   "name": "TMCA parts desk",
+   "email": "parts.nsw@example.toyota",
+   "phone": "(02) 9000 2000"
+  },
+  "address": "155 Bertie St, Port Melbourne VIC",
+  "terms": "30 days",
+  "rating": 5,
+  "status": "active",
+  "spend12m": 43100,
+  "openInvoices": 1,
+  "createdAt": "2025-10-29T22:00:00+11:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-102",
+  "name": "Southern Cross Auto Accessories Pty Ltd",
+  "abn": "53 004 821 000",
+  "category": "accessories",
+  "contact": {
+   "name": "Deb Nguyen",
+   "email": "orders@example.sca",
+   "phone": "(02) 9000 2101"
+  },
+  "address": "12 Industry Rd, Smithfield NSW",
+  "terms": "30 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 111300,
+  "openInvoices": 1,
+  "createdAt": "2025-03-29T22:00:00+11:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-103",
+  "name": "Coastline Tint & Protect Pty Ltd",
+  "abn": "86 120 773 560",
+  "category": "tint-protection",
+  "contact": {
+   "name": "Mark Ellis",
+   "email": "bookings@example.coastline",
+   "phone": "(02) 9000 2202"
+  },
+  "address": "8 Bay St, Brookvale NSW",
+  "terms": "14 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 94700,
+  "openInvoices": 3,
+  "createdAt": "2025-09-20T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-104",
+  "name": "Bridgestone Select Parramatta",
+  "abn": "61 007 516 841",
+  "category": "tyres",
+  "contact": {
+   "name": "Trade desk",
+   "email": "trade@example.bridgestone",
+   "phone": "(02) 9000 2303"
+  },
+  "address": "300 Church St, Parramatta NSW",
+  "terms": "30 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 39100,
+  "openInvoices": 5,
+  "createdAt": "2026-02-02T22:00:00+11:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-105",
+  "name": "Westside Windscreens",
+  "abn": "42 611 220 118",
+  "category": "sublet",
+  "contact": {
+   "name": "Kerry Dunn",
+   "email": "jobs@example.westside",
+   "phone": "(02) 9000 2404"
+  },
+  "address": "21 Mill Rd, Wetherill Park NSW",
+  "terms": "14 days",
+  "rating": 3,
+  "status": "active",
+  "spend12m": 22500,
+  "openInvoices": 0,
+  "createdAt": "2024-05-21T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-106",
+  "name": "Penrith Auto Electrical",
+  "abn": "19 882 004 310",
+  "category": "sublet",
+  "contact": {
+   "name": "Dave Moore",
+   "email": "dave@example.pae",
+   "phone": "(02) 9000 2505"
+  },
+  "address": "5 Lawson St, Penrith NSW",
+  "terms": "7 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 35200,
+  "openInvoices": 0,
+  "createdAt": "2024-05-18T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-107",
+  "name": "Castrol Australia",
+  "abn": "51 004 274 335",
+  "category": "consumables",
+  "contact": {
+   "name": "Account team",
+   "email": "trade@example.castrol",
+   "phone": "1300 000 001"
+  },
+  "address": "Melbourne VIC",
+  "terms": "30 days",
+  "rating": 5,
+  "status": "active",
+  "spend12m": 143000,
+  "openInvoices": 5,
+  "createdAt": "2025-01-28T22:00:00+11:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-108",
+  "name": "Repco Trade Hornsby",
+  "abn": "40 000 040 111",
+  "category": "parts",
+  "contact": {
+   "name": "Trade counter",
+   "email": "hornsby@example.repco",
+   "phone": "(02) 9000 2606"
+  },
+  "address": "2 Pacific Hwy, Hornsby NSW",
+  "terms": "30 days",
+  "rating": 3,
+  "status": "active",
+  "spend12m": 96700,
+  "openInvoices": 4,
+  "createdAt": "2024-07-24T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-109",
+  "name": "Hills Towing & Transport",
+  "abn": "77 345 221 009",
+  "category": "towing",
+  "contact": {
+   "name": "Dispatch",
+   "email": "dispatch@example.hillstow",
+   "phone": "(02) 9000 2707"
+  },
+  "address": "Castle Hill NSW",
+  "terms": "14 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 16000,
+  "openInvoices": 2,
+  "createdAt": "2024-09-18T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-110",
+  "name": "Paint Protect Sydney",
+  "abn": "28 998 110 554",
+  "category": "tint-protection",
+  "contact": {
+   "name": "Tina Wu",
+   "email": "tina@example.ppsyd",
+   "phone": "(02) 9000 2808"
+  },
+  "address": "Liverpool NSW",
+  "terms": "14 days",
+  "rating": 3,
+  "status": "on_hold",
+  "spend12m": 123100,
+  "openInvoices": 0,
+  "createdAt": "2025-05-07T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-111",
+  "name": "Hybrid Battery Services NSW",
+  "abn": "33 554 870 219",
+  "category": "sublet",
+  "contact": {
+   "name": "Ahmed Saleh",
+   "email": "service@example.hbs",
+   "phone": "(02) 9000 2909"
+  },
+  "address": "Silverwater NSW",
+  "terms": "30 days",
+  "rating": 5,
+  "status": "active",
+  "spend12m": 6200,
+  "openInvoices": 0,
+  "createdAt": "2024-06-17T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-112",
+  "name": "Liverpool Smash Repairs",
+  "abn": "60 123 876 003",
+  "category": "sublet",
+  "contact": {
+   "name": "Front office",
+   "email": "office@example.lsr",
+   "phone": "(02) 9000 3010"
+  },
+  "address": "Moorebank NSW",
+  "terms": "30 days",
+  "rating": 3,
+  "status": "active",
+  "spend12m": 132600,
+  "openInvoices": 1,
+  "createdAt": "2024-06-18T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-113",
+  "name": "Dunlop Super Dealer Penrith",
+  "abn": "83 220 119 004",
+  "category": "tyres",
+  "contact": {
+   "name": "Trade desk",
+   "email": "penrith@example.dunlop",
+   "phone": "(02) 9000 3111"
+  },
+  "address": "Penrith NSW",
+  "terms": "30 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 131400,
+  "openInvoices": 6,
+  "createdAt": "2025-04-14T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-114",
+  "name": "Narva Lighting (NSW distributor)",
+  "abn": "21 004 303 410",
+  "category": "parts",
+  "contact": {
+   "name": "Account team",
+   "email": "nsw@example.narva",
+   "phone": "1300 000 002"
+  },
+  "address": "Sydney NSW",
+  "terms": "30 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 5800,
+  "openInvoices": 5,
+  "createdAt": "2025-09-11T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-115",
+  "name": "Clean Fleet Detailing",
+  "abn": "48 776 230 118",
+  "category": "sublet",
+  "contact": {
+   "name": "Jess Lane",
+   "email": "jess@example.cleanfleet",
+   "phone": "0400 000 003"
+  },
+  "address": "Mobile, Western Sydney",
+  "terms": "7 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 81300,
+  "openInvoices": 5,
+  "createdAt": "2026-02-25T22:00:00+11:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-116",
+  "name": "AutoGlass Direct",
+  "abn": "92 101 443 227",
+  "category": "sublet",
+  "contact": {
+   "name": "Bookings",
+   "email": "book@example.autoglass",
+   "phone": "1300 000 004"
+  },
+  "address": "Blacktown NSW",
+  "terms": "14 days",
+  "rating": 3,
+  "status": "on_hold",
+  "spend12m": 147900,
+  "openInvoices": 4,
+  "createdAt": "2024-05-16T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-117",
+  "name": "Toyota Genuine Accessories (TMCA)",
+  "abn": "64 009 686 097",
+  "category": "accessories",
+  "contact": {
+   "name": "TMCA accessories",
+   "email": "accessories@example.toyota",
+   "phone": "(02) 9000 2001"
+  },
+  "address": "Port Melbourne VIC",
+  "terms": "30 days",
+  "rating": 5,
+  "status": "active",
+  "spend12m": 5800,
+  "openInvoices": 2,
+  "createdAt": "2026-02-06T22:00:00+11:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-118",
+  "name": "Sydney Diesel Specialists",
+  "abn": "70 334 992 180",
+  "category": "sublet",
+  "contact": {
+   "name": "Workshop",
+   "email": "workshop@example.sds",
+   "phone": "(02) 9000 3212"
+  },
+  "address": "St Marys NSW",
+  "terms": "30 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 77700,
+  "openInvoices": 3,
+  "createdAt": "2024-12-17T22:00:00+11:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-119",
+  "name": "Bosch Car Service Hornsby",
+  "abn": "15 003 120 097",
+  "category": "sublet",
+  "contact": {
+   "name": "Service desk",
+   "email": "hornsby@example.bosch",
+   "phone": "(02) 9000 3313"
+  },
+  "address": "Hornsby NSW",
+  "terms": "14 days",
+  "rating": 3,
+  "status": "active",
+  "spend12m": 95100,
+  "openInvoices": 3,
+  "createdAt": "2024-06-19T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-120",
+  "name": "Workshop Supplies Direct",
+  "abn": "36 880 211 004",
+  "category": "consumables",
+  "contact": {
+   "name": "Online",
+   "email": "orders@example.wsd",
+   "phone": "1300 000 005"
+  },
+  "address": "Online",
+  "terms": "30 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 160600,
+  "openInvoices": 6,
+  "createdAt": "2025-06-25T22:00:00+10:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-121",
+  "name": "Key & Lock Automotive",
+  "abn": "58 220 390 117",
+  "category": "parts",
+  "contact": {
+   "name": "Counter",
+   "email": "keys@example.keylock",
+   "phone": "(02) 9000 3414"
+  },
+  "address": "Parramatta NSW",
+  "terms": "7 days",
+  "rating": 4,
+  "status": "active",
+  "spend12m": 113500,
+  "openInvoices": 5,
+  "createdAt": "2025-01-06T22:00:00+11:00",
+  "seed": "service-v1"
+ },
+ {
+  "id": "SUP-122",
+  "name": "Western Sydney Loan Cars",
+  "abn": "44 219 008 331",
+  "category": "sublet",
+  "contact": {
+   "name": "Fleet desk",
+   "email": "fleet@example.wslc",
+   "phone": "(02) 9000 3515"
+  },
+  "address": "Parramatta NSW",
+  "terms": "30 days",
+  "rating": 3,
+  "status": "active",
+  "spend12m": 45600,
+  "openInvoices": 3,
+  "createdAt": "2024-11-14T22:00:00+11:00",
+  "seed": "service-v1"
+ }
+]

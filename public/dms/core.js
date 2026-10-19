@@ -30,7 +30,7 @@ export const modelName = id => MODEL_LABEL[id] || (id ? String(id).replace(/-/g,
 let onUnauthorised = () => {};
 export function setUnauthorisedHandler(fn) { onUnauthorised = fn; }
 
-export async function api(path, { method = 'GET', body, query, timeout = 90000 } = {}) {
+export async function api(path, { method = 'GET', body, query, timeout = 90000, quiet = false } = {}) {
   let url = API + path;
   if (query) {
     const qs = new URLSearchParams();
@@ -47,13 +47,64 @@ export async function api(path, { method = 'GET', body, query, timeout = 90000 }
     if (ct.includes('json')) { try { data = await r.json(); } catch { data = null; } }
     else { const txt = await r.text(); data = txt; if (!r.ok || ct.includes('html')) data = null; }
     if (r.status === 401 && !path.startsWith('/auth/login')) { onUnauthorised(); }
-    if (!r.ok) return { ok: false, status: r.status, data, error: (data && (data.error || data.message)) || r.statusText || 'request failed' };
+    if (!r.ok) {
+      const res = { ok: false, status: r.status, data, error: (data && (data.error || data.message)) || r.statusText || 'request failed' };
+      // Friendly error (phase 2): ask the agent to explain the failure in plain language, grounded in the manual.
+      if (!quiet) res.friendly = await explainError({ status: r.status, endpoint: path, method, message: res.error, code: data && data.code });
+      return res;
+    }
     // A JSON route that answers HTML (SPA fallback) means the API is not mounted yet.
     if (data === null && method === 'GET' && !ct.includes('json')) return { ok: false, status: 503, data: null, error: 'DMS API not mounted' };
     return { ok: true, status: r.status, data };
   } catch (e) {
     return { ok: false, status: 0, data: null, error: e.name === 'AbortError' ? 'timed out' : 'network error' };
   } finally { clearTimeout(t); }
+}
+
+
+// ---------- friendly errors (Progress Agentic RAG explains API failures) ----------
+const explainCache = new Map(); const recentErrors = new Map(); let explainAvailable = true;
+const FALLBACK_FRIENDLY = {
+  401: { title: 'Please sign in again', message: 'Your session has ended, so the DMS cannot tell who you are.', nextStep: 'Sign in with your demo account and retry.' },
+  403: { title: 'Not available for your role', message: 'This action needs a permission your role does not have.', nextStep: 'Ask a general manager, or sign in as one for the demo.' },
+  404: { title: 'That record is not here', message: 'The DMS has nothing at this address. It may have been removed, or the id is mistyped.', nextStep: 'Check the id, or search with Cmd+K.' },
+  409: { title: 'Someone got there first', message: 'The record changed or is held by another action.', nextStep: 'Refresh and try again.' },
+  429: { title: 'The assistant is busy', message: 'Too many AI requests in a short time.', nextStep: 'Wait a few seconds and try again.' },
+  500: { title: 'Something went wrong on the server', message: 'The DMS hit an unexpected problem. Nothing is wrong with your data.', nextStep: 'Try again; if it repeats, raise a ticket from Help.' },
+  502: { title: 'The AI service did not answer', message: 'The knowledge box or agent did not respond in time.', nextStep: 'Try again in a moment.' },
+  504: { title: 'That took too long', message: 'The request timed out while a longer job (such as document processing) was still running.', nextStep: 'Call the same action again to pick up the result.' },
+};
+/** Explain an API failure in plain language. Always resolves (never throws); falls back to the catalogue. */
+export async function explainError({ status, endpoint, method = 'GET', message = '', code } = {}) {
+  const page = location.hash.replace(/^#\/?/, '').split('?')[0].split('/')[0] || 'dashboard';
+  const pattern = String(endpoint || '').replace(/\/[A-Z]{1,4}-\d+/g, '/:id').replace(/\/\d+/g, '/:n').split('?')[0];
+  const key = `${status}|${method}|${pattern}|${String(message).slice(0, 80)}`;
+  const base = FALLBACK_FRIENDLY[status] || (status === 0 ? { title: 'Cannot reach the DMS', message: 'The network request failed before the server answered.', nextStep: 'Check your connection, then try again.' } : { title: 'Something went wrong', message: `The request returned ${status}: ${message || 'error'}.`, nextStep: 'Try again, or raise a ticket from Help.' });
+  const fallback = { ...base, cause: message || null, manualRoute: null, by: 'catalogue', cached: false, status, endpoint: pattern, method };
+  if (explainCache.has(key)) return { ...explainCache.get(key), cached: true };
+  if (!explainAvailable || pattern.startsWith('/errors/explain') || (status === 401 && pattern.startsWith('/auth/login')) || !state.token) return fallback;
+  const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 1200);
+  try {
+    const r = await fetch(`${API}/errors/explain`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', Authorization: 'Bearer ' + state.token }, body: JSON.stringify({ status, endpoint: pattern, method, message: String(message || '').slice(0, 300), code: code || null, page, role: state.user?.role || null }), signal: ctl.signal });
+    if (r.status === 404) { explainAvailable = false; return fallback; }
+    if (!r.ok) return fallback;
+    const d = await r.json();
+    const out = { title: d.title || fallback.title, message: d.message || fallback.message, cause: d.cause || null, nextStep: d.nextStep || fallback.nextStep, manualRoute: d.manualRoute || null, by: d.by || 'agent', cached: Boolean(d.cached), status, endpoint: pattern, method };
+    explainCache.set(key, out); return out;
+  } catch { return fallback; } finally { clearTimeout(t); }
+}
+/** Show a friendly error toast once per 10 s for the same failure. */
+export function friendlyToast(res) {
+  const f = res && res.friendly; if (!f) return;
+  const key = `${f.status}|${f.method}|${f.endpoint}`; const now = Date.now();
+  if (now - (recentErrors.get(key) || 0) < 10000) return; recentErrors.set(key, now);
+  const el = document.createElement('div'); el.className = 'toast toast-friendly';
+  el.innerHTML = `<div class="tf-t">${esc(f.title)}</div><div class="tf-m">${esc(f.message)}</div>${f.nextStep ? `<div class="tf-n"><b>What to do:</b> ${esc(f.nextStep)}</div>` : ''}<div class="tf-a"><button type="button" data-more>Tell me more</button>${f.manualRoute ? `<a href="${esc(f.manualRoute)}">Manual</a>` : ''}<span class="tf-by">${f.by === 'agent' ? 'explained by Progress Agentic RAG' : 'catalogue'}</span><button type="button" data-close aria-label="Dismiss">✕</button></div><details class="tf-d"><summary>Details</summary><code>HTTP ${esc(String(f.status))} ${esc(f.method)} ${esc(API + f.endpoint)}${f.cause ? ' · ' + esc(f.cause) : ''}</code></details>`;
+  document.getElementById('toasts').appendChild(el);
+  const kill = setTimeout(() => el.remove(), 9000);
+  el.querySelector('[data-close]').onclick = () => { clearTimeout(kill); el.remove(); };
+  el.querySelector('[data-more]').onclick = () => { clearTimeout(kill); el.remove(); window.hlHelp?.open({ question: `I got the error "${f.title}" (${f.message}). What should I do?`, context: `HTTP ${f.status} ${f.method} ${f.endpoint}` }); };
+  el.addEventListener('mouseenter', () => clearTimeout(kill));
 }
 
 // list responses: {items,total,page,pageSize} per spec; tolerate bare arrays and {rows}
@@ -155,6 +206,9 @@ export function empty({ title = 'Nothing here yet', body = '', ic = 'inbox', act
 // One designed state per failure class; never a blank panel.
 export function failState(res, { what = 'this data', endpoint = '', inline = false } = {}) {
   const ep = endpoint ? ` <code>${esc(endpoint)}</code>` : '';
+  const f = res && res.friendly;
+  if (f && res.status !== 503 && res.status !== 0 && res.status !== 502)
+    return empty({ ic: res.status === 403 ? 'lock' : 'alert', error: res.status !== 403, title: f.title, body: `${esc(f.message)}${f.nextStep ? ` <b>What to do:</b> ${esc(f.nextStep)}` : ''}<br><span class="subtle" style="font-size:.74rem">${f.by === 'agent' ? 'Explained by Progress Agentic RAG' : 'From the error catalogue'} · HTTP ${esc(String(res.status))}${ep}</span>`, actions: `<button class="btn secondary sm" data-retry>Try again</button><button class="btn ghost sm" onclick="window.hlHelp&&window.hlHelp.open({question:'I got the error \u201c${esc(f.title).replace(/'/g, '')}\u201d while loading ${esc(what).replace(/'/g, '')}. What should I do?'})">Tell me more</button>${f.manualRoute ? `<a class="btn ghost sm" href="${esc(f.manualRoute)}">Manual</a>` : ''}`, inline });
   if (res.status === 403) return empty({ ic: 'lock', title: 'Not available for your role', body: `Your role (${esc(ROLE_LABEL[state.user?.role] || state.user?.role || 'unknown')}) cannot see ${esc(what)}. Ask a general manager if you need access.`, inline });
   if (res.status === 404) return empty({ ic: 'alert', error: true, title: 'Not found', body: `The DMS API has no ${esc(what)} here${ep}. It may have been removed, or this route is not built yet.`, inline });
   if (res.status === 503 || res.status === 0 || res.status === 502)

@@ -1,0 +1,122 @@
+{
+ "pack": "Simulated campaign and recall feed",
+ "refreshedAt": "2026-10-01",
+ "campaigns": [
+  {
+   "id": "CMP-2026-04",
+   "title": "Fuel pump impeller inspection",
+   "kind": "recall",
+   "make": "Toyota",
+   "models": [
+    "rav4",
+    "kluger",
+    "camry"
+   ],
+   "vinFrom": "JTM",
+   "vinTo": "JTN",
+   "yearFrom": 2021,
+   "yearTo": 2023,
+   "remedy": "Inspect low-pressure fuel pump; replace if from the affected batch.",
+   "hours": 1.2,
+   "partsRrp": 0,
+   "openedAt": "2026-04-02",
+   "status": "open"
+  },
+  {
+   "id": "CMP-2026-07",
+   "title": "Hybrid inverter software update",
+   "kind": "service_campaign",
+   "make": "Toyota",
+   "models": [
+    "rav4",
+    "corolla",
+    "c-hr",
+    "corolla-cross"
+   ],
+   "vinFrom": "JTM",
+   "vinTo": "JTN",
+   "yearFrom": 2022,
+   "yearTo": 2024,
+   "remedy": "Reflash the power management ECU to the latest calibration.",
+   "hours": 0.6,
+   "partsRrp": 0,
+   "openedAt": "2026-07-14",
+   "status": "open"
+  },
+  {
+   "id": "CMP-2025-11",
+   "title": "DPF pressure sensor hose",
+   "kind": "recall",
+   "make": "Toyota",
+   "models": [
+    "hilux",
+    "prado",
+    "fortuner"
+   ],
+   "vinFrom": "MR0",
+   "vinTo": "MR1",
+   "yearFrom": 2020,
+   "yearTo": 2022,
+   "remedy": "Replace the DPF differential pressure sensor hose and clear codes.",
+   "hours": 0.8,
+   "partsRrp": 46,
+   "openedAt": "2025-11-20",
+   "status": "open"
+  },
+  {
+   "id": "CMP-2026-02",
+   "title": "Rear seat belt pretensioner",
+   "kind": "recall",
+   "make": "Toyota",
+   "models": [
+    "landcruiser-300"
+   ],
+   "vinFrom": "JTE",
+   "vinTo": "JTF",
+   "yearFrom": 2022,
+   "yearTo": 2025,
+   "remedy": "Replace the second-row outboard pretensioners.",
+   "hours": 1.5,
+   "partsRrp": 310,
+   "openedAt": "2026-02-10",
+   "status": "open"
+  },
+  {
+   "id": "CMP-2025-06",
+   "title": "Steering intermediate shaft",
+   "kind": "service_campaign",
+   "make": "Toyota",
+   "models": [
+    "hilux"
+   ],
+   "vinFrom": "MR0",
+   "vinTo": "MR1",
+   "yearFrom": 2019,
+   "yearTo": 2021,
+   "remedy": "Lubricate or replace the intermediate shaft if a clunk is reported.",
+   "hours": 1,
+   "partsRrp": 220,
+   "openedAt": "2025-06-01",
+   "status": "closed"
+  },
+  {
+   "id": "CMP-2026-09",
+   "title": "Panoramic view monitor camera seal",
+   "kind": "service_campaign",
+   "make": "Toyota",
+   "models": [
+    "kluger",
+    "prado"
+   ],
+   "vinFrom": "JTE",
+   "vinTo": "JTF",
+   "yearFrom": 2024,
+   "yearTo": 2026,
+   "remedy": "Reseal the front camera housing; replace the camera if moisture is present.",
+   "hours": 0.7,
+   "partsRrp": 0,
+   "openedAt": "2026-09-05",
+   "status": "open"
+  }
+ ]
+}

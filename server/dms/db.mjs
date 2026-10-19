@@ -34,13 +34,18 @@ export const TABLES = {
   finance_apps: { key: 'id', date: 'submittedAt', cols: 'id, dealId, lender (Toyota Finance|Macquarie|ANZ|Westpac), amount, termMonths, rate, status (submitted|approved|conditional|declined|settled), submittedAt, decisionAt' },
   promotions: { key: 'id', date: 'startsAt', cols: 'id, title, kind, value, source{domo,kb}, startsAt, endsAt, appliesTo, status' },
   campaigns: { key: 'id', date: 'startsAt', cols: 'id, name, channel (email|sms|web|social), audience, startsAt, endsAt, promotionIds[], sent, opened, clicked, leads, budget' },
-  documents: { key: 'id', date: 'uploadedAt', cols: 'id, kind (contract|trade_in_form|supplier_invoice|licence|insurance), dealId, customerId, fileName, uploadedAt, status (uploaded|processing|extracted|verified), extracted{}, aragResourceId' },
+  documents: { key: 'id', date: 'uploadedAt', cols: 'id, kind (contract|trade_in_form|supplier_invoice|licence|insurance|image|inspection_report|other), dealId, customerId, jobCardId, supplierId, fileName, contentType, caption, uploadedAt, status (uploaded|processing|extracted|verified), extracted{}, aragResourceId' },
   targets: { key: '_key', cols: 'siteId, month (YYYY-MM), units, grossTarget' },
+  job_cards: { key: 'id', date: 'bookedAt', owner: 'technicianId', cols: 'id (JC-#####), siteId, customerId, vehicle{vin,rego,make,model,modelId,year,km}, advisorId, technicianId, status (booked|checked_in|in_progress|awaiting_parts|awaiting_approval|completed|invoiced|collected|cancelled), bookedAt, promisedAt, checkedInAt, completedAt, collectedAt, customerRequests[], findings[], recallsOpen[{campaign,title}], lines[{id,type,code,desc,qty,hours,unitPrice,total,source,menuId,approved}], laborHours, partsTotal, labourTotal, total, loanCar, waiting, infomediaMenuId, statusHistory[{status,at}], createdAt, updatedAt' },
+  memos: { key: 'id', date: 'at', owner: 'byStaffId', cols: 'id (M-#####), entity (job_card|customer|supplier), entityId, at, byStaffId, kind (customer_note|tech_note|advisor_note|parts_note|quality|call|credit|sla), text, pinned' },
+  suppliers: { key: 'id', date: 'createdAt', cols: 'id (SUP-###), name, abn, category (parts|accessories|tyres|tint-protection|sublet|consumables|towing), contact{name,email,phone}, address, terms, rating (1-5), status (active|on_hold), spend12m, openInvoices, createdAt' },
+  support_tickets: { key: 'id', date: 'createdAt', cols: 'id (T-####), userEmail, role, page, question, answerId, status (open|answered|closed), createdAt, closedAt' },
 };
 const FK = {
   leads: ['customerId', 'siteId', 'ownerId', 'bookingId'], test_drives: ['leadId', 'customerId', 'siteId', 'staffId'],
   deals: ['leadId', 'customerId', 'siteId', 'salespersonId'], trade_ins: ['dealId', 'customerId'], finance_apps: ['dealId'],
-  documents: ['dealId', 'customerId'], vehicles: ['siteId', 'dealId', 'vin'], staff: ['siteId', 'email'], targets: ['siteId'],
+  documents: ['dealId', 'customerId', 'jobCardId', 'supplierId'], vehicles: ['siteId', 'dealId', 'vin'], staff: ['siteId', 'email'], targets: ['siteId'],
+  job_cards: ['siteId', 'customerId', 'technicianId', 'advisorId'], memos: ['entityId', 'byStaffId'], suppliers: ['category'], support_tickets: ['userEmail'],
 };
 
 // ── state ────────────────────────────────────────────────────────────────────

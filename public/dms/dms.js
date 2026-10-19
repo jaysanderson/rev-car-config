@@ -1,5 +1,7 @@
 // Harbourline DMS · Sales — SPA entry: shell, hash router, auth, role-driven rail, data-layer toggle.
 import { state, api, setSession, setSite, setLang, setUnauthorisedHandler, icon, esc, initials, ROLE_LABEL, siteName, empty, closeDrawer, clearCache, toast } from './core.js';
+import { initHelp } from './help.js';
+import { initPalette } from './palette.js';
 
 // role → which pages. gm all; sales_manager all (no Domo recompute, enforced on the page);
 // salesperson own leads/deals/test drives + read-only stock & promotions; dxm; finance.
@@ -12,17 +14,23 @@ export const NAV = [
   { id: 'leads', label: 'Leads', ic: 'leads', roles: ['gm', 'sales_manager', 'salesperson', 'dxm'] },
   { id: 'test-drives', label: 'Test drives', ic: 'drive', roles: ['gm', 'sales_manager', 'salesperson'] },
   { id: 'deals', label: 'Deals', ic: 'deals', roles: ['gm', 'sales_manager', 'salesperson', 'finance'] },
-  { id: 'customers', label: 'Customers', ic: 'customers', roles: ['gm', 'sales_manager', 'salesperson', 'finance'] },
+  { id: 'customers', label: 'Customers', ic: 'customers', roles: ['gm', 'sales_manager', 'salesperson', 'finance', 'service_manager', 'technician'] },
   { id: 'stock', label: 'Stock', ic: 'stock', roles: ['gm', 'sales_manager', 'salesperson'], badge: 'dm' },
   { id: 'finance', label: 'Finance & trade-ins', ic: 'finance', roles: ['gm', 'sales_manager', 'finance'] },
+  { group: 'Service' },
+  { id: 'job-cards', label: 'Job cards', ic: 'stock', roles: ['gm', 'sales_manager', 'service_manager', 'technician'], badge: 'ai' },
+  { id: 'suppliers', label: 'Suppliers', ic: 'inbox', roles: ['gm', 'sales_manager', 'service_manager', 'finance'], badge: 'ai' },
   { group: 'Marketing' },
   { id: 'promotions', label: 'Promotions', ic: 'promotions', roles: ['gm', 'sales_manager', 'salesperson', 'dxm'] },
   { id: 'campaigns', label: 'Campaigns', ic: 'campaigns', roles: ['gm', 'sales_manager', 'dxm'] },
   { id: 'dxm', label: 'Digital experience', ic: 'dxm', roles: ['gm', 'sales_manager', 'dxm'] },
   { group: 'Back office' },
-  { id: 'documents', label: 'Documents', ic: 'documents', roles: ['gm', 'sales_manager', 'dxm', 'finance'], badge: 'ai' },
+  { id: 'documents', label: 'Documents', ic: 'documents', roles: ['gm', 'sales_manager', 'dxm', 'finance', 'service_manager'], badge: 'ai' },
   { id: 'insights', label: 'Insights · Domo', ic: 'insights', roles: ['gm', 'sales_manager'], badge: 'dm' },
   { id: 'settings', label: 'Settings & API', ic: 'settings', roles: ALL },
+  { group: 'Help' },
+  { id: 'manual', label: 'Manual', ic: 'documents', roles: ALL, badge: 'ai' },
+  { id: 'onboarding', label: 'Onboarding', ic: 'assistant', roles: ALL, badge: 'ai' },
 ];
 const PAGES = {
   login: () => import('./pages/login.js'),
@@ -31,6 +39,8 @@ const PAGES = {
   'test-drives': () => import('./pages/testdrives.js'),
   deals: () => import('./pages/deals.js'),
   customers: () => import('./pages/customers.js'),
+  'job-cards': () => import('./pages/service.js'),
+  suppliers: () => import('./pages/suppliers.js'),
   stock: () => import('./pages/stock.js'),
   finance: () => import('./pages/finance.js'),
   promotions: () => import('./pages/promotions.js'),
@@ -40,6 +50,8 @@ const PAGES = {
   assistant: () => import('./pages/assistant.js'),
   insights: () => import('./pages/insights.js'),
   settings: () => import('./pages/settings.js'),
+  manual: () => import('./pages/manual.js'),
+  onboarding: () => import('./pages/onboarding.js'),
 };
 export const canSee = (id, role = state.user?.role) => { const n = NAV.find(x => x.id === id); return !n || !role || n.roles.includes(role); };
 const homeFor = role => (NAV.find(n => n.id && n.roles.includes(role)) || { id: 'assistant' }).id;
@@ -78,6 +90,7 @@ async function route() {
   if (!state.token || !state.user) { if (page !== 'login') { location.replace('#/login' + (page ? '?next=' + encodeURIComponent(raw) : '')); return; } }
   else if (!page || page === 'login') { location.replace('#/' + homeFor(state.user.role)); return; }
   renderShell(); markNav(page);
+  if (state.user) { try { initHelp(); initPalette(); } catch (e) { console.warn('help/palette init', e); } }
   const root = document.createElement('div'); root.className = 'page page-' + page;
   view.replaceChildren(root);
   if (!PAGES[page]) { root.innerHTML = empty({ ic: 'alert', title: 'Page not found', body: `There is no page at <code>#/${esc(pathPart)}</code>.`, actions: `<a class="btn sm" href="#/${homeFor(state.user?.role)}">Go to start</a>` }); return; }

@@ -543,3 +543,29 @@ Deal timelines flattened: one row per event with the human note (for activity an
 | `staffId` | string | Who logged it |
 | `note` | string | Human note |
 | `dealStage` | string | Current deal stage |
+
+## Phase 2 tables (service, suppliers, memos, help) — see docs/DMS-PHASE2-SPEC.md
+
+### `job_cards` (key `id`, `JC-#####`; date `bookedAt`)
+
+One row per workshop visit. `status` booked | checked_in | in_progress | awaiting_parts | awaiting_approval | completed | invoiced | collected | cancelled. `vehicle{vin, rego, make, model, modelId, year, km}`, `advisorId` and `technicianId` (staff), `promisedAt`, `checkedInAt`, `completedAt`, `collectedAt`, `customerRequests[]`, `findings[]`, `recallsOpen[]`, `lines[{id, type labour|part|sublet|menu, code, desc, qty, hours, unitPrice, total, source menu|epc|manual|sublet, menuId, approved}]`, `laborHours`, `partsTotal`, `labourTotal`, `total`, `loanCar`, `waiting`, `infomediaMenuId`, `statusHistory[{status, at}]`. Joins: `customerId` → customers, `siteId` → sites, `vehicle.modelId` → catalogue models, `vehicle.vin` → vehicles when the car was sold by Harbourline.
+
+### `memos` (key `id`, `M-#####`; date `at`)
+
+Generic notes on any entity: `entity` job_card | customer | supplier, `entityId`, `at`, `byStaffId`, `kind` customer_note | tech_note | advisor_note | parts_note | quality | call | credit | sla, `text`, `pinned`.
+
+### `suppliers` (key `id`, `SUP-###`)
+
+`name`, `abn`, `category` parts | accessories | tyres | tint-protection | sublet | consumables | towing, `contact{name, email, phone}`, `address`, `terms`, `rating` 1–5, `status` active | on_hold, `spend12m`, `openInvoices`, `createdAt`. Invoices are `documents` rows of kind `supplier_invoice` with `supplierId`.
+
+### `documents` additions
+
+`jobCardId` and `supplierId` (nullable) join a document to a job card or supplier; new kinds `image` (jpg/png photos with a `caption`) and `inspection_report`.
+
+### `support_tickets` (state file; key `id`, `T-####`)
+
+`userEmail`, `role`, `page`, `question`, `answerId`, `status` open | answered | closed, `createdAt`.
+
+### Derived datasets added
+
+`job_card_lines` (one row per line with the card's site, model, status and dates), `service_daily` (date × site: cards opened, completed, labour hours, labour and parts revenue, overdue count), `support_deflection` (day × page: answers, helpful, unhelpful, tickets, deflection rate), `onboarding_progress` (user × role: steps total, verified, manual, started, completed).
